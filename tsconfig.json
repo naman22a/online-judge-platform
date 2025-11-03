@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@leetcode/database": ["packages/database/src"]
+        }
+    }
+}

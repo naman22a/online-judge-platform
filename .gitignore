@@ -11,6 +11,8 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+apps/**/.env
+apps/**/.env.local
 
 # Testing
 coverage
@@ -37,3 +39,4 @@ yarn-error.log*
 .DS_Store
 *.pem
 .vscode/
+/pgdata
