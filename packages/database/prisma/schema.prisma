@@ -12,6 +12,7 @@ model User {
   username     String   @unique
   email        String   @unique
   password     String
+  emailVerfied Boolean  @default(false)
   full_name    String?
   avatar_url   String?
   bio          String?
