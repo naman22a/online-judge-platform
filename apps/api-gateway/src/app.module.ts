@@ -4,19 +4,20 @@ import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
+import { MICROSERVICES } from '@leetcode/constants';
 
 @Module({
     imports: [
         ClientsModule.register([
             {
-                name: 'USERS_SERVICE',
+                name: MICROSERVICES.USERS_SERVICE,
                 transport: Transport.TCP,
                 options: {
                     port: 5001,
                 },
             },
             {
-                name: 'AUTH_SERVICE',
+                name: MICROSERVICES.AUTH_SERVICE,
                 transport: Transport.TCP,
                 options: {
                     port: 5002,

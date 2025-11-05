@@ -1,11 +1,13 @@
 import { PrismaService } from '@leetcode/database';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { OkResponse, RegisterDto } from './types';
+import { RegisterDto } from './types';
 import * as argon2 from 'argon2';
 import { MailService } from '../mail/mail.service';
 import { redis } from '../redis';
 import { CONFIRMATION_PREFIX } from '../constants';
+import { AUTH } from '@leetcode/constants';
+import { OkResponse } from '@leetcode/types';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +16,7 @@ export class AuthController {
         private mailService: MailService,
     ) {}
 
-    @MessagePattern('auth.register')
+    @MessagePattern(AUTH.REGISTER)
     async register(registerDto: RegisterDto): Promise<OkResponse> {
         const { username, email, password } = registerDto;
 
@@ -65,7 +67,7 @@ export class AuthController {
         return { ok: true };
     }
 
-    @MessagePattern('auth.confirmEmail')
+    @MessagePattern(AUTH.CONFIRM_EMAIL)
     async confirmEmail(token: string) {
         if (!token) return { ok: false };
 

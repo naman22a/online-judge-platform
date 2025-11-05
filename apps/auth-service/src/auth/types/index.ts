@@ -3,13 +3,3 @@ export class RegisterDto {
     email: string;
     password: string;
 }
-
-export class FieldError {
-    field: string;
-    message: string;
-}
-
-export class OkResponse {
-    ok: boolean;
-    errors?: FieldError[];
-}

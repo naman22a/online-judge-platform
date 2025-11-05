@@ -5,6 +5,7 @@ import { exceptionFactory } from './validation';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+
     // VALIDATION
     app.useGlobalPipes(new ValidationPipe({ exceptionFactory }));
 
