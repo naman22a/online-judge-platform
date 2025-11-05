@@ -8,6 +8,11 @@ export class UsersController {
 
     @MessagePattern('users.findAll')
     async find() {
-        return await this.prisma.user.findMany();
+        return await this.prisma.user.findMany({
+            omit: {
+                password: true,
+                emailVerfied: true,
+            },
+        });
     }
 }
