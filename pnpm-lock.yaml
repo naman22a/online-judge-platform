@@ -33,6 +33,9 @@ importers:
       '@leetcode/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@leetcode/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@leetcode/types':
         specifier: workspace:*
         version: link:../../packages/types
