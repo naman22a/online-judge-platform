@@ -5,7 +5,7 @@ import { LoginDto, RegisterDto } from './types';
 import * as argon2 from 'argon2';
 import { MailService } from '../mail/mail.service';
 import { redis } from '../redis';
-import { CONFIRMATION_PREFIX } from '../constants';
+import { CONFIRMATION_PREFIX, FORGOT_PASSWORD_PREFIX } from '../constants';
 import { AUTH } from '@leetcode/constants';
 import { LoginResponse, OkResponse, RefreshTokenPayload } from '@leetcode/types';
 import { AuthService } from './auth.service';
@@ -169,5 +169,51 @@ export class AuthController {
         const refreshToken = this.authService.createRefreshToken(user);
 
         return { accessToken, refreshToken };
+    }
+
+    @MessagePattern(AUTH.FORGOT_PASSWORD)
+    async forgotPassword({ email }: { email: string }) {
+        // check if user exists
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) return { ok: true };
+
+        // send forgot password email
+        const metadata = await this.mailService.createForgotpasswordMetadata(user.id);
+        await this.mailService.sendEmail(email, metadata);
+
+        return { ok: true };
+    }
+
+    @MessagePattern(AUTH.RESET_PASSWORD)
+    async resetPassword({ token, password }: { token: string; password: string }) {
+        if (!token) return { ok: false };
+
+        // find user id in redis
+        const userId = await redis.get(FORGOT_PASSWORD_PREFIX + token);
+        if (!userId) return { ok: false };
+
+        // check if user exists for the found user id
+        const user = await this.prisma.user.findUnique({ where: { id: parseInt(userId, 10) } });
+        if (!user) return { ok: false };
+
+        // hash the password
+        const hashedPassword = await argon2.hash(password);
+
+        // update user password
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashedPassword },
+        });
+
+        // increment token version
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { tokenVersion: { increment: 1 } },
+        });
+
+        // delete token from redis
+        await redis.del(FORGOT_PASSWORD_PREFIX + token);
+
+        return { ok: true };
     }
 }

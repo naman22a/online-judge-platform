@@ -16,7 +16,7 @@ import { LoginResponse, OkResponse } from '@leetcode/types';
 import { firstValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
-import { RegisterDto, LoginDto } from './types';
+import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './types';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 const __prod__ = process.env.NODE_ENV === 'production';
@@ -80,5 +80,18 @@ export class AuthController {
             sameSite: 'lax',
         });
         return { accessToken };
+    }
+
+    @Post('forgot-password')
+    async forgotPassword(@Body() { email }: ForgotPasswordDto) {
+        return this.client.send(AUTH.FORGOT_PASSWORD, { email });
+    }
+
+    @Post('reset-password/:token')
+    async resetPassword(
+        @Param('token', new ParseUUIDPipe({ version: '4' })) token: string,
+        @Body() { password }: ResetPasswordDto,
+    ) {
+        return this.client.send(AUTH.RESET_PASSWORD, { token, password });
     }
 }

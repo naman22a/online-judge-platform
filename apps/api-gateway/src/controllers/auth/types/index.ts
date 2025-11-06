@@ -31,3 +31,19 @@ export class LoginDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class ForgotPasswordDto {
+    @ApiProperty({ example: 'test@test.com', description: 'email of the user' })
+    @IsEmail()
+    email: string;
+}
+
+export class ResetPasswordDto {
+    @ApiProperty({
+        example: 'password123',
+        description: 'password of the user',
+        minLength: 6,
+    })
+    @MinLength(6)
+    password: string;
+}
