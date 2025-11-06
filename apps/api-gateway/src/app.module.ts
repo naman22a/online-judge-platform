@@ -1,33 +1,57 @@
 import { Module } from '@nestjs/common';
 import { MICROSERVICES } from '@leetcode/constants';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, TcpClientOptions, Transport } from '@nestjs/microservices';
 import { UsersController } from './controllers/users/users.controller';
 import { AuthController } from './controllers/auth/auth.controller';
 import { ProblemsController } from './controllers/problems/problems.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Configuration, configuration, validate } from '@leetcode/config';
 
 @Module({
     imports: [
-        ClientsModule.register([
+        ConfigModule.forRoot({
+            cache: true,
+            isGlobal: true,
+            expandVariables: true,
+            load: [configuration],
+            validate,
+        }),
+        ClientsModule.registerAsync([
             {
                 name: MICROSERVICES.USERS_SERVICE,
-                transport: Transport.TCP,
-                options: {
-                    port: 5001,
-                },
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: 'localhost',
+                        port: configService.get('users_service_port'),
+                    },
+                }),
             },
             {
                 name: MICROSERVICES.AUTH_SERVICE,
-                transport: Transport.TCP,
-                options: {
-                    port: 5002,
-                },
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: 'localhost',
+                        port: configService.get('auth_service_port'),
+                    },
+                }),
             },
             {
                 name: MICROSERVICES.PROBLEMS_SERVICE,
-                transport: Transport.TCP,
-                options: {
-                    port: 5003,
-                },
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: 'localhost',
+                        port: configService.get('problems_service_port'),
+                    },
+                }),
             },
         ]),
     ],

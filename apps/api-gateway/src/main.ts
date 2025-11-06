@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { exceptionFactory } from './validation';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { Configuration } from '@leetcode/config';
 
 declare global {
     namespace Express {
@@ -16,13 +18,18 @@ declare global {
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
+    // CONFIGURATION
+    const configService = app.get(ConfigService<Configuration>);
+    const port = configService.get('api_gateway_port');
+    const client_url = configService.get('client_url');
+
     // VALIDATION
     app.useGlobalPipes(new ValidationPipe({ exceptionFactory }));
 
     // MIDDLWARE
     app.use(cookieParser());
     app.enableCors({
-        origin: process.env.CORS_ORIGIN,
+        origin: [client_url],
         credentials: true,
     });
 
@@ -33,6 +40,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
 
-    await app.listen(process.env.PORT ?? 5000);
+    // STARTING THE SERVER
+    await app.listen(port);
 }
 bootstrap();

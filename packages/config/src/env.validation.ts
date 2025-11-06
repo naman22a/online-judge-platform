@@ -1,10 +1,10 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, validateSync, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, Matches, Max, Min, validateSync } from 'class-validator';
 
 enum Environment {
     Development = 'development',
     Production = 'production',
-    Testing = 'testing',
+    Test = 'test',
     Provision = 'provision',
 }
 
@@ -12,17 +12,42 @@ export class EnvironmentVariables {
     @IsEnum(Environment)
     NODE_ENV: Environment;
 
-    @IsNotEmpty()
-    DATABASE_URL: string;
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    API_GATEWAY_PORT: number;
+
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    USERS_SERVICE_PORT: number;
+
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    AUTH_SERVICE_PORT: number;
+
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    PROBLEMS_SERVICE_PORT: number;
 
     @IsNotEmpty()
-    CORS_ORIGIN: string;
+    CLIENT_URL: string;
+
+    @IsNotEmpty()
+    SERVER_URL: string;
+
+    @Matches(/^postgresql:\/\/([^:]+):([^@]+)@([^:\/]+):(\d+)\/([^?]+)\?schema=([^&]+)$/)
+    DATABASE_URL: string;
 
     @IsNotEmpty()
     REDIS_HOST: string;
 
-    @IsNotEmpty()
-    REDIS_PORT: string;
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    REDIS_PORT: number;
 
     @IsNotEmpty()
     ACCESS_TOKEN_SECRET: string;

@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { redis } from '../redis';
 import { CONFIRMATION_PREFIX, FORGOT_PASSWORD_PREFIX } from '../constants';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from '../config';
+import { EnvironmentVariables } from '@leetcode/config';
 import * as nodemailer from 'nodemailer';
 
 interface Metadata {
@@ -41,7 +41,7 @@ export class MailService {
 
     async createConfirmationMetadata(userId: number): Promise<Metadata> {
         const token = v4();
-        const cors_origin = this.configService.get('CORS_ORIGIN');
+        const client_url = this.configService.get('CLIENT_URL');
 
         await redis.set(
             CONFIRMATION_PREFIX + token,
@@ -51,14 +51,14 @@ export class MailService {
         );
 
         return {
-            url: `${cors_origin}/confirm/${token}`,
+            url: `${client_url}/confirm/${token}`,
             subject: 'Confirmation Email',
         };
     }
 
     async createForgotpasswordMetadata(userId: number): Promise<Metadata> {
         const token = v4();
-        const cors_origin = this.configService.get('CORS_ORIGIN');
+        const client_url = this.configService.get('CLIENT_URL');
 
         await redis.set(
             FORGOT_PASSWORD_PREFIX + token,
@@ -68,7 +68,7 @@ export class MailService {
         );
 
         return {
-            url: `${cors_origin}/reset-password/${token}`,
+            url: `${client_url}/reset-password/${token}`,
             subject: 'Reset Password',
         };
     }

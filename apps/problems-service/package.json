@@ -20,10 +20,12 @@
         "test:e2e": "dotenv -e ../../.env.test -- jest --config ./test/jest-e2e.json --passWithNoTests"
     },
     "dependencies": {
+        "@leetcode/config": "workspace:*",
         "@leetcode/constants": "workspace:*",
         "@leetcode/database": "workspace:*",
         "@leetcode/types": "workspace:*",
         "@nestjs/common": "^11.0.1",
+        "@nestjs/config": "^4.0.2",
         "@nestjs/core": "^11.0.1",
         "@nestjs/platform-express": "^11.0.1",
         "reflect-metadata": "^0.2.2",

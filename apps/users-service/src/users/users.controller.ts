@@ -39,10 +39,22 @@ export class UsersController {
                 omit: { password: true, emailVerfied: true, tokenVersion: true },
             });
         }
-        return await this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             where: { id },
             omit: { email: true, password: true, emailVerfied: true, tokenVersion: true },
         });
+
+        if (!user) {
+            return {
+                ok: false,
+                errors: [
+                    {
+                        field: 'id',
+                        message: 'user not found',
+                    },
+                ],
+            };
+        }
     }
 
     @MessagePattern(USERS.UPDATE)
