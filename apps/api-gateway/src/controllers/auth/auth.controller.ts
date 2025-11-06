@@ -17,6 +17,7 @@ import { firstValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RegisterDto, LoginDto } from './types';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 const __prod__ = process.env.NODE_ENV === 'production';
 
@@ -53,6 +54,7 @@ export class AuthController {
         return { accessToken };
     }
 
+    @ApiBearerAuth()
     @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: Response): Promise<OkResponse> {

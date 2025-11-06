@@ -4,7 +4,9 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '../../guards/auth.guard';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
