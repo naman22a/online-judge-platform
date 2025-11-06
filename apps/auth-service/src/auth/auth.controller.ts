@@ -1,19 +1,24 @@
 import { PrismaService } from '@leetcode/database';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { RegisterDto } from './types';
+import { LoginDto, RegisterDto } from './types';
 import * as argon2 from 'argon2';
 import { MailService } from '../mail/mail.service';
 import { redis } from '../redis';
 import { CONFIRMATION_PREFIX } from '../constants';
 import { AUTH } from '@leetcode/constants';
-import { OkResponse } from '@leetcode/types';
+import { LoginResponse, OkResponse, RefreshTokenPayload } from '@leetcode/types';
+import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
+import { verify } from 'jsonwebtoken';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private prisma: PrismaService,
         private mailService: MailService,
+        private authService: AuthService,
+        private configService: ConfigService,
     ) {}
 
     @MessagePattern(AUTH.REGISTER)
@@ -89,5 +94,80 @@ export class AuthController {
         await redis.del(CONFIRMATION_PREFIX + token);
 
         return { ok: true };
+    }
+
+    @MessagePattern(AUTH.LOGIN)
+    async login(dto: LoginDto): Promise<LoginResponse> {
+        const { email, password } = dto;
+
+        // check if user exists in database
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return {
+                accessToken: '',
+                errors: [{ field: 'email', message: 'User not found.' }],
+            };
+        }
+
+        // check if password is correct
+        const isMatch = await argon2.verify(user.password, password);
+        if (!isMatch) {
+            return {
+                accessToken: '',
+                errors: [{ field: 'password', message: 'Incorrect Password.' }],
+            };
+        }
+
+        // check is user is verified
+        if (!user.emailVerfied) {
+            return {
+                accessToken: '',
+                errors: [{ field: 'email', message: 'Please verify your email.' }],
+            };
+        }
+
+        // send access and refresh tokens
+        const accessToken = this.authService.createAcessToken(user);
+        const refreshToken = this.authService.createRefreshToken(user);
+
+        return { accessToken, refreshToken };
+    }
+
+    @MessagePattern(AUTH.LOGOUT)
+    logout(): OkResponse {
+        return { ok: true };
+    }
+
+    @MessagePattern(AUTH.REFRESH_TOKEN)
+    async refreshToken({ token }: { token: string }): Promise<LoginResponse> {
+        const secret = this.configService.get('REFRESH_TOKEN_SECRET');
+
+        // check if token exists
+        if (!token) return { accessToken: '' };
+
+        let payload: RefreshTokenPayload | null = null;
+
+        try {
+            // decode the token
+            payload = verify(token, secret) as RefreshTokenPayload;
+        } catch (error) {
+            console.error(error);
+            return { accessToken: '' };
+        }
+
+        // check if user exists
+        const user = await this.prisma.user.findUnique({ where: { id: payload.userId } });
+        if (!user) return { accessToken: '' };
+
+        // check if token version of user and jwt are equal
+        if (user.tokenVersion !== payload.tokenVersion) {
+            return { accessToken: '' };
+        }
+
+        // send access and refresh tokens
+        const accessToken = this.authService.createAcessToken(user);
+        const refreshToken = this.authService.createRefreshToken(user);
+
+        return { accessToken, refreshToken };
     }
 }

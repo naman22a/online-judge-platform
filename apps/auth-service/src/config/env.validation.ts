@@ -17,6 +17,18 @@ export class EnvironmentVariables {
 
     @IsNotEmpty()
     CORS_ORIGIN: string;
+
+    @IsNotEmpty()
+    REDIS_HOST: string;
+
+    @IsNotEmpty()
+    REDIS_PORT: string;
+
+    @IsNotEmpty()
+    ACCESS_TOKEN_SECRET: string;
+
+    @IsNotEmpty()
+    REFRESH_TOKEN_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -18,6 +18,8 @@
         "node": ">=18"
     },
     "dependencies": {
-        "@nestjs/microservices": "^11.1.8"
+        "@nestjs/microservices": "^11.1.8",
+        "dotenv": "^17.2.3",
+        "dotenv-cli": "^11.0.0"
     }
 }
