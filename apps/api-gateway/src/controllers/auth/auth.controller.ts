@@ -12,32 +12,13 @@ import {
 } from '@nestjs/common';
 import { AUTH, COOKIE_NAME, MICROSERVICES } from '@leetcode/constants';
 import { ClientProxy } from '@nestjs/microservices';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { LoginResponse, OkResponse } from '@leetcode/types';
 import { firstValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RegisterDto, LoginDto } from './types';
 
 const __prod__ = process.env.NODE_ENV === 'production';
-
-export class RegisterDto {
-    @IsNotEmpty()
-    username: string;
-
-    @IsEmail()
-    email: string;
-
-    @MinLength(6)
-    password: string;
-}
-
-export class LoginDto {
-    @IsEmail()
-    email: string;
-
-    @IsNotEmpty()
-    password: string;
-}
 
 @Controller('auth')
 export class AuthController {
