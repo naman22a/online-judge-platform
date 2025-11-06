@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { MICROSERVICES } from '@leetcode/constants';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './controllers/users/users.controller';
 import { AuthController } from './controllers/auth/auth.controller';
-import { MICROSERVICES } from '@leetcode/constants';
+import { ProblemsController } from './controllers/problems/problems.controller';
 
 @Module({
     imports: [
@@ -21,9 +22,16 @@ import { MICROSERVICES } from '@leetcode/constants';
                     port: 5002,
                 },
             },
+            {
+                name: MICROSERVICES.PROBLEMS_SERVICE,
+                transport: Transport.TCP,
+                options: {
+                    port: 5003,
+                },
+            },
         ]),
     ],
-    controllers: [UsersController, AuthController],
+    controllers: [UsersController, AuthController, ProblemsController],
     providers: [],
 })
 export class AppModule {}
