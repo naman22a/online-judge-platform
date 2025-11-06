@@ -23,4 +23,336 @@ model User {
   is_admin     Boolean  @default(false)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+
+  // Relations
+  problemsCreated     Problem[]            @relation("CreatedProblems")
+  submissions         Submission[]
+  userProblemStatus   UserProblemStatus[]
+  editorials          Editorial[]
+  contestsCreated     Contest[]            @relation("CreatedContests")
+  contestParticipants ContestParticipant[]
+  comments            Comment[]
+  discussionVotes     DiscussionVote[]
+  bookmarks           Bookmark[]
+  problemLikes        ProblemLike[]
+
+  @@map("users")
+}
+
+model Problem {
+  id               Int        @id @default(autoincrement())
+  title            String     @db.VarChar(255)
+  slug             String     @unique @db.VarChar(255)
+  description      String     @db.Text
+  difficulty       Difficulty
+  acceptanceRate   Decimal    @default(0.00) @db.Decimal(5, 2)
+  totalSubmissions Int        @default(0)
+  totalAccepted    Int        @default(0)
+  likes            Int        @default(0)
+  dislikes         Int        @default(0)
+  isPremium        Boolean    @default(false)
+  constraints      String?    @db.Text
+  hints            String[]
+  similarProblems  Int[]
+  createdById      Int?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  // Relations
+  createdBy         User?               @relation("CreatedProblems", fields: [createdById], references: [id])
+  problemTags       ProblemTag[]
+  problemCompanies  ProblemCompany[]
+  testCases         TestCase[]
+  submissions       Submission[]
+  userProblemStatus UserProblemStatus[]
+  editorials        Editorial[]
+  contestProblems   ContestProblem[]
+  comments          Comment[]
+  bookmarks         Bookmark[]
+  problemLikes      ProblemLike[]
+
+  @@index([difficulty])
+  @@index([slug])
+  @@map("problems")
+}
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50)
+  slug        String   @unique @db.VarChar(50)
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  // Relations
+  problemTags ProblemTag[]
+
+  @@map("tags")
+}
+
+model ProblemTag {
+  problemId Int
+  tagId     Int
+
+  // Relations
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, tagId])
+  @@map("problem_tags")
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(100)
+  slug      String   @unique @db.VarChar(100)
+  logoUrl   String?  @db.VarChar(500)
+  createdAt DateTime @default(now())
+
+  // Relations
+  problemCompanies ProblemCompany[]
+
+  @@map("companies")
+}
+
+model ProblemCompany {
+  problemId     Int
+  companyId     Int
+  frequency     Int       @default(1)
+  lastAskedDate DateTime? @db.Date
+
+  // Relations
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, companyId])
+  @@map("problem_companies")
+}
+
+model TestCase {
+  id             Int      @id @default(autoincrement())
+  problemId      Int
+  input          String   @db.Text
+  expectedOutput String   @db.Text
+  isSample       Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  explanation    String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  // Relations
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([problemId])
+  @@map("test_cases")
+}
+
+model Submission {
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  problemId       Int
+  language        String           @db.VarChar(50)
+  code            String           @db.Text
+  status          SubmissionStatus
+  runtime         Int?
+  memory          Int?
+  testCasesPassed Int              @default(0)
+  totalTestCases  Int              @default(0)
+  errorMessage    String?          @db.Text
+  submittedAt     DateTime         @default(now())
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([userId, problemId])
+  @@index([status])
+  @@map("submissions")
+}
+
+model UserProblemStatus {
+  userId          Int
+  problemId       Int
+  status          ProblemStatus
+  lastAttemptedAt DateTime?
+  solvedAt        DateTime?
+  attempts        Int           @default(0)
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([userId, problemId])
+  @@index([userId, problemId])
+  @@map("user_problem_status")
+}
+
+model Editorial {
+  id              Int      @id @default(autoincrement())
+  problemId       Int
+  title           String   @db.VarChar(255)
+  approach        String?  @db.VarChar(100)
+  content         String   @db.Text
+  codeSnippets    Json?
+  timeComplexity  String?  @db.VarChar(100)
+  spaceComplexity String?  @db.VarChar(100)
+  isOfficial      Boolean  @default(true)
+  createdById     Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  createdBy User?   @relation(fields: [createdById], references: [id])
+
+  @@map("editorials")
+}
+
+model Contest {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  duration    Int
+  isPublic    Boolean  @default(true)
+  createdById Int?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  createdBy           User?                @relation("CreatedContests", fields: [createdById], references: [id])
+  contestProblems     ContestProblem[]
+  contestParticipants ContestParticipant[]
+
+  @@index([startTime])
+  @@map("contests")
+}
+
+model ContestProblem {
+  contestId    Int
+  problemId    Int
+  problemOrder Int
+  points       Int @default(100)
+
+  // Relations
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([contestId, problemId])
+  @@map("contest_problems")
+}
+
+model ContestParticipant {
+  id           Int       @id @default(autoincrement())
+  contestId    Int
+  userId       Int
+  score        Int       @default(0)
+  rank         Int?
+  finishTime   DateTime?
+  registeredAt DateTime  @default(now())
+
+  // Relations
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([contestId, userId])
+  @@index([userId])
+  @@map("contest_participants")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  problemId  Int
+  userId     Int
+  parentId   Int?
+  title      String?  @db.VarChar(255)
+  content    String   @db.Text
+  isSolution Boolean  @default(false)
+  language   String?  @db.VarChar(50)
+  upvotes    Int      @default(0)
+  downvotes  Int      @default(0)
+  isPinned   Boolean  @default(false)
+  isDeleted  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  problem         Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent          Comment?         @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies         Comment[]        @relation("CommentReplies")
+  discussionVotes DiscussionVote[]
+
+  @@index([problemId])
+  @@index([userId])
+  @@map("comments")
+}
+
+model DiscussionVote {
+  userId    Int
+  commentId Int
+  voteType  VoteType
+  createdAt DateTime @default(now())
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, commentId])
+  @@map("discussion_votes")
+}
+
+model Bookmark {
+  userId    Int
+  problemId Int
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([userId, problemId])
+  @@index([userId])
+  @@map("bookmarks")
+}
+
+model ProblemLike {
+  userId    Int
+  problemId Int
+  isLike    Boolean
+  createdAt DateTime @default(now())
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([userId, problemId])
+  @@map("problem_likes")
+}
+
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+}
+
+enum SubmissionStatus {
+  Accepted
+  WrongAnswer
+  TimeLimitExceeded
+  MemoryLimitExceeded
+  RuntimeError
+  CompileError
+  Pending
+}
+
+enum ProblemStatus {
+  Solved
+  Attempted
+  Todo
+}
+
+enum VoteType {
+  Upvote
+  Downvote
 }
