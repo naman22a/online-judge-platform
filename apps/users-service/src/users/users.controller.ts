@@ -1,7 +1,8 @@
-import { PrismaService } from '@leetcode/database';
+import { PrismaService, User } from '@leetcode/database';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { USERS } from '@leetcode/constants';
+import { OkResponse } from '@leetcode/types';
 
 @Controller('users')
 export class UsersController {
@@ -42,5 +43,48 @@ export class UsersController {
             where: { id },
             omit: { email: true, password: true, emailVerfied: true, tokenVersion: true },
         });
+    }
+
+    @MessagePattern(USERS.UPDATE)
+    async updateOne({
+        userId,
+        body,
+    }: {
+        userId: number;
+        body: Omit<
+            Partial<User>,
+            | 'password'
+            | 'email'
+            | 'emailVerfied'
+            | 'tokenVersion'
+            | 'is_admin'
+            | 'id'
+            | 'created_at'
+            | 'updated_at'
+        >;
+    }): Promise<OkResponse> {
+        if (!body)
+            return { ok: false, errors: [{ field: 'all', message: 'atleast provide one field' }] };
+
+        if (body.username) {
+            const usernameTaken = await this.prisma.user.findUnique({
+                where: { username: body.username },
+            });
+            if (usernameTaken) {
+                return {
+                    ok: false,
+                    errors: [
+                        {
+                            field: 'username',
+                            message: 'username already taken',
+                        },
+                    ],
+                };
+            }
+        }
+
+        await this.prisma.user.update({ where: { id: userId }, data: body });
+
+        return { ok: true };
     }
 }

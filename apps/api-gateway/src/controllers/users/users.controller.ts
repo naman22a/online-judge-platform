@@ -1,10 +1,21 @@
 import { MICROSERVICES, USERS } from '@leetcode/constants';
-import { Controller, Get, Inject, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '../../guards/auth.guard';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateUserDetails } from './types';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -28,5 +39,11 @@ export class UsersController {
     async getOneUser(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
         const userId = req.userId;
         return await firstValueFrom(this.client.send(USERS.FIND_ONE, { id, userId }));
+    }
+
+    @Patch()
+    async updateUser(@Req() req: Request, @Body() body: UpdateUserDetails) {
+        const userId = req.userId;
+        return this.client.send(USERS.UPDATE, { userId, body });
     }
 }

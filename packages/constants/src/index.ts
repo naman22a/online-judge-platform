@@ -2,6 +2,7 @@ export const USERS = {
     FIND_ALL: 'users.findAll',
     CURRENT: 'users.current',
     FIND_ONE: 'users.findOne',
+    UPDATE: 'users.update',
 };
 
 export const AUTH = {
