@@ -16,7 +16,7 @@ import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { LoginResponse, OkResponse } from '@leetcode/types';
 import { firstValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 
 const __prod__ = process.env.NODE_ENV === 'production';
 

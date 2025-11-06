@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { UsersController } from './users/users.controller';
-import { AuthController } from './auth/auth.controller';
+import { UsersController } from './controllers/users/users.controller';
+import { AuthController } from './controllers/auth/auth.controller';
 import { MICROSERVICES } from '@leetcode/constants';
 
 @Module({

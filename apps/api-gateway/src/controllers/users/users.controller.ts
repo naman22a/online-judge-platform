@@ -1,7 +1,7 @@
 import { MICROSERVICES, USERS } from '@leetcode/constants';
 import { Controller, Get, Inject, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 
