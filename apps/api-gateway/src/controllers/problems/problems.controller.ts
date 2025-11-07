@@ -47,11 +47,13 @@ export class ProblemsController {
         return this.client.send(PROBLEMS.CREATE, body);
     }
 
+    @UseGuards(AdminGuard)
     @Delete(':id')
     deleteOneProblem(@Param('id', ParseIntPipe) id: number) {
         return this.client.send(PROBLEMS.DELETE, { id });
     }
 
+    @UseGuards(AdminGuard)
     @Patch(':id')
     updateProblem(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProblemDto) {
         return this.client.send(PROBLEMS.UPDATE, { id, dto });
