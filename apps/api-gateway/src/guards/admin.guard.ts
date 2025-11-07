@@ -30,23 +30,25 @@ export class AdminGuard implements CanActivate {
             throw new UnauthorizedException();
         }
 
+        let payload: AccessTokenPayload;
+
         try {
             const token = authorization.split(' ')[1];
-            const payload = verify(token, process.env.ACCESS_TOKEN_SECRET!) as AccessTokenPayload;
+            payload = verify(token, process.env.ACCESS_TOKEN_SECRET!) as AccessTokenPayload;
             req.userId = payload.userId;
-
-            const user = (await firstValueFrom(
-                this.client.send(USERS.CURRENT, { userId: payload.userId }),
-            )) as Omit<User, 'password' | 'emailVerfied' | 'tokenVersion'>;
-
-            if (!user.is_admin) {
-                throw new ForbiddenException();
-            }
-
-            return true;
         } catch (error) {
             this.logger.error(error);
             throw new UnauthorizedException();
         }
+
+        const user = (await firstValueFrom(
+            this.client.send(USERS.CURRENT, { userId: payload.userId }),
+        )) as Omit<User, 'password' | 'emailVerfied' | 'tokenVersion'>;
+
+        if (!user.is_admin) {
+            throw new ForbiddenException();
+        }
+
+        return true;
     }
 }

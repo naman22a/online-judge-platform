@@ -3,10 +3,15 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { PrismaService } from '@leetcode/database';
 import { GetProblemsQueryDto } from './types';
+import { ProblemsService } from './problems.service';
+import { CreateProblemDto } from '@leetcode/types';
 
 @Controller('problems')
 export class ProblemsController {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private problemsService: ProblemsService,
+    ) {}
 
     @MessagePattern(PROBLEMS.FIND_ALL)
     async getAllProblems({ query }: { query: GetProblemsQueryDto }) {
@@ -52,5 +57,10 @@ export class ProblemsController {
             offset,
             data: problems,
         };
+    }
+
+    @MessagePattern(PROBLEMS.CREATE)
+    async createProblem(dto: CreateProblemDto) {
+        return await this.problemsService.create(dto);
     }
 }

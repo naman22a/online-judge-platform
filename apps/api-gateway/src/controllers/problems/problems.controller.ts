@@ -1,7 +1,18 @@
 import { MICROSERVICES, PROBLEMS } from '@leetcode/constants';
-import { Controller, Get, Inject, ParseIntPipe, Query, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Post,
+    Query,
+    UseGuards,
+    ValidationPipe,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { GetProblemsQueryDto } from './types';
+import { AdminGuard } from '../../guards/admin.guard';
+import { CreateProblemDto } from '@leetcode/types';
 
 @Controller('problems')
 export class ProblemsController {
@@ -19,5 +30,11 @@ export class ProblemsController {
         query: GetProblemsQueryDto,
     ) {
         return this.client.send(PROBLEMS.FIND_ALL, { query });
+    }
+
+    @UseGuards(AdminGuard)
+    @Post()
+    async createProblem(@Body() body: CreateProblemDto) {
+        return this.client.send(PROBLEMS.CREATE, body);
     }
 }

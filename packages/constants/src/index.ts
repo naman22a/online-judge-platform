@@ -25,4 +25,5 @@ export const AUTH = {
 
 export const PROBLEMS = {
     FIND_ALL: 'problems.findAll',
+    CREATE: 'problems.create',
 };

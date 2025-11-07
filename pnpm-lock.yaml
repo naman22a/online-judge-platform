@@ -636,6 +636,16 @@ importers:
         version: 8.40.0(eslint@9.38.0(jiti@2.6.1))(typescript@5.9.2)
 
   packages/types:
+    dependencies:
+      '@leetcode/database':
+        specifier: workspace:*
+        version: link:../database
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.2
+        version: 0.14.2
     devDependencies:
       '@types/node':
         specifier: ^24.10.0

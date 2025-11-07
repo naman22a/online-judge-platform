@@ -3,6 +3,7 @@ import { ProblemsController } from './problems/problems.controller';
 import { DatabaseModule } from '@leetcode/database';
 import { ConfigModule } from '@nestjs/config';
 import { configuration, validate } from '@leetcode/config';
+import { ProblemsService } from './problems/problems.service';
 
 @Module({
     imports: [
@@ -16,6 +17,6 @@ import { configuration, validate } from '@leetcode/config';
         DatabaseModule,
     ],
     controllers: [ProblemsController],
-    providers: [],
+    providers: [ProblemsService],
 })
 export class AppModule {}
