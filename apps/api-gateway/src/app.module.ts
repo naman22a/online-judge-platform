@@ -6,6 +6,7 @@ import { AuthController } from './controllers/auth/auth.controller';
 import { ProblemsController } from './controllers/problems/problems.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Configuration, configuration, validate } from '@leetcode/config';
+import { TagsController } from './controllers/tags/tags.controller';
 
 @Module({
     imports: [
@@ -53,9 +54,21 @@ import { Configuration, configuration, validate } from '@leetcode/config';
                     },
                 }),
             },
+            {
+                name: MICROSERVICES.TAGS_SERVICE,
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: 'localhost',
+                        port: configService.get('tags_service_port'),
+                    },
+                }),
+            },
         ]),
     ],
-    controllers: [UsersController, AuthController, ProblemsController],
+    controllers: [UsersController, AuthController, ProblemsController, TagsController],
     providers: [],
 })
 export class AppModule {}

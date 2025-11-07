@@ -1,6 +1,8 @@
 import { Difficulty } from '@leetcode/database';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+    ArrayMinSize,
     IsArray,
     IsBoolean,
     IsDateString,
@@ -10,6 +12,7 @@ import {
     IsNumber,
     IsOptional,
     IsString,
+    Length,
     Matches,
     Max,
     Min,
@@ -248,4 +251,59 @@ export class TestCaseInput {
     @IsOptional()
     @IsString()
     explanation?: string;
+}
+
+export class CreateTagDto {
+    @ApiProperty({
+        example: 'Dynamic Programming',
+        description: 'Human-readable name of the tag.',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @Length(2, 50, { message: 'Tag name must be between 2 and 50 characters long.' })
+    name: string;
+
+    @ApiProperty({
+        example: 'dynamic-programming',
+        description: 'URL-friendly slug used for the tag.',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+        message: 'Slug must be lowercase and use hyphens (e.g., "binary-search").',
+    })
+    slug: string;
+
+    @ApiProperty({
+        example: 'Problems involving overlapping subproblems and optimal substructure.',
+        description: 'Optional description of the tag.',
+        required: false,
+    })
+    @IsString()
+    @IsOptional()
+    @Length(0, 255)
+    description?: string;
+}
+
+export class BulkCreateTagsDto {
+    @ApiProperty({
+        description: 'Array of tags to create in bulk.',
+        type: [CreateTagDto],
+        example: [
+            {
+                name: 'Array',
+                slug: 'array',
+                description: 'Problems involving manipulation and traversal of arrays.',
+            },
+            {
+                name: 'Hash Table',
+                slug: 'hash-table',
+                description: 'Problems using hash maps or dictionaries for fast lookups.',
+            },
+        ],
+    })
+    @ValidateNested({ each: true })
+    @Type(() => CreateTagDto)
+    @ArrayMinSize(1, { message: 'At least one tag must be provided.' })
+    tags: CreateTagDto[];
 }

@@ -2,6 +2,7 @@ export const MICROSERVICES = {
     USERS_SERVICE: 'USERS_SERVICE',
     AUTH_SERVICE: 'AUTH_SERVICE',
     PROBLEMS_SERVICE: 'PROBLEMS_SERVICE',
+    TAGS_SERVICE: 'TAGS_SERVICE',
 };
 
 export const COOKIE_NAME = 'jid';
@@ -29,4 +30,10 @@ export const PROBLEMS = {
     CREATE: 'problems.create',
     DELETE: 'problems.delete',
     UPDATE: 'problems.update',
+};
+
+export const TAGS = {
+    FIND_ALL: 'tags.findAll',
+    FIND_ONE: 'tags.findOne',
+    CREATE: 'tags.create',
 };
