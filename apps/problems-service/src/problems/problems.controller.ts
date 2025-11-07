@@ -1,10 +1,10 @@
 import { PROBLEMS } from '@leetcode/constants';
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { PrismaService } from '@leetcode/database';
 import { GetProblemsQueryDto } from './types';
 import { ProblemsService } from './problems.service';
-import { CreateProblemDto } from '@leetcode/types';
+import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
 
 @Controller('problems')
 export class ProblemsController {
@@ -59,8 +59,38 @@ export class ProblemsController {
         };
     }
 
+    @MessagePattern(PROBLEMS.FIND_ONE)
+    async findOneProblem({ id }: { id: number }) {
+        const problem = await this.prisma.problem.findUnique({
+            where: { id },
+            include: { testCases: true, problemTags: { select: { tag: true } } },
+        });
+        if (!problem) return { ok: false, errors: [{ field: 'id', message: 'problem not found' }] };
+
+        return problem;
+    }
+
     @MessagePattern(PROBLEMS.CREATE)
     async createProblem(dto: CreateProblemDto) {
         return await this.problemsService.create(dto);
+    }
+
+    @MessagePattern(PROBLEMS.DELETE)
+    async deleteProblem({ id }: { id: number }) {
+        try {
+            const deletedProblem = await this.prisma.problem.delete({ where: { id } });
+
+            return { ok: true };
+        } catch (error) {
+            if (error.code === 'P2025')
+                return { ok: false, errors: [{ field: 'id', message: 'problem not found' }] };
+            Logger.error(error);
+            return { ok: false };
+        }
+    }
+
+    @MessagePattern(PROBLEMS.UPDATE)
+    async updateProblem({ id, dto }: { id: number; dto: UpdateProblemDto }) {
+        return this.problemsService.update(id, dto);
     }
 }

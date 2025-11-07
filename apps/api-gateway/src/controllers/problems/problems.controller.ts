@@ -2,8 +2,12 @@ import { MICROSERVICES, PROBLEMS } from '@leetcode/constants';
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Inject,
+    Param,
+    ParseIntPipe,
+    Patch,
     Post,
     Query,
     UseGuards,
@@ -12,7 +16,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { GetProblemsQueryDto } from './types';
 import { AdminGuard } from '../../guards/admin.guard';
-import { CreateProblemDto } from '@leetcode/types';
+import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
 
 @Controller('problems')
 export class ProblemsController {
@@ -32,9 +36,24 @@ export class ProblemsController {
         return this.client.send(PROBLEMS.FIND_ALL, { query });
     }
 
+    @Get(':id')
+    getOneProblem(@Param('id', ParseIntPipe) id: number) {
+        return this.client.send(PROBLEMS.FIND_ONE, { id });
+    }
+
     @UseGuards(AdminGuard)
     @Post()
-    async createProblem(@Body() body: CreateProblemDto) {
+    createProblem(@Body() body: CreateProblemDto) {
         return this.client.send(PROBLEMS.CREATE, body);
+    }
+
+    @Delete(':id')
+    deleteOneProblem(@Param('id', ParseIntPipe) id: number) {
+        return this.client.send(PROBLEMS.DELETE, { id });
+    }
+
+    @Patch(':id')
+    updateProblem(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProblemDto) {
+        return this.client.send(PROBLEMS.UPDATE, { id, dto });
     }
 }

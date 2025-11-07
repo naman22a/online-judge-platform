@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
     IsArray,
     IsBoolean,
+    IsDateString,
     IsEnum,
     IsInt,
     IsNotEmpty,
@@ -156,4 +157,95 @@ export class CreateProblemCompanyDto {
     @IsOptional()
     @IsString()
     lastAskedDate?: string;
+}
+
+export class UpdateProblemDto {
+    @IsOptional()
+    @IsString()
+    title?: string;
+
+    @IsOptional()
+    @IsString()
+    slug?: string;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsEnum(Difficulty)
+    difficulty?: Difficulty;
+
+    @IsOptional()
+    @IsBoolean()
+    isPremium?: boolean;
+
+    @IsOptional()
+    @IsString()
+    constraints?: string;
+
+    @IsOptional()
+    @IsArray()
+    hints?: string[];
+
+    @IsOptional()
+    @IsArray()
+    similarProblems?: number[];
+
+    @IsOptional()
+    @IsNumber()
+    createdById?: number;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ProblemTagInput)
+    problemTags?: ProblemTagInput[];
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ProblemCompanyInput)
+    problemCompanies?: ProblemCompanyInput[];
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => TestCaseInput)
+    testCases?: TestCaseInput[];
+}
+
+export class ProblemTagInput {
+    @IsNumber()
+    tagId: number;
+}
+
+export class ProblemCompanyInput {
+    @IsNumber()
+    companyId: number;
+
+    @IsOptional()
+    @IsNumber()
+    frequency?: number;
+
+    @IsOptional()
+    @IsDateString()
+    lastAskedDate?: string;
+}
+
+export class TestCaseInput {
+    @IsString()
+    input: string;
+
+    @IsString()
+    expectedOutput: string;
+
+    @IsOptional()
+    @IsBoolean()
+    isSample?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isActive?: boolean;
+
+    @IsOptional()
+    @IsString()
+    explanation?: string;
 }
