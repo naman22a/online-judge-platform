@@ -4,6 +4,8 @@ import * as api from '@/api';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import LogoutButton from '@/components/LogoutButton';
+import AdminDashboard from '@/components/admin/AdminDashboard';
+import ProblemsList from '@/components/ProblemsList';
 
 function Home() {
     const router = useRouter();
@@ -11,10 +13,10 @@ function Home() {
 
     // protected route
     useEffect(() => {
-        if (meQuery.isError) {
+        if (meQuery.isError && meQuery.fetchStatus === 'idle') {
             router.push('/login');
         }
-    }, [meQuery.isError, router]);
+    }, [meQuery.isError, router, meQuery.fetchStatus]);
 
     if (meQuery.isLoading) return <p>Loading...</p>;
     if (meQuery.isError) return null;
@@ -23,9 +25,7 @@ function Home() {
         <div>
             <h1>Leetcode</h1>
             <LogoutButton>Logout</LogoutButton>
-            <pre>
-                <code>{JSON.stringify(meQuery.data, null, 4)}</code>
-            </pre>
+            {meQuery.data?.is_admin ? <AdminDashboard /> : <ProblemsList />}
         </div>
     );
 }

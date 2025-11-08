@@ -39,8 +39,8 @@ function Login() {
         try {
             const res = await login(data);
             if (res.accessToken && !res.errors) {
-                setAccessToken(res.accessToken);
                 await queryClient.invalidateQueries({ queryKey: ['users', 'me'], exact: true });
+                setAccessToken(res.accessToken);
                 toast.success('Logged in');
                 router.push('/');
             } else if (res.errors) {
