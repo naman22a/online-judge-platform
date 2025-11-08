@@ -7,7 +7,7 @@ import { Toaster } from 'sonner';
 
 interface Props extends PropsWithChildren {}
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
 
 const Layout: React.FC<Props> = ({ children }) => {
     return (

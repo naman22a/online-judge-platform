@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { useMutation } from '@tanstack/react-query';
 import * as api from '@/api';
 import { toast } from 'sonner';
+import { Spinner } from '@/components/ui/spinner';
 
 const registerSchema = z.object({
     username: z.string().min(1),
@@ -121,7 +122,7 @@ function Register() {
                 </CardContent>
                 <CardFooter>
                     <Button type="submit" form="register-form">
-                        {form.formState.isSubmitting ? 'Loading...' : 'Register'}
+                        {form.formState.isSubmitting && <Spinner />} Register
                     </Button>
                 </CardFooter>
             </Card>

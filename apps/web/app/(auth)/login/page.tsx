@@ -11,6 +11,7 @@ import * as api from '@/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { setAccessToken } from '@/global';
+import { Spinner } from '@/components/ui/spinner';
 
 const loginSchema = z.object({
     email: z.email(),
@@ -38,8 +39,8 @@ function Login() {
         try {
             const res = await login(data);
             if (res.accessToken && !res.errors) {
-                await queryClient.invalidateQueries({ queryKey: ['users', 'me'], exact: true });
                 setAccessToken(res.accessToken);
+                await queryClient.invalidateQueries({ queryKey: ['users', 'me'], exact: true });
                 toast.success('Logged in');
                 router.push('/');
             } else if (res.errors) {
@@ -109,7 +110,7 @@ function Login() {
                 </CardContent>
                 <CardFooter>
                     <Button type="submit" form="login-form">
-                        {form.formState.isSubmitting ? 'Loading...' : 'Login'}
+                        {form.formState.isSubmitting && <Spinner />} Login
                     </Button>
                 </CardFooter>
             </Card>

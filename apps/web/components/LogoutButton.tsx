@@ -6,6 +6,7 @@ import { setAccessToken } from '@/global';
 import * as api from '@/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Spinner } from './ui/spinner';
 
 interface Props extends PropsWithChildren {}
 
@@ -20,10 +21,10 @@ const LogoutButton: React.FC<Props> = ({ children }) => {
         try {
             const res = await logoutMut.mutateAsync();
             if (res.ok && !res.errors) {
-                toast.success('Logged out');
                 setAccessToken('');
                 await queryClient.invalidateQueries({ queryKey: ['users', 'me'], exact: true });
                 router.push('/login');
+                toast.success('Logged out');
             } else {
                 toast.error('Something went wrong');
             }
@@ -35,7 +36,12 @@ const LogoutButton: React.FC<Props> = ({ children }) => {
         }
     };
 
-    return <Button onClick={() => handleLogout()}>{isLoading ? 'Loading...' : children}</Button>;
+    return (
+        <Button onClick={() => handleLogout()}>
+            {isLoading && <Spinner />}
+            {children}
+        </Button>
+    );
 };
 
 export default LogoutButton;

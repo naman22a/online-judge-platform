@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import * as api from '@/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 function ConfirmEmail({ params }: { params: Promise<{ token: string }> }) {
     const router = useRouter();
@@ -32,9 +33,7 @@ function ConfirmEmail({ params }: { params: Promise<{ token: string }> }) {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen w-full">
             <h1 className="font-semibold text-4xl mb-5">ConfirmEmail</h1>
-            <Button onClick={() => handleSubmit()}>
-                {isPending ? 'Loading...' : 'Confirm Email'}
-            </Button>
+            <Button onClick={() => handleSubmit()}>{isPending && <Spinner />} Confirm Email</Button>
         </div>
     );
 }
