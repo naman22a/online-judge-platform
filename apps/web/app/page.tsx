@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import LogoutButton from '@/components/LogoutButton';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import ProblemsList from '@/components/ProblemsList';
+import Header from '@/components/Header';
 
 function Home() {
     const router = useRouter();
@@ -23,9 +23,10 @@ function Home() {
 
     return (
         <div>
-            <h1>Leetcode</h1>
-            <LogoutButton>Logout</LogoutButton>
-            {meQuery.data?.is_admin ? <AdminDashboard /> : <ProblemsList />}
+            <Header />
+            <div className="p-5">
+                {meQuery.data?.is_admin ? <AdminDashboard /> : <ProblemsList />}
+            </div>
         </div>
     );
 }
