@@ -1,7 +1,17 @@
 import { COMPANIES, MICROSERVICES } from '@leetcode/constants';
 import { BulkCreateCompaniesDto } from '@leetcode/types';
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Param,
+    ParseIntPipe,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { AdminGuard } from '../../guards/admin.guard';
 
 @Controller('companies')
 export class CompaniesController {
@@ -17,6 +27,7 @@ export class CompaniesController {
         return this.client.send(COMPANIES.FIND_ONE, { id });
     }
 
+    @UseGuards(AdminGuard)
     @Post('bulk')
     create(@Body() body: BulkCreateCompaniesDto) {
         return this.client.send(COMPANIES.CREATE, { dto: body });
