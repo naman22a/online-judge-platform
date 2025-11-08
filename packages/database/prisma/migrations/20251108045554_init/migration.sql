@@ -43,11 +43,10 @@ CREATE TABLE "problems" (
     "totalAccepted" INTEGER NOT NULL DEFAULT 0,
     "likes" INTEGER NOT NULL DEFAULT 0,
     "dislikes" INTEGER NOT NULL DEFAULT 0,
-    "isPremium" BOOLEAN NOT NULL DEFAULT false,
     "constraints" TEXT,
     "hints" TEXT[],
     "similarProblems" INTEGER[],
-    "createdById" INTEGER,
+    "createdById" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -149,7 +148,7 @@ CREATE TABLE "editorials" (
     "timeComplexity" VARCHAR(100),
     "spaceComplexity" VARCHAR(100),
     "isOfficial" BOOLEAN NOT NULL DEFAULT true,
-    "createdById" INTEGER,
+    "createdById" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -166,7 +165,7 @@ CREATE TABLE "contests" (
     "endTime" TIMESTAMP(3) NOT NULL,
     "duration" INTEGER NOT NULL,
     "isPublic" BOOLEAN NOT NULL DEFAULT true,
-    "createdById" INTEGER,
+    "createdById" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "contests_pkey" PRIMARY KEY ("id")
@@ -306,7 +305,7 @@ CREATE INDEX "comments_userId_idx" ON "comments"("userId");
 CREATE INDEX "bookmarks_userId_idx" ON "bookmarks"("userId");
 
 -- AddForeignKey
-ALTER TABLE "problems" ADD CONSTRAINT "problems_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "problems" ADD CONSTRAINT "problems_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "problem_tags" ADD CONSTRAINT "problem_tags_problemId_fkey" FOREIGN KEY ("problemId") REFERENCES "problems"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -339,10 +338,10 @@ ALTER TABLE "user_problem_status" ADD CONSTRAINT "user_problem_status_problemId_
 ALTER TABLE "editorials" ADD CONSTRAINT "editorials_problemId_fkey" FOREIGN KEY ("problemId") REFERENCES "problems"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "editorials" ADD CONSTRAINT "editorials_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "editorials" ADD CONSTRAINT "editorials_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "contests" ADD CONSTRAINT "contests_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "contests" ADD CONSTRAINT "contests_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "contest_problems" ADD CONSTRAINT "contest_problems_contestId_fkey" FOREIGN KEY ("contestId") REFERENCES "contests"("id") ON DELETE CASCADE ON UPDATE CASCADE;

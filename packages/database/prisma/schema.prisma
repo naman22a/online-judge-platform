@@ -50,16 +50,15 @@ model Problem {
   totalAccepted    Int        @default(0)
   likes            Int        @default(0)
   dislikes         Int        @default(0)
-  isPremium        Boolean    @default(false)
   constraints      String?    @db.Text
   hints            String[]
   similarProblems  Int[]
-  createdById      Int?
+  createdById      Int
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
   // Relations
-  createdBy         User?               @relation("CreatedProblems", fields: [createdById], references: [id])
+  createdBy         User                @relation("CreatedProblems", fields: [createdById], references: [id])
   problemTags       ProblemTag[]
   problemCompanies  ProblemCompany[]
   testCases         TestCase[]
@@ -195,13 +194,13 @@ model Editorial {
   timeComplexity  String?  @db.VarChar(100)
   spaceComplexity String?  @db.VarChar(100)
   isOfficial      Boolean  @default(true)
-  createdById     Int?
+  createdById     Int
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   // Relations
   problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  createdBy User?   @relation(fields: [createdById], references: [id])
+  createdBy User    @relation(fields: [createdById], references: [id])
 
   @@map("editorials")
 }
@@ -215,11 +214,11 @@ model Contest {
   endTime     DateTime
   duration    Int
   isPublic    Boolean  @default(true)
-  createdById Int?
+  createdById Int
   createdAt   DateTime @default(now())
 
   // Relations
-  createdBy           User?                @relation("CreatedContests", fields: [createdById], references: [id])
+  createdBy           User                 @relation("CreatedContests", fields: [createdById], references: [id])
   contestProblems     ContestProblem[]
   contestParticipants ContestParticipant[]
 

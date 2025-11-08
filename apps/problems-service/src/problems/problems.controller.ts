@@ -71,14 +71,14 @@ export class ProblemsController {
     }
 
     @MessagePattern(PROBLEMS.CREATE)
-    async createProblem(dto: CreateProblemDto) {
-        return await this.problemsService.create(dto);
+    async createProblem({ userId, dto }: { userId: number; dto: CreateProblemDto }) {
+        return await this.problemsService.create({ userId, dto });
     }
 
     @MessagePattern(PROBLEMS.DELETE)
     async deleteProblem({ id }: { id: number }) {
         try {
-            const deletedProblem = await this.prisma.problem.delete({ where: { id } });
+            await this.prisma.problem.delete({ where: { id } });
 
             return { ok: true };
         } catch (error) {

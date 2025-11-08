@@ -10,6 +10,7 @@ import {
     Patch,
     Post,
     Query,
+    Req,
     UseGuards,
     ValidationPipe,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { GetProblemsQueryDto } from './types';
 import { AdminGuard } from '../../guards/admin.guard';
 import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
+import type { Request } from 'express';
 
 @Controller('problems')
 export class ProblemsController {
@@ -43,8 +45,9 @@ export class ProblemsController {
 
     @UseGuards(AdminGuard)
     @Post()
-    createProblem(@Body() body: CreateProblemDto) {
-        return this.client.send(PROBLEMS.CREATE, body);
+    createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
+        const userId = req.userId;
+        return this.client.send(PROBLEMS.CREATE, { userId, dto: body });
     }
 
     @UseGuards(AdminGuard)

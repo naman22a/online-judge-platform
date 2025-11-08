@@ -6,11 +6,12 @@ import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
 export class ProblemsService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(dto: CreateProblemDto) {
+    async create({ userId, dto }: { userId: number; dto: CreateProblemDto }) {
         const { problemTags, problemCompanies, testCases, ...problemData } = dto;
 
         return this.prisma.problem.create({
             data: {
+                createdById: userId,
                 ...problemData,
 
                 ...(problemTags?.length
