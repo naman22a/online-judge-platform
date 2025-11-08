@@ -7,6 +7,7 @@ const configuration = () => ({
     auth_service_port: parseInt(process.env.AUTH_SERVICE_PORT!, 10),
     problems_service_port: parseInt(process.env.PROBLEMS_SERVICE_PORT!, 10),
     tags_service_port: parseInt(process.env.TAGS_SERVICE_PORT!, 10),
+    companies_service_port: parseInt(process.env.COMPANIES_SERVICE_PORT!, 10),
     client_url: process.env.CLIENT_URL,
     server_url: process.env.SERVER_URL,
     db_url: process.env.DATABASE_URL,

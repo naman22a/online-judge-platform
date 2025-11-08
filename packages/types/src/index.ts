@@ -12,9 +12,11 @@ import {
     IsNumber,
     IsOptional,
     IsString,
+    IsUrl,
     Length,
     Matches,
     Max,
+    MaxLength,
     Min,
     ValidateNested,
 } from 'class-validator';
@@ -306,4 +308,50 @@ export class BulkCreateTagsDto {
     @Type(() => CreateTagDto)
     @ArrayMinSize(1, { message: 'At least one tag must be provided.' })
     tags: CreateTagDto[];
+}
+
+export class CreateCompanyDto {
+    @ApiProperty({
+        description: 'The name of the company.',
+        example: 'Google',
+    })
+    @IsString()
+    @IsNotEmpty({ message: 'Company name must not be empty.' })
+    @MaxLength(100, { message: 'Company name must not exceed 100 characters.' })
+    name: string;
+
+    @ApiProperty({
+        description: 'Unique slug identifier for the company (used in URLs).',
+        example: 'google',
+    })
+    @IsString()
+    @IsNotEmpty({ message: 'Slug must not be empty.' })
+    @MaxLength(100, { message: 'Slug must not exceed 100 characters.' })
+    slug: string;
+
+    @ApiProperty({
+        description: 'Optional logo URL for the company.',
+        example: 'https://logo.clearbit.com/google.com',
+        required: false,
+    })
+    @IsString()
+    @IsOptional()
+    @IsUrl({}, { message: 'Logo URL must be a valid URL.' })
+    @MaxLength(500, { message: 'Logo URL must not exceed 500 characters.' })
+    logoUrl?: string;
+}
+
+export class BulkCreateCompaniesDto {
+    @ApiProperty({
+        description: 'Array of companies to create in bulk.',
+        type: [CreateCompanyDto],
+        example: [
+            { name: 'Google', slug: 'google', logoUrl: 'https://logo.clearbit.com/google.com' },
+            { name: 'Amazon', slug: 'amazon', logoUrl: 'https://logo.clearbit.com/amazon.com' },
+        ],
+    })
+    @ValidateNested({ each: true })
+    @Type(() => CreateCompanyDto)
+    @ArrayMinSize(1, { message: 'At least one company must be provided.' })
+    companies: CreateCompanyDto[];
 }
