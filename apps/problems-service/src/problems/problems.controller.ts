@@ -60,9 +60,9 @@ export class ProblemsController {
     }
 
     @MessagePattern(PROBLEMS.FIND_ONE)
-    async findOneProblem({ id }: { id: number }) {
+    async findOneProblem({ slug }: { slug: string }) {
         const problem = await this.prisma.problem.findUnique({
-            where: { id },
+            where: { slug },
             include: { testCases: true, problemTags: { select: { tag: true } } },
         });
         if (!problem) return { ok: false, errors: [{ field: 'id', message: 'problem not found' }] };

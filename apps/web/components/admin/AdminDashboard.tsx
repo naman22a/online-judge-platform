@@ -1,11 +1,11 @@
 import React from 'react';
+import CreateProblemForm from './CreateProblemForm';
 
-interface Props {}
-
-const AdminDashboard: React.FC<Props> = () => {
+const AdminDashboard: React.FC = () => {
     return (
-        <div>
-            <h2>Admin Dashboard</h2>
+        <div className="flex flex-col gap-5">
+            <h2 className="font-semibold text-2xl">Admin Dashboard</h2>
+            <CreateProblemForm />
         </div>
     );
 };

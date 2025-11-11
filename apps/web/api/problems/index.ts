@@ -1,6 +1,7 @@
 import axios from 'axios';
 import API from '..';
 import { GetProblemsQueryDto, IProblem } from './types';
+import { OkResponse } from '@leetcode/types';
 
 export const getProblems = async (
     params: GetProblemsQueryDto,
@@ -20,6 +21,19 @@ export const getProblems = async (
             limit: 0,
             offset: 0,
             data: [],
+        };
+    }
+};
+
+export const findOne = async (slug: string): Promise<OkResponse | IProblem> => {
+    try {
+        const res = await API.get(`/problems/{slug}`);
+        return res.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) return error.response?.data;
+        return {
+            ok: false,
+            errors: [{ field: 'server', message: 'Something went wrong' }],
         };
     }
 };

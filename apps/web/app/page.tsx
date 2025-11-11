@@ -22,12 +22,12 @@ function Home() {
     if (meQuery.isError) return null;
 
     return (
-        <div>
+        <>
             <Header />
             <div className="p-5">
                 {meQuery.data?.is_admin ? <AdminDashboard /> : <ProblemsList />}
             </div>
-        </div>
+        </>
     );
 }
 

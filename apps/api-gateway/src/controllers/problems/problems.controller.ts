@@ -38,9 +38,9 @@ export class ProblemsController {
         return this.client.send(PROBLEMS.FIND_ALL, { query });
     }
 
-    @Get(':id')
-    getOneProblem(@Param('id', ParseIntPipe) id: number) {
-        return this.client.send(PROBLEMS.FIND_ONE, { id });
+    @Get(':slug')
+    getOneProblem(@Param('slug') slug: string) {
+        return this.client.send(PROBLEMS.FIND_ONE, { slug });
     }
 
     @UseGuards(AdminGuard)
