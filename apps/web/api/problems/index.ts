@@ -1,7 +1,7 @@
 import axios from 'axios';
-import API from '..';
+import API, { companies } from '..';
 import { GetProblemsQueryDto, IProblem } from './types';
-import { OkResponse } from '@leetcode/types';
+import { CreateProblemDto, OkResponse } from '@leetcode/types';
 
 export const getProblems = async (
     params: GetProblemsQueryDto,
@@ -35,5 +35,21 @@ export const findOne = async (slug: string): Promise<OkResponse | IProblem> => {
             ok: false,
             errors: [{ field: 'server', message: 'Something went wrong' }],
         };
+    }
+};
+
+export const create = async (data: any): Promise<IProblem | null> => {
+    try {
+        const res = await API.post('/problems', {
+            ...data,
+            companies: undefined,
+            tags: undefined,
+            problemTags: data.tags.map((tag: number) => ({ tagId: tag })),
+            problemCompanies: data.companies.map((company: any) => ({ ...company })),
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 };
