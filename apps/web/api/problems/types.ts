@@ -39,4 +39,21 @@ export interface IProblem {
             createdAt: string;
         };
     }[];
+    testCases: {
+        id: number;
+        input: string;
+        expectedOutput: string;
+        explanation: string;
+        isSample: boolean;
+        isActive: boolean;
+    }[];
+    problemCompanies: {
+        company: {
+            id: number;
+            name: string;
+            slug: string;
+            logoUrl?: string;
+            createdAt: string;
+        };
+    }[];
 }

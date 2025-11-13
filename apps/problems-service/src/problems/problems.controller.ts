@@ -46,6 +46,17 @@ export class ProblemsController {
                 take: limit,
                 include: {
                     problemTags: { select: { tag: true } },
+                    testCases: {
+                        where: { isActive: true, isSample: true },
+                        select: {
+                            id: true,
+                            input: true,
+                            expectedOutput: true,
+                            explanation: true,
+                            isSample: true,
+                            isActive: true,
+                        },
+                    },
                 },
             }),
             this.prisma.problem.count({ where }),
@@ -63,9 +74,28 @@ export class ProblemsController {
     async findOneProblem({ slug }: { slug: string }) {
         const problem = await this.prisma.problem.findUnique({
             where: { slug },
-            include: { testCases: true, problemTags: { select: { tag: true } } },
+            include: {
+                testCases: {
+                    where: { isActive: true, isSample: true },
+                    select: {
+                        id: true,
+                        input: true,
+                        expectedOutput: true,
+                        explanation: true,
+                        isSample: true,
+                        isActive: true,
+                    },
+                },
+                problemTags: { select: { tag: true } },
+                // TODO: add them when you implement on frontend
+                // comments: true,
+                // editorials: true,
+                // submissions: true,
+                problemCompanies: { select: { company: true } },
+            },
         });
-        if (!problem) return { ok: false, errors: [{ field: 'id', message: 'problem not found' }] };
+        if (!problem)
+            return { ok: false, errors: [{ field: 'slug', message: 'problem not found' }] };
 
         return problem;
     }

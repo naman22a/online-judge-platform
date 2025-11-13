@@ -27,7 +27,7 @@ export const getProblems = async (
 
 export const findOne = async (slug: string): Promise<OkResponse | IProblem> => {
     try {
-        const res = await API.get(`/problems/{slug}`);
+        const res = await API.get(`/problems/${slug}`);
         return res.data;
     } catch (error) {
         if (axios.isAxiosError(error)) return error.response?.data;
