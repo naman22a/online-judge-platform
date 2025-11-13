@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import '../styles/globals.css';
-import Layout from '../components/Layout';
+import '@/styles/globals.css';
+import Layout from '@/components/Layout';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
     title: 'Leetcode',
@@ -12,9 +13,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body>
-                <Layout>{children}</Layout>
+                <ThemeProvider attribute="class" defaultTheme="dark">
+                    <Layout>{children}</Layout>
+                </ThemeProvider>
             </body>
         </html>
     );

@@ -1,8 +1,11 @@
+'use client';
+
 import React from 'react';
 import { IProblem } from '@/api/problems/types';
 import { OkResponse } from '@leetcode/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
+import { useTheme } from 'next-themes';
 
 interface Props {
     data: OkResponse | IProblem;
@@ -18,6 +21,8 @@ int main(){
 `;
 
 const Right: React.FC<Props> = () => {
+    const { theme } = useTheme();
+
     const handleRun = () => {};
     const handleSubmit = () => {};
 
@@ -25,22 +30,19 @@ const Right: React.FC<Props> = () => {
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
             <div className="mb-10">
                 <Editor
-                    height="70vh"
-                    theme="vs-dark"
+                    height="50vh"
+                    theme={theme === 'dark' ? 'vs-dark' : 'vs-light'}
                     defaultLanguage="cpp"
                     defaultValue={sampleCode}
                 />
             </div>
             <div className="flex gap-5">
-                <Button
-                    onClick={() => handleRun()}
-                    className="bg-gray-500 hover:bg-gray-700 font-semibold"
-                >
+                <Button onClick={() => handleRun()} className="font-semibold">
                     Run
                 </Button>
                 <Button
                     onClick={() => handleSubmit()}
-                    className="bg-green-500 hover:bg-green-600 font-semibold"
+                    className="text-white bg-green-500 hover:bg-green-600 font-semibold"
                 >
                     Submit
                 </Button>
