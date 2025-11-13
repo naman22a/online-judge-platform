@@ -1,6 +1,7 @@
 import React from 'react';
 import { IProblem } from '@/api/problems/types';
 import { cn } from '@/lib/utils';
+import { CodeBlock } from '../../../components/ui/code-block';
 
 interface Props {
     data: IProblem;
@@ -26,8 +27,18 @@ const Left: React.FC<Props> = ({ data }) => {
                 {data.testCases.map((testCase, index) => (
                     <div key={testCase.id}>
                         <h3>Example {index + 1}</h3>
-                        <p>Input: {testCase.input}</p>
-                        <p>Output: {testCase.expectedOutput}</p>
+                        <p>
+                            Input: <br />{' '}
+                            <CodeBlock language="bash" filename="input.txt" code={testCase.input} />
+                        </p>
+                        <p>
+                            Output: <br />{' '}
+                            <CodeBlock
+                                language="bash"
+                                filename="output.txt"
+                                code={testCase.expectedOutput}
+                            />
+                        </p>
                         {testCase.explanation && <p>Explaination: {testCase.explanation}</p>}
                     </div>
                 ))}
@@ -35,7 +46,7 @@ const Left: React.FC<Props> = ({ data }) => {
             {data.constraints && (
                 <>
                     <h2 className="font-semibold text-lg">Constraints</h2>
-                    <div>{data.constraints}</div>
+                    <pre>{data.constraints}</pre>
                 </>
             )}
             {data.problemTags.length > 0 && (
