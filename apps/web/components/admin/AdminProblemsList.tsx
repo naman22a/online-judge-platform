@@ -96,15 +96,18 @@ const AdminProblemsList: React.FC = () => {
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const handleProblemDelete = async (id: number) => {
-        try {
-            const res = await problemDeleteMutation.mutateAsync(id);
-            if (res.ok && !res.errors) {
-                await queryClient.invalidateQueries({ queryKey: ['problems'] });
-                toast.success('Problem deleted');
+        const yes = confirm('Are you sure you want to delete this problem ?');
+        if (yes) {
+            try {
+                const res = await problemDeleteMutation.mutateAsync(id);
+                if (res.ok && !res.errors) {
+                    await queryClient.invalidateQueries({ queryKey: ['problems'] });
+                    toast.success('Problem deleted');
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error('Something went wrong');
             }
-        } catch (error) {
-            console.error(error);
-            toast.error('Something went wrong');
         }
     };
 
