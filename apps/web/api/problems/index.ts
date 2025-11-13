@@ -53,3 +53,13 @@ export const create = async (data: any): Promise<IProblem | null> => {
         return null;
     }
 };
+
+export const remove = async (id: number): Promise<OkResponse> => {
+    try {
+        const res = await API.delete(`/problems/${id}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return { ok: false };
+    }
+};
