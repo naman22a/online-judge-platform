@@ -27,18 +27,14 @@ const Left: React.FC<Props> = ({ data }) => {
                 {data.testCases.map((testCase, index) => (
                     <div key={testCase.id}>
                         <h3>Example {index + 1}</h3>
-                        <p>
-                            Input: <br />{' '}
-                            <CodeBlock language="bash" filename="input.txt" code={testCase.input} />
-                        </p>
-                        <p>
-                            Output: <br />{' '}
-                            <CodeBlock
-                                language="bash"
-                                filename="output.txt"
-                                code={testCase.expectedOutput}
-                            />
-                        </p>
+                        <p className="my-2">Input: </p>
+                        <CodeBlock language="bash" filename="input.txt" code={testCase.input} />
+                        <p className="my-2">Output: </p>
+                        <CodeBlock
+                            language="bash"
+                            filename="output.txt"
+                            code={testCase.expectedOutput}
+                        />
                         {testCase.explanation && <p>Explaination: {testCase.explanation}</p>}
                     </div>
                 ))}
