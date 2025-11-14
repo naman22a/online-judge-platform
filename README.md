@@ -6,7 +6,7 @@ A full-featured competitive programming platform built with microservices archit
 
 ## 🏗️ Architecture
 
-This project uses a microservices architecture with 12 independent services communicating through an API Gateway.
+This project uses a microservices architecture with 7 independent services communicating through an API Gateway.
 
 ![Architecture](./assets/architecture.png)
 
@@ -19,12 +19,7 @@ This project uses a microservices architecture with 12 independent services comm
 | **Tags Service**        | 5004 | Problem categorization and filtering    |
 | **Companies Service**   | 5005 | Company tags and frequency tracking     |
 | **Submissions Service** | 5006 | Code submission tracking and history    |
-| **Test Cases Service**  | 5007 | Test case management (sample & hidden)  |
-| **Editorials Service**  | 5008 | Official solutions and explanations     |
-| **Contests Service**    | 5009 | Contest management and leaderboards     |
-| **Discussion Service**  | 5010 | Comments, solutions, voting system      |
-| **Bookmarks Service**   | 5011 | User's saved problems with notes        |
-| **Code Execution**      | 5012 | Async code execution via BullMQ workers |
+| **Code Execution**      | 5007 | Async code execution via BullMQ workers |
 
 ## ⚙️ Tech Stack
 
@@ -45,26 +40,11 @@ This project uses a microservices architecture with 12 independent services comm
 - Company-specific problem tracking
 - Submission history and statistics
 
-### Community Features
-
-- Discussion forum with nested comments
-- Upvote/downvote system
-- Solution sharing with code snippets
-- Official editorials with complexity analysis
-
 ### User Features
 
 - User authentication and profiles
-- Problem bookmarking with personal notes
 - Progress tracking (Solved/Attempted/Todo)
 - User statistics and achievements
-
-### Contest Features
-
-- Timed programming contests
-- Real-time leaderboards
-- Contest participation tracking
-- Ranking and scoring system
 
 ## 🤝 Contributions
 
