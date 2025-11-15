@@ -5,7 +5,6 @@ import { configuration, validate } from '@leetcode/config';
 import { DatabaseModule } from '@leetcode/database';
 import { RedisService } from './execution/redis.service';
 import { ExecutionConsumer } from './execution/execution.worker';
-import { EventsGateway } from './execution/events.gateway';
 
 @Module({
     imports: [
@@ -19,6 +18,6 @@ import { EventsGateway } from './execution/events.gateway';
         DatabaseModule,
     ],
     controllers: [],
-    providers: [ExecutionService, RedisService, ExecutionConsumer, EventsGateway],
+    providers: [ExecutionService, RedisService, ExecutionConsumer],
 })
 export class AppModule {}

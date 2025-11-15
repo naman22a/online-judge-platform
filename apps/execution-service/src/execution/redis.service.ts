@@ -2,17 +2,13 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
-import { EventsGateway } from './events.gateway';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
     private sub: Redis;
     private pub: Redis;
 
-    constructor(
-        private configService: ConfigService<Configuration>,
-        private eventsGateway: EventsGateway,
-    ) {}
+    constructor(private configService: ConfigService<Configuration>) {}
 
     onModuleInit() {
         this.sub = new Redis({
@@ -33,7 +29,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
             const [, , socketId] = channel.split(':');
             const data = JSON.parse(message);
             Logger.log(`📤 Emitting to ${socketId}:` + JSON.stringify(data));
-            this.eventsGateway.server.to(socketId).emit('execute:done', data);
+            // TODO: fix this
+            // this.eventsGateway.server.to(socketId).emit('execute:done', data);
         });
     }
 

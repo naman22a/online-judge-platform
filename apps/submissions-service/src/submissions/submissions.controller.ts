@@ -7,8 +7,6 @@ import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { getHash } from '../utils';
 import { redis } from '../redis';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
 
 @Controller('submissions')
 export class SubmissionsController {
@@ -16,9 +14,6 @@ export class SubmissionsController {
         private prisma: PrismaService,
         @InjectQueue('submissions') private submissionsQueue: Queue,
     ) {}
-
-    @WebSocketServer()
-    io: Server<any, any>;
 
     @MessagePattern(SUBMISSIONS.FIND_ALL)
     async findAll({ userId, problemId }: { userId: number; problemId: number }) {
@@ -46,10 +41,11 @@ export class SubmissionsController {
         const cached = await redis.get(`execute:${hash}`);
 
         if (cached) {
-            this.io.to(socketId).emit('execute:done', {
-                cached: true,
-                report: JSON.parse(cached),
-            });
+            // TODO: fix this
+            // this.io.to(socketId).emit('execute:done', {
+            //     cached: true,
+            //     report: JSON.parse(cached),
+            // });
             return { cached: true, jobId: null };
         }
 
