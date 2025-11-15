@@ -144,11 +144,30 @@ model TestCase {
   @@map("test_cases")
 }
 
+enum Language {
+  cpp
+  java
+  javascript
+  python
+  go
+  rust
+  csharp
+  ruby
+  swift
+  php
+  kotlin
+  dart
+  R
+  perl
+  typescript
+  haskell
+}
+
 model Submission {
   id              Int              @id @default(autoincrement())
   userId          Int
   problemId       Int
-  language        String           @db.VarChar(50)
+  language        Language
   code            String           @db.Text
   status          SubmissionStatus
   runtime         Int?

@@ -4,6 +4,7 @@ export const MICROSERVICES = {
     PROBLEMS_SERVICE: 'PROBLEMS_SERVICE',
     TAGS_SERVICE: 'TAGS_SERVICE',
     COMPANIES_SERVICE: 'COMPANIES_SERVICE',
+    SUBMISSIONS_SERVICE: 'SUBMISSIONS_SERVICE',
 };
 
 export const COOKIE_NAME = 'jid';
@@ -43,4 +44,9 @@ export const COMPANIES = {
     FIND_ALL: 'companies.findAll',
     FIND_ONE: 'companies.findOne',
     CREATE: 'companies.create',
+};
+
+export const SUBMISSIONS = {
+    FIND_ALL: 'submissions.findAll',
+    CREATE: 'submissions.create',
 };

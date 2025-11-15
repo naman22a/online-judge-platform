@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Configuration, configuration, validate } from '@leetcode/config';
 import { TagsController } from './controllers/tags/tags.controller';
 import { CompaniesController } from './controllers/companies/companies.controller';
+import { SubmissionsController } from './controllers/submissions/submissions.controller';
+import { EventsGateway } from './gateways/events.gateway';
 
 @Module({
     imports: [
@@ -79,6 +81,18 @@ import { CompaniesController } from './controllers/companies/companies.controlle
                     },
                 }),
             },
+            {
+                name: MICROSERVICES.SUBMISSIONS_SERVICE,
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: 'localhost',
+                        port: configService.get('submissions_service_port'),
+                    },
+                }),
+            },
         ]),
     ],
     controllers: [
@@ -87,7 +101,8 @@ import { CompaniesController } from './controllers/companies/companies.controlle
         ProblemsController,
         TagsController,
         CompaniesController,
+        SubmissionsController,
     ],
-    providers: [],
+    providers: [EventsGateway],
 })
 export class AppModule {}

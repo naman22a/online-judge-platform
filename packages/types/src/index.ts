@@ -1,4 +1,4 @@
-import { Difficulty } from '@leetcode/database';
+import { Difficulty, Language } from '@leetcode/database';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -354,4 +354,15 @@ export class BulkCreateCompaniesDto {
     @Type(() => CreateCompanyDto)
     @ArrayMinSize(1, { message: 'At least one company must be provided.' })
     companies: CreateCompanyDto[];
+}
+
+export class CreateSubmissionDto {
+    @IsNotEmpty()
+    code: string;
+
+    @IsEnum(Language)
+    language: Language;
+
+    @IsNotEmpty()
+    socketId: string;
 }

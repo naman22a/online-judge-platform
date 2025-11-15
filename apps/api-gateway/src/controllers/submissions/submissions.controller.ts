@@ -1,0 +1,38 @@
+import { MICROSERVICES, SUBMISSIONS } from '@leetcode/constants';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Param,
+    ParseIntPipe,
+    Post,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { AuthGuard } from '../../guards/auth.guard';
+import type { Request } from 'express';
+import { CreateSubmissionDto } from '@leetcode/types';
+
+@UseGuards(AuthGuard)
+@Controller('submissions')
+export class SubmissionsController {
+    constructor(@Inject(MICROSERVICES.SUBMISSIONS_SERVICE) private client: ClientProxy) {}
+
+    @Get(':id')
+    findAll(@Req() req: Request, @Param('id', ParseIntPipe) problemId: number) {
+        const userId = req.userId;
+        return this.client.send(SUBMISSIONS.FIND_ALL, { userId, problemId });
+    }
+
+    @Post(':id')
+    create(
+        @Req() req: Request,
+        @Param('id', ParseIntPipe) problemId: number,
+        @Body() body: CreateSubmissionDto,
+    ) {
+        const userId = req.userId;
+        return this.client.send(SUBMISSIONS.CREATE, { userId, problemId, body });
+    }
+}

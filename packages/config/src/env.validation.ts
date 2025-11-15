@@ -42,6 +42,16 @@ export class EnvironmentVariables {
     @Max(65536)
     COMPANIES_SERVICE_PORT: number;
 
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    SUBMISSIONS_SERVICE_PORT: number;
+
+    @IsNumber()
+    @Min(0)
+    @Max(65536)
+    EXECUTION_SERVICE_PORT: number;
+
     @IsNotEmpty()
     CLIENT_URL: string;
 
