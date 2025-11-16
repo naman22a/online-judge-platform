@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IProblem } from '@/api/problems/types';
-import { OkResponse } from '@leetcode/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
 import { useTheme } from 'next-themes';
 import { getAccessToken } from '../../../global';
 import { connectSocket, getSocket } from '../../../lib/socket';
+import { Spinner } from '../../../components/ui/spinner';
 
 interface Props {
     data: IProblem;
@@ -23,6 +23,7 @@ int main(){
 
 const Right: React.FC<Props> = ({ data }) => {
     const { theme } = useTheme();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const token = getAccessToken();
@@ -37,6 +38,7 @@ const Right: React.FC<Props> = ({ data }) => {
         });
 
         socket.on('execution-done', (data) => {
+            setLoading(false);
             console.log('Execution:', data);
         });
 
@@ -45,10 +47,11 @@ const Right: React.FC<Props> = ({ data }) => {
         };
     }, [getAccessToken()]);
 
-    const handleRun = () => {
+    const handleSubmit = () => {
         const socket = getSocket();
         if (!socket) return;
 
+        setLoading(true);
         socket.emit('create-submission', {
             code: sampleCode,
             language: 'cpp',
@@ -56,7 +59,6 @@ const Right: React.FC<Props> = ({ data }) => {
             problemId: data.id,
         });
     };
-    const handleSubmit = () => {};
 
     return (
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
@@ -69,13 +71,11 @@ const Right: React.FC<Props> = ({ data }) => {
                 />
             </div>
             <div className="flex gap-5">
-                <Button onClick={() => handleRun()} className="font-semibold">
-                    Run
-                </Button>
                 <Button
                     onClick={() => handleSubmit()}
                     className="text-white bg-green-500 hover:bg-green-600 font-semibold"
                 >
+                    {loading && <Spinner />}
                     Submit
                 </Button>
             </div>
