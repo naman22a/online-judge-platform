@@ -19,24 +19,47 @@ This project uses a microservices architecture with 7 independent services commu
 | **Tags Service**        | 5004 | Problem categorization and filtering    |
 | **Companies Service**   | 5005 | Company tags and frequency tracking     |
 | **Submissions Service** | 5006 | Code submission tracking and history    |
-| **Code Execution**      | 5007 | Async code execution via BullMQ workers |
+| **Execution Service**   | 5007 | Async code execution via BullMQ workers |
 
 ## ⚙️ Tech Stack
 
-- Backend Framework: NestJS (TypeScript)
-- Database: PostgreSQL (single database for simplicity)
-- Cache and Queue: Redis (caching + BullMQ for job processing)
-- Communication: HTTP/REST + TCP between services
-- Code Execution: Sandboxed Docker containers
+### Frontend
 
-## 🚀 Features
+- Full-featured Next.js client
+- Beautiful UI with shadcn/ui
+- Problem-solving interface with Monaco Editor
+- Live submission updates using Socket.IO
+- Global state management with Zustand
+- Fully typed with TypeScript
+- Form handling with React Hook Form
+- API interactions using Axios
+- Tailwind CSS styling
+- Day.js for handling timestamps and dates
 
-- Real-time code execution with test cases
-- Problem solving with multiple programming languages
-- Difficulty levels (Easy, Medium, Hard)
-- Problem tagging and categorization
-- Company-specific problem tracking
-- Submission history and statistics
+### Backend
+
+- NestJS (across all microservices)
+- BullMQ queues
+- Redis (queue broker)
+- PostgreSQL (shared DB via Prisma)
+- Socket.IO server (via API Gateway)
+- JWT authentication
+- Docker (execution container)
+
+## ⚙️ Execution Pipeline
+
+- User clicks "Submit" → Frontend sends code via WebSocket to API Gateway
+- API Gateway → TCP request to Submission Service
+- Submission Service → Publishes job to execution-queue (BullMQ)
+- Execution Service → Consumes job from queue
+- Execution Service → Runs code in sandboxed Docker container
+- Workers → Return execution result
+- Execution Service → Publishes result to results-queue
+- Submission Service → Consumes result from queue
+- Submission Service → Updates database with status/results
+- Submission Service → Publishes notification to notifications-queue
+- API Gateway → Consumes notification event
+- API Gateway → Pushes real-time update through WebSocket to user's browser
 
 ## 🤝 Contributions
 
