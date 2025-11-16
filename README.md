@@ -2,7 +2,8 @@
 
 > Coding practice platform
 
-A full-featured competitive programming platform built with microservices architecture, featuring real-time code execution, contests, discussions, and comprehensive problem management.
+A fully-featured, production-grade LeetCode-style online judge platform built using a modern microservices architecture.
+It supports real-time code execution, WebSockets, distributed queues, JWT authentication, Next.js frontend, and an execution engine powered by Docker + BullMQ.
 
 ## 🏗️ Architecture
 
@@ -60,6 +61,149 @@ This project uses a microservices architecture with 7 independent services commu
 - Submission Service → Publishes notification to notifications-queue
 - API Gateway → Consumes notification event
 - API Gateway → Pushes real-time update through WebSocket to user's browser
+
+## 📁 Folder Structure
+
+```
+.
+├── apps
+│   ├── api-gateway
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── auth-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── companies-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── execution-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── problems-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── submissions-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── tags-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── users-service
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   └── web
+│       ├── api
+│       ├── app
+│       ├── components
+│       ├── components.json
+│       ├── eslint.config.js
+│       ├── global
+│       ├── lib
+│       ├── next.config.js
+│       ├── next-env.d.ts
+│       ├── package.json
+│       ├── postcss.config.mjs
+│       ├── public
+│       ├── README.md
+│       ├── store
+│       ├── styles
+│       └── tsconfig.json
+├── assets
+│   ├── architecture.png
+│   ├── problems.png
+│   └── two-sum.png
+├── docker-compose.dev.yml
+├── LICENSE
+├── package.json
+├── packages
+│   ├── config
+│   │   ├── package.json
+│   │   ├── src
+│   │   └── tsconfig.json
+│   ├── constants
+│   │   ├── package.json
+│   │   ├── src
+│   │   └── tsconfig.json
+│   ├── database
+│   │   ├── package.json
+│   │   ├── prisma
+│   │   ├── prisma.config.ts
+│   │   ├── src
+│   │   └── tsconfig.json
+│   ├── eslint-config
+│   │   ├── base.js
+│   │   ├── next.js
+│   │   ├── package.json
+│   │   ├── react-internal.js
+│   │   └── README.md
+│   ├── types
+│   │   ├── package.json
+│   │   ├── src
+│   │   └── tsconfig.json
+│   └── typescript-config
+│       ├── base.json
+│       ├── nextjs.json
+│       ├── package.json
+│       └── react-library.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── README.md
+├── tsconfig.json
+└── turbo.json
+```
+
+## 📷 Screenshots
+
+![Two sum](./assets/two-sum.png)
+![List of Problems](./assets/problems.png)
 
 ## 🤝 Contributions
 
