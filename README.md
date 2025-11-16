@@ -2,8 +2,8 @@
 
 > Coding practice platform
 
-A fully-featured, production-grade LeetCode-style online judge platform built using a modern microservices architecture.
-It supports real-time code execution, WebSockets, distributed queues, JWT authentication, Next.js frontend, and an execution engine powered by Docker + BullMQ.
+A fully-featured, scalable LeetCode-style online judge built using a modern microservices architecture.
+Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Docker-based isolated execution.
 
 ## 🏗️ Architecture
 
@@ -39,13 +39,13 @@ This project uses a microservices architecture with 7 independent services commu
 
 ### Backend
 
-- NestJS (across all microservices)
-- BullMQ queues
-- Redis (queue broker)
-- PostgreSQL (shared DB via Prisma)
-- Socket.IO server (via API Gateway)
+- NestJS for all microservices
+- Redis + BullMQ for distributed queues
+- PostgreSQL (shared DB, Prisma ORM)
+- Socket.IO (real-time communication)
+- Docker containers for isolated code execution
 - JWT authentication
-- Docker (execution container)
+- Event-driven architecture
 
 ## ⚙️ Execution Pipeline
 
@@ -61,6 +61,76 @@ This project uses a microservices architecture with 7 independent services commu
 - Submission Service → Publishes notification to notifications-queue
 - API Gateway → Consumes notification event
 - API Gateway → Pushes real-time update through WebSocket to user's browser
+
+## ✨ Why Microservices?
+
+- Each service deploys independently
+- Execution workload isolated from main API
+- Faster horizontal scaling
+- Services communicate through queues → highly resilient
+- Matches real LeetCode-scale architecture
+
+## 📷 Screenshots
+
+![Two sum](./assets/two-sum.png)
+![List of Problems](./assets/problems.png)
+
+## 📡 API Features (OpenAPI 3.0)
+
+This project includes a complete OAS 3.0 compliant REST API.
+
+### 👤 Users API
+
+| Method | Endpoint          | Description             |
+| ------ | ----------------- | ----------------------- |
+| GET    | `/api/users`      | Get all users           |
+| PATCH  | `/api/users`      | Update own user details |
+| GET    | `/api/users/me`   | Get authenticated user  |
+| GET    | `/api/users/{id}` | Get user by ID          |
+
+### 🔐 Auth API
+
+| Method | Endpoint                           | Description                   |
+| ------ | ---------------------------------- | ----------------------------- |
+| POST   | `/api/auth/register`               | User registration             |
+| POST   | `/api/auth/confirm-email/{token}`  | Email verification            |
+| POST   | `/api/auth/login`                  | Login using credentials       |
+| POST   | `/api/auth/logout`                 | Logout and invalidate session |
+| POST   | `/api/auth/refresh_token`          | Refresh JWT access token      |
+| POST   | `/api/auth/forgot-password`        | Generate password reset link  |
+| POST   | `/api/auth/reset-password/{token}` | Reset password                |
+
+### 🧠 Problems API
+
+| Method | Endpoint               |
+| ------ | ---------------------- |
+| GET    | `/api/problems`        |
+| POST   | `/api/problems`        |
+| GET    | `/api/problems/{slug}` |
+| DELETE | `/api/problems/{id}`   |
+| PATCH  | `/api/problems/{id}`   |
+
+### 🏷️ Tags API
+
+| Method | Endpoint         |
+| ------ | ---------------- |
+| GET    | `/api/tags`      |
+| GET    | `/api/tags/{id}` |
+| POST   | `/api/tags/bulk` |
+
+### 🏢 Companies API
+
+| Method | Endpoint              |
+| ------ | --------------------- |
+| GET    | `/api/companies`      |
+| GET    | `/api/companies/{id}` |
+| POST   | `/api/companies/bulk` |
+
+## 📝 Submissions API
+
+| Method | Endpoint                |
+| ------ | ----------------------- |
+| GET    | `/api/submissions/{id}` |
 
 ## 📁 Folder Structure
 
@@ -199,11 +269,6 @@ This project uses a microservices architecture with 7 independent services commu
 ├── tsconfig.json
 └── turbo.json
 ```
-
-## 📷 Screenshots
-
-![Two sum](./assets/two-sum.png)
-![List of Problems](./assets/problems.png)
 
 ## 🤝 Contributions
 
