@@ -6,6 +6,8 @@
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
             "outputs": [
+                "dist/**",
+                "build/**",
                 ".next/**",
                 "!.next/cache/**",
                 "node_modules/.prisma/**",
