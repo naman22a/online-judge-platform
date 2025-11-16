@@ -31,20 +31,12 @@ This project uses a microservices architecture with 7 independent services commu
 
 ## 🚀 Features
 
-### Core Features
-
-- Problem solving with multiple programming languages
 - Real-time code execution with test cases
+- Problem solving with multiple programming languages
 - Difficulty levels (Easy, Medium, Hard)
 - Problem tagging and categorization
 - Company-specific problem tracking
 - Submission history and statistics
-
-### User Features
-
-- User authentication and profiles
-- Progress tracking (Solved/Attempted/Todo)
-- User statistics and achievements
 
 ## 🤝 Contributions
 
