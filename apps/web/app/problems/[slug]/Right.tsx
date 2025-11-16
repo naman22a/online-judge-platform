@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IProblem } from '@/api/problems/types';
 import { OkResponse } from '@leetcode/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
 import { useTheme } from 'next-themes';
+import { getAccessToken } from '../../../global';
+import { connectSocket, getSocket } from '../../../lib/socket';
 
 interface Props {
     data: OkResponse | IProblem;
@@ -17,11 +19,27 @@ using namespace std;
 int main(){
     
     return 0;
-}
-`;
+}`;
 
 const Right: React.FC<Props> = () => {
     const { theme } = useTheme();
+
+    useEffect(() => {
+        const token = getAccessToken();
+        if (!token) return;
+
+        connectSocket();
+        const s = getSocket();
+        if (!s) return;
+
+        s.on('connect', () => {
+            console.log('Connected:', s.id);
+        });
+
+        return () => {
+            s.disconnect();
+        };
+    }, [getAccessToken()]);
 
     const handleRun = () => {};
     const handleSubmit = () => {};
