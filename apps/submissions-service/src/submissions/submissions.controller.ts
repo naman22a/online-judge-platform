@@ -47,6 +47,7 @@ export class SubmissionsController {
         if (!problemExists)
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
+        // push job into execution queue
         const job = await this.executionQueue.add('execute-code-job', { code, language });
 
         return { jobId: job.id };
