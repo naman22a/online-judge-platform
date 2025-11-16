@@ -3,7 +3,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { EventsGateway } from '../gateways/events.gateway';
 
-@Processor('results-queue')
+@Processor('notifications-queue')
 export class NotificationConsumer extends WorkerHost {
     constructor(private readonly eventsGateway: EventsGateway) {
         super();
