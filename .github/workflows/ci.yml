@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        use: actions/checkout@v4
+      - name: Setup Node.js enviroment
+        use: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm run build
+      - name: Test
+        run: pnpm run test
