@@ -12,7 +12,7 @@ import { redis } from '../redis';
 export class SubmissionsController {
     constructor(
         private prisma: PrismaService,
-        @InjectQueue('submissions') private submissionsQueue: Queue,
+        @InjectQueue('execution-queue') private executionQueue: Queue,
     ) {}
 
     @MessagePattern(SUBMISSIONS.FIND_ALL)
@@ -23,40 +23,32 @@ export class SubmissionsController {
     }
 
     @MessagePattern(SUBMISSIONS.CREATE)
-    async create({
-        userId,
-        problemId,
-        body,
-    }: {
-        userId: number;
-        problemId: number;
-        body: CreateSubmissionDto;
-    }) {
-        if (!body || !body.code || !body.language || !body.socketId)
-            return { message: 'validation error' };
+    async create({ code, language, socketId, problemId }: CreateSubmissionDto) {
+        // validation
+        if (!code) return { jobId: null, errors: [{ field: 'code', message: 'code is required' }] };
+        if (!language)
+            return {
+                jobId: null,
+                errors: [{ field: 'language', message: 'language is required' }],
+            };
+        if (!socketId)
+            return {
+                jobId: null,
+                errors: [{ field: 'socketId', message: 'socketId is required' }],
+            };
+        if (!problemId)
+            return {
+                jobId: null,
+                errors: [{ field: 'problemId', message: 'problemId is required' }],
+            };
 
-        const { code, language, socketId } = body;
+        // check if problem exists
+        const problemExists = await this.prisma.problem.findUnique({ where: { id: problemId } });
+        if (!problemExists)
+            return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
-        const hash = getHash(`${code}:${language}`);
-        const cached = await redis.get(`execute:${hash}`);
+        const job = await this.executionQueue.add('execute-code-job', { code, language });
 
-        if (cached) {
-            // TODO: fix this
-            // this.io.to(socketId).emit('execute:done', {
-            //     cached: true,
-            //     report: JSON.parse(cached),
-            // });
-            return { cached: true, jobId: null };
-        }
-
-        const job = await this.submissionsQueue.add('execute', {
-            userId,
-            problemId,
-            code,
-            language,
-            socketId,
-        });
-
-        return { cached: false, jobId: job.id };
+        return { jobId: job.id };
     }
 }

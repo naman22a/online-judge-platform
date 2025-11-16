@@ -365,4 +365,8 @@ export class CreateSubmissionDto {
 
     @IsNotEmpty()
     socketId: string;
+
+    @IsInt()
+    @IsNotEmpty()
+    problemId: number;
 }

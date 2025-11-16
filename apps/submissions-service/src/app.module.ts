@@ -26,7 +26,7 @@ import { BullModule } from '@nestjs/bullmq';
             }),
         }),
         BullModule.registerQueue({
-            name: 'submissions',
+            name: 'execution-queue',
         }),
     ],
     controllers: [SubmissionsController],

@@ -10,7 +10,7 @@ import { getAccessToken } from '../../../global';
 import { connectSocket, getSocket } from '../../../lib/socket';
 
 interface Props {
-    data: OkResponse | IProblem;
+    data: IProblem;
 }
 
 const sampleCode = `#include<iostream>
@@ -21,7 +21,7 @@ int main(){
     return 0;
 }`;
 
-const Right: React.FC<Props> = () => {
+const Right: React.FC<Props> = ({ data }) => {
     const { theme } = useTheme();
 
     useEffect(() => {
@@ -41,7 +41,17 @@ const Right: React.FC<Props> = () => {
         };
     }, [getAccessToken()]);
 
-    const handleRun = () => {};
+    const handleRun = () => {
+        const socket = getSocket();
+        if (!socket) return;
+
+        socket.emit('create-submission', {
+            sampleCode,
+            language: 'cpp',
+            socketId: socket.id,
+            problemId: data.id,
+        });
+    };
     const handleSubmit = () => {};
 
     return (
