@@ -3,6 +3,7 @@ import { CreateSubmissionDto } from '@leetcode/types';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 import { ExecutionService } from './execution.service';
+import { Logger } from '@nestjs/common';
 
 @Processor('execution-queue')
 export class ExecutionConsumer extends WorkerHost {
@@ -25,6 +26,7 @@ export class ExecutionConsumer extends WorkerHost {
 
                 if (!problem) return;
 
+                Logger.log('running test cases...');
                 const results = await this.executionService.runTestCases(
                     language,
                     code,
@@ -33,6 +35,7 @@ export class ExecutionConsumer extends WorkerHost {
                         output: tc.expectedOutput,
                     })),
                 );
+                Logger.log('done running test cases');
 
                 this.resultsQueue.add('result-job', { code, language, problemId, results, userId });
                 break;
