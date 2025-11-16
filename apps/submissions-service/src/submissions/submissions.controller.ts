@@ -5,10 +5,8 @@ import { PrismaService } from '@leetcode/database';
 import { CreateSubmissionDto } from '@leetcode/types';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
-import { getHash } from '../utils';
-import { redis } from '../redis';
 
-@Controller('submissions')
+@Controller()
 export class SubmissionsController {
     constructor(
         private prisma: PrismaService,
@@ -48,7 +46,11 @@ export class SubmissionsController {
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
         // push job into execution queue
-        const job = await this.executionQueue.add('execute-code-job', { code, language });
+        const job = await this.executionQueue.add('execute-code-job', {
+            code,
+            language,
+            problemId,
+        });
 
         return { jobId: job.id };
     }

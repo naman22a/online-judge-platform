@@ -46,7 +46,7 @@ const Right: React.FC<Props> = ({ data }) => {
         if (!socket) return;
 
         socket.emit('create-submission', {
-            sampleCode,
+            code: sampleCode,
             language: 'cpp',
             socketId: socket.id,
             problemId: data.id,

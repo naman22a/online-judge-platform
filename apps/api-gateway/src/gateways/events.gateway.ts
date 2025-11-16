@@ -25,8 +25,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server;
 
-    afterInit(client: Socket) {
-        client.use(SocketAuthMiddleware() as any);
+    afterInit(server: Server) {
+        server.of('/').use(SocketAuthMiddleware());
     }
 
     handleConnection(client: Socket) {
@@ -39,6 +39,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('create-submission')
     handleCreateSubmission(@MessageBody() data: CreateSubmissionDto) {
-        this.client.send(SUBMISSIONS.CREATE, data);
+        return this.client.send(SUBMISSIONS.CREATE, data);
     }
 }
