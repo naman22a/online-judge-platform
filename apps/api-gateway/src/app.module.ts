@@ -10,6 +10,8 @@ import { TagsController } from './controllers/tags/tags.controller';
 import { CompaniesController } from './controllers/companies/companies.controller';
 import { SubmissionsController } from './controllers/submissions/submissions.controller';
 import { EventsGateway } from './gateways/events.gateway';
+import { BullModule } from '@nestjs/bullmq';
+import { NotificationConsumer } from './workers/notification.worker';
 
 @Module({
     imports: [
@@ -94,6 +96,19 @@ import { EventsGateway } from './gateways/events.gateway';
                 }),
             },
         ]),
+        BullModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService<Configuration>) => ({
+                connection: {
+                    host: configService.get('redis_host'),
+                    port: configService.get('redis_port'),
+                },
+            }),
+        }),
+        BullModule.registerQueue({
+            name: 'notifications-queue',
+        }),
     ],
     controllers: [
         UsersController,
@@ -103,6 +118,6 @@ import { EventsGateway } from './gateways/events.gateway';
         CompaniesController,
         SubmissionsController,
     ],
-    providers: [EventsGateway],
+    providers: [EventsGateway, NotificationConsumer],
 })
 export class AppModule {}

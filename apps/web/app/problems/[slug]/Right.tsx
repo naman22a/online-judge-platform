@@ -29,15 +29,19 @@ const Right: React.FC<Props> = ({ data }) => {
         if (!token) return;
 
         connectSocket();
-        const s = getSocket();
-        if (!s) return;
+        const socket = getSocket();
+        if (!socket) return;
 
-        s.on('connect', () => {
-            console.log('Connected:', s.id);
+        socket.on('connect', () => {
+            console.log('Connected:', socket.id);
+        });
+
+        socket.on('execution-done', (data) => {
+            console.log('Execution:', data);
         });
 
         return () => {
-            s.disconnect();
+            socket.disconnect();
         };
     }, [getAccessToken()]);
 

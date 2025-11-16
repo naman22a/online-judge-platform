@@ -21,7 +21,7 @@ export class SubmissionsController {
     }
 
     @MessagePattern(SUBMISSIONS.CREATE)
-    async create({ code, language, socketId, problemId }: CreateSubmissionDto) {
+    async create({ code, language, socketId, problemId, userId }: CreateSubmissionDto) {
         // validation
         if (!code) return { jobId: null, errors: [{ field: 'code', message: 'code is required' }] };
         if (!language)
@@ -46,10 +46,12 @@ export class SubmissionsController {
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
         // push job into execution queue
-        const job = await this.executionQueue.add('execute-code-job', {
+        const job = await this.executionQueue.add('execute-job', {
             code,
             language,
             problemId,
+            socketId,
+            userId,
         });
 
         return { jobId: job.id };

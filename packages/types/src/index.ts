@@ -369,4 +369,13 @@ export class CreateSubmissionDto {
     @IsInt()
     @IsNotEmpty()
     problemId: number;
+
+    @IsInt()
+    @IsNotEmpty()
+    userId: number;
+}
+
+export interface ExecutionResult {
+    success: boolean;
+    output: string;
 }

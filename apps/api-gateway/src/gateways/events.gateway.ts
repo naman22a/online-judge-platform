@@ -5,6 +5,7 @@ import {
     WebSocketServer,
     SubscribeMessage,
     MessageBody,
+    ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SocketAuthMiddleware } from '../middleware/ws.middleware';
@@ -12,6 +13,7 @@ import { MICROSERVICES, SUBMISSIONS } from '@leetcode/constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
 import { CreateSubmissionDto } from '@leetcode/types';
+import type { Request } from 'express';
 
 @WebSocketGateway({
     cors: {
@@ -38,7 +40,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('create-submission')
-    handleCreateSubmission(@MessageBody() data: CreateSubmissionDto) {
-        return this.client.send(SUBMISSIONS.CREATE, data);
+    handleCreateSubmission(
+        @ConnectedSocket() socket: Socket,
+        @MessageBody() data: Omit<CreateSubmissionDto, 'userId'>,
+    ) {
+        const req = socket.request as Request;
+        const userId = req.userId;
+        return this.client.send(SUBMISSIONS.CREATE, { ...data, userId });
     }
 }

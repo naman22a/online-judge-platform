@@ -4,6 +4,7 @@ import { DatabaseModule } from '@leetcode/database';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Configuration, configuration, validate } from '@leetcode/config';
 import { BullModule } from '@nestjs/bullmq';
+import { ResultsConsumer } from './submissions/submissions.worker';
 
 @Module({
     imports: [
@@ -28,8 +29,11 @@ import { BullModule } from '@nestjs/bullmq';
         BullModule.registerQueue({
             name: 'execution-queue',
         }),
+        BullModule.registerQueue({
+            name: 'notifications-queue',
+        }),
     ],
     controllers: [SubmissionsController],
-    providers: [],
+    providers: [ResultsConsumer],
 })
 export class AppModule {}

@@ -29,6 +29,9 @@ import { BullModule } from '@nestjs/bullmq';
         BullModule.registerQueue({
             name: 'execution-queue',
         }),
+        BullModule.registerQueue({
+            name: 'results-queue',
+        }),
     ],
     controllers: [],
     providers: [ExecutionService, ExecutionConsumer],
