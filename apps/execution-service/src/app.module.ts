@@ -3,7 +3,6 @@ import { ExecutionService } from './execution/execution.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Configuration, configuration, validate } from '@leetcode/config';
 import { DatabaseModule } from '@leetcode/database';
-import { RedisService } from './execution/redis.service';
 import { ExecutionConsumer } from './execution/execution.worker';
 import { BullModule } from '@nestjs/bullmq';
 
@@ -32,6 +31,6 @@ import { BullModule } from '@nestjs/bullmq';
         }),
     ],
     controllers: [],
-    providers: [ExecutionService, RedisService, ExecutionConsumer],
+    providers: [ExecutionService, ExecutionConsumer],
 })
 export class AppModule {}
