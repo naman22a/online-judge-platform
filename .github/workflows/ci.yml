@@ -6,20 +6,32 @@ on:
 
 jobs:
   build:
-    name: Build and Test
     runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
-      - name: Check out code
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Setup Node.js enviroment
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install pnpm
-        run: npm install -g pnpm
+          cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install
-      - name: Build
+
+      - name: Build monorepo
         run: pnpm run build
-      - name: Test
+
+      - name: Run tests
         run: pnpm run test
