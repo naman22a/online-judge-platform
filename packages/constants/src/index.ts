@@ -51,15 +51,26 @@ export const SUBMISSIONS = {
     CREATE: 'submissions.create',
 };
 
-export const LANG_CONFIGS: Record<string, { image: string; compile?: string[]; run: string[] }> = {
+export const LANG_CONFIGS: Record<
+    string,
+    { image: string; compile?: string[]; run: string[]; defaultCode?: string }
+> = {
     cpp: {
         image: 'gcc:latest',
         compile: ['g++', '/app/solution.cpp', '-o', '/app/solution'],
         run: ['/app/solution'],
+        defaultCode: `#include<iostream>
+using namespace std;
+
+int main(){
+    
+    return 0;
+}`,
     },
     python: {
         image: 'python:3.9',
         run: ['python3', '/app/solution.py'],
+        defaultCode: '',
     },
     javascript: {
         image: 'node:18',

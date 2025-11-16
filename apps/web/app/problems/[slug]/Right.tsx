@@ -5,25 +5,29 @@ import { IProblem } from '@/api/problems/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
 import { useTheme } from 'next-themes';
-import { getAccessToken } from '../../../global';
-import { connectSocket, getSocket } from '../../../lib/socket';
-import { Spinner } from '../../../components/ui/spinner';
+import { getAccessToken, languages } from '@/global';
+import { connectSocket, getSocket } from '@/lib/socket';
+import { Spinner } from '@/components/ui/spinner';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ExecutionResult } from '@leetcode/types';
+import { toast } from 'sonner';
+import { useStore } from '@/store';
 
 interface Props {
     data: IProblem;
 }
 
-const sampleCode = `#include<iostream>
-using namespace std;
-
-int main(){
-    
-    return 0;
-}`;
-
 const Right: React.FC<Props> = ({ data }) => {
     const { theme } = useTheme();
     const [loading, setLoading] = useState(false);
+    const queryClient = useQueryClient();
+    const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
 
     useEffect(() => {
         const token = getAccessToken();
@@ -37,13 +41,29 @@ const Right: React.FC<Props> = ({ data }) => {
             console.log('Connected:', socket.id);
         });
 
-        socket.on('execution-done', (data) => {
+        socket.on('execution-done', (res) => {
             setLoading(false);
-            console.log('Execution:', data);
+            queryClient.invalidateQueries({ queryKey: ['submissions'] });
+
+            const results = res as ExecutionResult[];
+            let solved = true;
+            for (let result of results) {
+                if (!result.success) {
+                    solved = false;
+                    setErrors([...errors, result.output]);
+                }
+            }
+            if (solved) {
+                toast.success('Solved');
+            } else {
+                toast.error('Try again');
+            }
         });
 
         return () => {
             socket.disconnect();
+            socket.off('connect');
+            socket.off('execution-done');
         };
     }, [getAccessToken()]);
 
@@ -51,10 +71,12 @@ const Right: React.FC<Props> = ({ data }) => {
         const socket = getSocket();
         if (!socket) return;
 
+        console.log(code, language, socket.id, data.id);
+        setErrors([]);
         setLoading(true);
         socket.emit('create-submission', {
-            code: sampleCode,
-            language: 'cpp',
+            code,
+            language,
             socketId: socket.id,
             problemId: data.id,
         });
@@ -62,12 +84,32 @@ const Right: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
+            Language:{' '}
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline">{language}</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {languages.map((lang) => (
+                        <DropdownMenuItem
+                            key={lang}
+                            onClick={() => {
+                                setCode('');
+                                setLanguage(lang);
+                            }}
+                        >
+                            {lang}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
             <div className="mb-10">
                 <Editor
                     height="50vh"
                     theme={theme === 'dark' ? 'vs-dark' : 'vs-light'}
                     defaultLanguage="cpp"
-                    defaultValue={sampleCode}
+                    value={code}
+                    onChange={(e) => setCode(e!)}
                 />
             </div>
             <div className="flex gap-5">
@@ -79,6 +121,13 @@ const Right: React.FC<Props> = ({ data }) => {
                     Submit
                 </Button>
             </div>
+            {errors.length > 0 && (
+                <div className="text-red-500 my-2">
+                    {errors.map((error, index) => (
+                        <p key={index}>{error}</p>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

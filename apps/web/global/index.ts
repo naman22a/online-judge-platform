@@ -9,8 +9,27 @@ export const setAccessToken = (token: string) => {
     accessToken = token;
 
     const socket = getSocket();
-    if (socket.connected) {
-        socket.disconnect();
+    if (socket?.connected) {
+        socket?.disconnect();
     }
     connectSocket();
 };
+
+export const languages = [
+    'cpp',
+    'python',
+    'javascript',
+    'java',
+    'go',
+    'rust',
+    'csharp',
+    'ruby',
+    'swift',
+    'php',
+    'kotlin',
+    'dart',
+    'R',
+    'perl',
+    'typescript',
+    'haskell',
+];
