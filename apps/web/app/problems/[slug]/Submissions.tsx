@@ -47,6 +47,7 @@ const Submissions: React.FC<Props> = ({ id }) => {
             <TableBody>
                 {submissionsQuery.data?.map((submission) => (
                     <TableRow
+                        key={submission.id}
                         className="cursor-pointer"
                         onClick={() => {
                             setCode(submission.code);
