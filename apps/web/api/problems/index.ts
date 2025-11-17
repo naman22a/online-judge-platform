@@ -1,7 +1,7 @@
 import axios from 'axios';
-import API, { companies } from '..';
+import API from '..';
 import { GetProblemsQueryDto, IProblem } from './types';
-import { CreateProblemDto, OkResponse } from '@leetcode/types';
+import { OkResponse } from '../types';
 
 export const getProblems = async (
     params: GetProblemsQueryDto,

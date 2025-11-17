@@ -1047,9 +1047,6 @@ importers:
       '@leetcode/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@leetcode/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@leetcode/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config

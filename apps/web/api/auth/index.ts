@@ -1,7 +1,7 @@
 import axios from 'axios';
 import API from '..';
 import { LoginDto, RegisterDto } from './types';
-import { LoginResponse, OkResponse } from '@leetcode/types';
+import { LoginResponse, OkResponse } from '../types';
 
 export const register = async (data: RegisterDto): Promise<OkResponse> => {
     try {

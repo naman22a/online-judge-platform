@@ -15,7 +15,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ExecutionResult } from '@leetcode/types';
 import { toast } from 'sonner';
 import { useStore } from '@/store';
 
@@ -45,7 +44,7 @@ const Right: React.FC<Props> = ({ data }) => {
             setLoading(false);
             queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
-            const results = res as ExecutionResult[];
+            const results = res as any;
             let solved = true;
             for (let result of results) {
                 if (!result.success) {
