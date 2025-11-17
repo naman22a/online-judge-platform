@@ -107,7 +107,7 @@ const Right: React.FC<Props> = ({ data }) => {
                 <Editor
                     height="50vh"
                     theme={theme === 'dark' ? 'vs-dark' : 'vs-light'}
-                    defaultLanguage="cpp"
+                    language={language}
                     value={code}
                     onChange={(e) => setCode(e!)}
                 />
