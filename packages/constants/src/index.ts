@@ -75,21 +75,31 @@ int main(){
     javascript: {
         image: 'node:18',
         run: ['node', '/app/solution.js'],
+        defaultCode: '',
     },
     java: {
         image: 'openjdk:17',
         compile: ['javac', '/app/Solution.java'],
         run: ['java', '-cp', '/app', 'Solution'],
+        defaultCode: `public class Solution {
+    public static void main(String[] args) {
+    }
+}`,
     },
     go: {
         image: 'golang:1.20',
         compile: ['go', 'build', '-o', '/app/solution', '/app/solution.go'],
         run: ['/app/solution'],
+        defaultCode: `package main
+func main() {
+}`,
     },
     rust: {
         image: 'rust:1.69',
         compile: ['rustc', '/app/solution.rs', '-o', '/app/solution'],
         run: ['/app/solution'],
+        defaultCode: `fn main() {
+}`,
     },
     csharp: {
         image: 'mcr.microsoft.com/dotnet/sdk:7.0',
@@ -131,6 +141,7 @@ int main(){
         image: 'node:18',
         compile: ['tsc', '/app/solution.ts'],
         run: ['node', '/app/solution.js'],
+        defaultCode: '',
     },
     haskell: {
         image: 'haskell:9.6',

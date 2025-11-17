@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useStore } from '@/store';
+import { LANG_CONFIGS } from '@leetcode/constants';
 
 interface Props {
     data: IProblem;
@@ -93,7 +94,7 @@ const Right: React.FC<Props> = ({ data }) => {
                         <DropdownMenuItem
                             key={lang}
                             onClick={() => {
-                                setCode('');
+                                setCode(LANG_CONFIGS[lang]?.defaultCode ?? '');
                                 setLanguage(lang);
                             }}
                         >
