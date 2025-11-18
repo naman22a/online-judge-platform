@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'sonner';
 import { useStore } from '../store';
 import { LANG_CONFIGS } from '../constants';
+import { ThemeProvider } from '@/components/theme-provider';
 
 interface Props extends PropsWithChildren {}
 
@@ -21,7 +22,9 @@ const Layout: React.FC<Props> = ({ children }) => {
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <ThemeProvider attribute="class" defaultTheme="dark">
+                {children}
+            </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
             <Toaster position="top-center" />
         </QueryClientProvider>
