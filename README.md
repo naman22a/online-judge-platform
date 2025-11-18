@@ -26,7 +26,6 @@ This project uses a microservices architecture with 7 independent services commu
 
 ### Frontend
 
-- Full-featured Next.js client
 - Beautiful UI with shadcn/ui
 - Problem-solving interface with Monaco Editor
 - Live submission updates using Socket.IO
