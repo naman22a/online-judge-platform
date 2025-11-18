@@ -1,0 +1,58 @@
+# -------------------------------------------------------------------------------------
+# BASE (Contains pnpm, turbo, workspace tools)
+# -------------------------------------------------------------------------------------
+FROM node:20-alpine AS base
+RUN npm install -g pnpm turbo
+WORKDIR /app
+
+# -------------------------------------------------------------------------------------
+# PRUNE (Turbo prune per service)
+# -------------------------------------------------------------------------------------
+FROM base AS prune
+ARG SERVICE_NAME
+COPY . .
+RUN turbo prune --scope=${SERVICE_NAME} --docker
+
+# -------------------------------------------------------------------------------------
+# BUILDER (Install root deps + service deps + build)
+# -------------------------------------------------------------------------------------
+FROM base AS builder
+ARG SERVICE_NAME
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+# Copy pruned files produced by prune stage
+COPY --from=prune /app/out/json/ .
+COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Install workspace root deps only once — includes NestJS globally
+RUN pnpm install --ignore-scripts
+
+# Install ONLY required deps for pruned project
+RUN pnpm install --frozen-lockfile
+
+# Bring in full source code (still pruned minimal workspace)
+COPY --from=prune /app/out/full/ .
+
+# Prisma generate from database package
+WORKDIR /app/packages/database
+RUN pnpm prisma generate
+
+# Build requested service using Turborepo
+WORKDIR /app
+RUN turbo run build --filter=${SERVICE_NAME}
+
+# -------------------------------------------------------------------------------------
+# RUNTIME (Minimal clean container)
+# -------------------------------------------------------------------------------------
+FROM node:20-alpine AS runner
+ARG SERVICE_NAME
+ENV SERVICE_NAME=${SERVICE_NAME}
+WORKDIR /app
+
+# Copy built code
+COPY --from=builder /app .
+
+# Default port (overridden by each service)
+EXPOSE 5000
+CMD sh -c "node apps/${SERVICE_NAME}/dist/main.js"

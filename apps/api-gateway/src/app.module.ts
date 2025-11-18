@@ -30,7 +30,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'users-service',
                         port: configService.get('users_service_port'),
                     },
                 }),
@@ -42,7 +42,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'auth-service',
                         port: configService.get('auth_service_port'),
                     },
                 }),
@@ -54,7 +54,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'problems-service',
                         port: configService.get('problems_service_port'),
                     },
                 }),
@@ -66,7 +66,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'tags-service',
                         port: configService.get('tags_service_port'),
                     },
                 }),
@@ -78,7 +78,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'companies-service',
                         port: configService.get('companies_service_port'),
                     },
                 }),
@@ -90,7 +90,7 @@ import { NotificationConsumer } from './workers/notification.worker';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'localhost',
+                        host: 'submissions-service',
                         port: configService.get('submissions_service_port'),
                     },
                 }),
