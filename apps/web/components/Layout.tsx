@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'sonner';
 import { useStore } from '../store';
-import { LANG_CONFIGS } from '@leetcode/constants';
+import { LANG_CONFIGS } from '../constants';
 
 interface Props extends PropsWithChildren {}
 

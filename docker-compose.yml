@@ -361,6 +361,25 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  web:
+      build:
+        context: .
+        dockerfile: Dockerfile.web
+      container_name: leetcode-web
+      ports:
+        - "3000:3000"
+      environment:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_ENDPOINT: http://api-gateway:5000
+      depends_on:
+        postgres:
+          condition: service_healthy
+        redis:
+          condition: service_healthy
+        prisma-migrate:
+          condition: service_completed_successfully
+      restart: unless-stopped
+
 volumes:
   pgdata:
   redis-data:

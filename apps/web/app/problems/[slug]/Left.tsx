@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React from 'react';
 import { IProblem } from '@/api/problems/types';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from '@/components/ui/code-block';
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Left: React.FC<Props> = ({ data }) => {
-    const { tabValue, setTabValue, setCode, setLanguage } = useStore();
+    const { tabValue, setTabValue } = useStore();
 
     return (
         <div className="w-full md:w-1/2 p-5 relative">

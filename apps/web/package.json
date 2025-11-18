@@ -40,12 +40,9 @@
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.17",
         "zod": "^4.1.12",
-        "zustand": "^5.0.8",
-        "@leetcode/constants": "workspace:*"
+        "zustand": "^5.0.8"
     },
     "devDependencies": {
-        "@leetcode/eslint-config": "workspace:*",
-        "@leetcode/typescript-config": "workspace:*",
         "@types/node": "^22.15.3",
         "@types/react": "19.1.0",
         "@types/react-dom": "19.1.1",

@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useStore } from '@/store';
-import { LANG_CONFIGS } from '@leetcode/constants';
+import { LANG_CONFIGS } from '../../../constants';
 
 interface Props {
     data: IProblem;

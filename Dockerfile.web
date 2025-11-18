@@ -1,0 +1,78 @@
+# -------------------------------------------------------------------------------------
+# BASE - Install pnpm
+# -------------------------------------------------------------------------------------
+FROM node:20-alpine AS base
+RUN npm i -g pnpm
+WORKDIR /app
+
+# -------------------------------------------------------------------------------------
+# DEPS - Install dependencies
+# -------------------------------------------------------------------------------------
+FROM base AS deps
+
+# Copy root workspace files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+
+# Copy web app package.json
+COPY apps/web/package.json ./apps/web/package.json
+
+# Copy database package (if web depends on it)
+COPY packages/database/package.json ./packages/database/package.json
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --filter=web...
+
+# -------------------------------------------------------------------------------------
+# BUILDER - Build the application
+# -------------------------------------------------------------------------------------
+FROM base AS builder
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages ./packages
+
+# Copy workspace files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
+
+# Copy web app source
+COPY apps/web ./apps/web
+
+# Generate Prisma client if needed
+WORKDIR /app/packages/database
+RUN pnpm prisma generate || true
+
+# Build the web app
+WORKDIR /app/apps/web
+RUN pnpm run build
+
+# -------------------------------------------------------------------------------------
+# RUNNER - Production image
+# -------------------------------------------------------------------------------------
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files from builder
+COPY --from=builder /app/apps/web/public ./public
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./.next/static
+
+# Set correct permissions
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
