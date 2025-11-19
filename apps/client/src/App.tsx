@@ -1,12 +1,29 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ConfirmEmail from './pages/ConfirmEmail';
+import ProblemDetails from './pages/ProblemDetails';
+import { Toaster } from 'sonner';
+
+const queryClient = new QueryClient();
 
 const App: React.FC = () => {
     return (
-        <div className="flex flex-col gap-5 items-start p-5">
-            <h1 className="font-semibold text-4xl">Leetcode</h1>
-            <Button>Click Me</Button>
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/confirm/:token" element={<ConfirmEmail />} />
+                    <Route path="/problems/:slug" element={<ProblemDetails />} />
+                </Routes>
+            </BrowserRouter>
+            <Toaster position="top-center" />
+        </QueryClientProvider>
     );
 };
 
