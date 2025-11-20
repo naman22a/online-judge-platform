@@ -57,6 +57,7 @@ services:
             args:
                 SERVICE_NAME: api-gateway
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-api-gateway
         container_name: leetcode-api-gateway
         ports:
             - '5000:5000'
@@ -97,6 +98,7 @@ services:
             args:
                 SERVICE_NAME: users-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-users-service
         container_name: leetcode-users-service
         ports:
             - '5001:5001'
@@ -137,6 +139,7 @@ services:
             args:
                 SERVICE_NAME: auth-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-auth-service
         container_name: leetcode-auth-service
         ports:
             - '5002:5002'
@@ -177,6 +180,7 @@ services:
             args:
                 SERVICE_NAME: problems-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-problems-service
         container_name: leetcode-problems-service
         ports:
             - '5003:5003'
@@ -215,6 +219,7 @@ services:
             args:
                 SERVICE_NAME: tags-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-tags-service
         container_name: leetcode-tags-service
         ports:
             - '5004:5004'
@@ -253,6 +258,7 @@ services:
             args:
                 SERVICE_NAME: companies-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-companies-service
         container_name: leetcode-companies-service
         ports:
             - '5005:5005'
@@ -291,6 +297,7 @@ services:
             args:
                 SERVICE_NAME: submissions-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-submissions-service
         container_name: leetcode-submissions-service
         ports:
             - '5006:5006'
@@ -331,6 +338,7 @@ services:
             args:
                 SERVICE_NAME: execution-service
                 DATABASE_URL: ${DATABASE_URL}
+        image: naman22a/leetcode-execution-service
         container_name: leetcode-execution-service
         ports:
             - '5007:5007'
@@ -360,6 +368,19 @@ services:
             prisma-migrate:
                 condition: service_completed_successfully
         restart: unless-stopped
+
+    client:
+        build:
+            context: .
+            dockerfile: Dockerfile.web
+        image: naman22a/leetcode-client
+        container_name: leetcode-client
+        restart: unless-stopped
+        ports:
+            - "80:80"
+        environment:
+            - NODE_ENV=production
+            - VITE_API_ENDPOINT=http://api-gateway:5000
 
 volumes:
     pgdata:

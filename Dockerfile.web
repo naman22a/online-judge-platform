@@ -1,78 +1,54 @@
-# -------------------------------------------------------------------------------------
-# BASE - Install pnpm
-# -------------------------------------------------------------------------------------
+############ BASE ############
 FROM node:20-alpine AS base
 RUN npm i -g pnpm
 WORKDIR /app
 
-# -------------------------------------------------------------------------------------
-# DEPS - Install dependencies
-# -------------------------------------------------------------------------------------
-FROM base AS deps
 
-# Copy root workspace files
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+############ PRUNE (TURBO) ############
+FROM base AS pruner
 
-# Copy web app package.json
-COPY apps/web/package.json ./apps/web/package.json
+# Copy root package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
-# Copy database package (if web depends on it)
-COPY packages/database/package.json ./packages/database/package.json
+# Copy all workspace package.json files only
+COPY apps ./apps
+COPY packages ./packages
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --filter=web...
+# Install deps so turbo can analyze pipeline
+RUN pnpm install --frozen-lockfile
 
-# -------------------------------------------------------------------------------------
-# BUILDER - Build the application
-# -------------------------------------------------------------------------------------
+# Copy full repo
+COPY . .
+
+# Turbo prune only the client app (minimize files)
+RUN npx turbo prune --scope=client --docker
+
+
+############ INSTALL DEPS ############
 FROM base AS builder
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
-COPY --from=deps /app/packages ./packages
+# Copy the pruned workspace (only what actually exists)
+COPY --from=pruner /app/out/full/ ./
 
-# Copy workspace files
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
+# Install dependencies WITHOUT frozen lockfile (lockfile missing in prune)
+RUN pnpm install --no-frozen-lockfile
 
-# Copy web app source
-COPY apps/web ./apps/web
 
-# Generate Prisma client if needed
-WORKDIR /app/packages/database
-RUN pnpm prisma generate || true
+############ BUILD CLIENT ############
+FROM builder AS client-builder
 
-# Build the web app
-WORKDIR /app/apps/web
-RUN pnpm run build
+# Build the client app
+RUN pnpm --filter client build
 
-# -------------------------------------------------------------------------------------
-# RUNNER - Production image
-# -------------------------------------------------------------------------------------
-FROM node:20-alpine AS runner
 
-WORKDIR /app
+############ CLIENT RUNTIME ############
+FROM nginx:alpine AS client
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Copy built files
+COPY --from=client-builder /app/apps/client/dist /usr/share/nginx/html
 
-# Copy necessary files from builder
-COPY --from=builder /app/apps/web/public ./public
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./.next/static
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
-EXPOSE 3000
-
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["node", "server.js"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
