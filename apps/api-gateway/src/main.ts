@@ -29,10 +29,29 @@ async function bootstrap() {
     // MIDDLWARE
     app.use(cookieParser());
     app.enableCors({
-        origin: [client_url],
+        origin: (origin: string, callback: Function) => {
+            const allowedOrigins = [
+                'https://leetcode.namanarora.xyz',
+                'http://localhost:3000',
+                'http://localhost:5173',
+            ];
+
+            if (!origin) {
+                return callback(null, true);
+            }
+
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+        exposedHeaders: ['Set-Cookie'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
     });
 
     app.setGlobalPrefix('api');
