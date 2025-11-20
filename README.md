@@ -74,6 +74,36 @@ This project uses a microservices architecture with 7 independent services commu
 ![Two sum](./assets/two-sum.png)
 ![List of Problems](./assets/problems.png)
 
+## 🚶🏻‍♂️ Getting started and 🏃🏻‍♂️ Running the app
+
+Clone the repo
+
+```bash
+$ git clone https://github.com/naman22a/leetcode-microservices
+$ cd leetcode-microservices
+```
+
+copy env files
+
+```bash
+$ cp .env.example .env
+$ cp ./apps/client/.env.example ./apps/client/.env
+```
+
+run the backend (microservices)
+
+```bash
+$ docker compose up
+```
+
+run the frontend
+
+```bash
+$ cd ./apps/client
+$ pnpm install
+$ pnpm dev
+```
+
 ## 📡 API Features (OpenAPI 3.0)
 
 This project includes a complete OAS 3.0 compliant REST API.
