@@ -167,133 +167,42 @@ This project includes a complete OAS 3.0 compliant REST API.
 .
 ├── apps
 │   ├── api-gateway
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
 │   ├── auth-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
+│   ├── client
 │   ├── companies-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
 │   ├── execution-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
 │   ├── problems-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
 │   ├── submissions-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
 │   ├── tags-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
-│   ├── users-service
-│   │   ├── eslint.config.mjs
-│   │   ├── nest-cli.json
-│   │   ├── package.json
-│   │   ├── README.md
-│   │   ├── src
-│   │   ├── test
-│   │   ├── tsconfig.build.json
-│   │   └── tsconfig.json
-│   └── web
-│       ├── api
-│       ├── app
-│       ├── components
-│       ├── components.json
-│       ├── eslint.config.js
-│       ├── global
-│       ├── lib
-│       ├── next.config.js
-│       ├── next-env.d.ts
-│       ├── package.json
-│       ├── postcss.config.mjs
-│       ├── public
-│       ├── README.md
-│       ├── store
-│       ├── styles
-│       └── tsconfig.json
+│   └── users-service
 ├── assets
 │   ├── architecture.png
 │   ├── problems.png
 │   └── two-sum.png
 ├── docker-compose.dev.yml
+├── docker-compose.yml
+├── Dockerfile.base
+├── Dockerfile.web
+├── .dockerignore
+├── .env
+├── .env.example
+├── .env.test
+├── .gitignore
 ├── LICENSE
+├── nginx.conf
+├── .npmrc
 ├── package.json
 ├── packages
 │   ├── config
-│   │   ├── package.json
-│   │   ├── src
-│   │   └── tsconfig.json
 │   ├── constants
-│   │   ├── package.json
-│   │   ├── src
-│   │   └── tsconfig.json
 │   ├── database
-│   │   ├── package.json
-│   │   ├── prisma
-│   │   ├── prisma.config.ts
-│   │   ├── src
-│   │   └── tsconfig.json
 │   ├── eslint-config
-│   │   ├── base.js
-│   │   ├── next.js
-│   │   ├── package.json
-│   │   ├── react-internal.js
-│   │   └── README.md
 │   ├── types
-│   │   ├── package.json
-│   │   ├── src
-│   │   └── tsconfig.json
 │   └── typescript-config
-│       ├── base.json
-│       ├── nextjs.json
-│       ├── package.json
-│       └── react-library.json
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
+├── .prettierignore
+├── .prettierrc
 ├── README.md
 ├── tsconfig.json
 └── turbo.json
