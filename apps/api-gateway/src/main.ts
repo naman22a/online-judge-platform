@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
+import { LokiLogger } from './logging/loki-logger.service';
+import { LokiLoggingInterceptor } from './logging/loki-logging.interceptor';
 
 declare global {
     namespace Express {
@@ -17,6 +19,7 @@ declare global {
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    const logger = new LokiLogger();
 
     // CONFIGURATION
     const configService = app.get(ConfigService<Configuration>);
@@ -25,6 +28,9 @@ async function bootstrap() {
 
     // VALIDATION
     app.useGlobalPipes(new ValidationPipe({ exceptionFactory }));
+
+    // LOGGING
+    app.useGlobalInterceptors(new LokiLoggingInterceptor(logger));
 
     // MIDDLWARE
     app.use(cookieParser());
