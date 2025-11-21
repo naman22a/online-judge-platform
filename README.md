@@ -71,8 +71,14 @@ This project uses a microservices architecture with 7 independent services commu
 
 ## 📷 Screenshots
 
+### Application
+
 ![Two sum](./assets/two-sum.png)
 ![List of Problems](./assets/problems.png)
+
+### Grafana
+
+![Grafana Metrics](./assets/grafana.png)
 
 ## 🚶🏻‍♂️ Getting started and 🏃🏻‍♂️ Running the app
 
