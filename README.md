@@ -1,7 +1,5 @@
 # Leetcode Microservices
 
-> Coding practice platform
-
 A fully-featured, scalable LeetCode-style online judge built using a modern microservices architecture.
 Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Docker-based isolated execution.
 
@@ -21,6 +19,17 @@ This project uses a microservices architecture with 7 independent services commu
 | **Companies Service**   | 5005 | Company tags and frequency tracking     |
 | **Submissions Service** | 5006 | Code submission tracking and history    |
 | **Execution Service**   | 5007 | Async code execution via BullMQ workers |
+
+## 🎯 Key Features
+
+- Real-time code execution with live feedback
+- Monaco Editor with syntax highlighting
+- Docker-based sandboxed execution environment
+- Distributed job processing with BullMQ
+- Full monitoring stack (Prometheus + Grafana + Loki)
+- CI/CD pipeline with GitHub Actions
+- JWT authentication with refresh tokens
+- Email verification and password reset
 
 ## ⚙️ Tech Stack
 
@@ -45,6 +54,16 @@ This project uses a microservices architecture with 7 independent services commu
 - Docker containers for isolated code execution
 - JWT authentication
 - Event-driven architecture
+
+### DevOps & Infrastructure
+
+- **Docker & Docker Compose** - Containerized microservices orchestration
+- **GitHub Actions** - Automated CI/CD pipeline
+- **Prometheus** - Metrics collection and monitoring
+- **Grafana** - Visualization dashboards for system metrics
+- **Loki** - Centralized log aggregation
+- **BullMQ + Redis** - Distributed job queues for async processing
+- **Nginx** - Reverse proxy and load balancing
 
 ## ⚙️ Execution Pipeline
 
@@ -108,6 +127,19 @@ run the frontend
 $ cd ./apps/client
 $ pnpm install
 $ pnpm dev
+```
+
+### 📊 Monitoring Dashboards
+
+After running `docker compose up`, access:
+
+- Grafana: http://localhost:3001 (default: admin/admin)
+- Prometheus: http://localhost:9090
+
+### 🧪 Running Tests
+
+```bash
+$ pnpm test
 ```
 
 ## 📡 API Features (OpenAPI 3.0)
