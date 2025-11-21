@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { exceptionFactory } from './validation';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -50,7 +50,9 @@ async function bootstrap() {
         optionsSuccessStatus: 204,
     });
 
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api', {
+        exclude: [{ path: 'metrics', method: RequestMethod.GET }],
+    });
 
     // SWAGGER
     const config = new DocumentBuilder().setTitle('Leetcode API').setVersion('1.0').build();

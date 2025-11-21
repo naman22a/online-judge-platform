@@ -6,37 +6,37 @@ on:
     types:
       - completed
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
 
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          script: |
-            echo "Pulling latest images from DockerHub..."
+#       - name: Deploy to Server
+#         uses: appleboy/ssh-action@v0.1.10
+#         with:
+#           host: ${{ secrets.SERVER_HOST }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_PRIVATE_KEY }}
+#           script: |
+#             echo "Pulling latest images from DockerHub..."
 
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-api-gateway:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-users-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-auth-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-problems-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-tags-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-companies-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-submissions-service:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-execution-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-api-gateway:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-users-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-auth-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-problems-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-tags-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-companies-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-submissions-service:latest
+#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-execution-service:latest
 
-            echo "Restarting services..."
+#             echo "Restarting services..."
 
-            cd ~/leetcode-microservices
+#             cd ~/leetcode-microservices
 
-            docker compose down
-            docker compose up -d
+#             docker compose down
+#             docker compose up -d
 
-            echo "Deployment completed successfully!"
+#             echo "Deployment completed successfully!"

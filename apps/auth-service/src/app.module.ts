@@ -4,7 +4,6 @@ import { MailModule } from './mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
 import { configuration, validate } from '@leetcode/config';
 import { DatabaseModule } from '@leetcode/database';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -18,7 +17,6 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         DatabaseModule,
         AuthModule,
         MailModule,
-        PrometheusModule.register(),
     ],
     controllers: [],
     providers: [],
