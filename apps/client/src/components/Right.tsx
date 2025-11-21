@@ -22,7 +22,7 @@ interface Props {
 }
 
 const Right: React.FC<Props> = ({ data }) => {
-    const { theme } = useTheme();
+    const { theme, resolvedTheme } = useTheme();
     const [loading, setLoading] = useState(false);
     const queryClient = useQueryClient();
     const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
@@ -79,6 +79,8 @@ const Right: React.FC<Props> = ({ data }) => {
             problemId: data.id,
         });
     };
+
+    if (!resolvedTheme) return null;
 
     return (
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
