@@ -54,7 +54,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "api-gateway"
+                loki-external-labels: "service=api-gateway,container=leetcode-api-gateway"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -94,7 +94,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "users-service"
+                loki-external-labels: "service=users-service,container=leetcode-users-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -134,7 +134,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "auth-service"
+                loki-external-labels: "service=auth-service,container=leetcode-auth-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -174,7 +174,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "problems-service"
+                loki-external-labels: "service=problems-service,container=leetcode-problems-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -212,7 +212,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "tags-service"
+                loki-external-labels: "service=tags-service,container=leetcode-tags-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -250,7 +250,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "companies-service"
+                loki-external-labels: "service=companies-service,container=leetcode-companies-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -288,7 +288,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "submissions-service"
+                loki-external-labels: "service=submissions-service,container=leetcode-submissions-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -328,7 +328,7 @@ services:
             driver: loki
             options:
                 loki-url: "http://loki:3100/loki/api/v1/push"
-                labels: "execution-service"
+                loki-external-labels: "service=execution-service,container=leetcode-execution-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
