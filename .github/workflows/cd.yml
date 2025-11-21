@@ -34,7 +34,7 @@ jobs:
 
             echo "Restarting services..."
 
-            cd /path/to/your/deployment/folder
+            cd ~/leetcode-microservices
 
             docker compose down
             docker compose up -d
