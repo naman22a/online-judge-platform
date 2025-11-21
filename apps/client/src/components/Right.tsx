@@ -16,13 +16,14 @@ import {
 import { toast } from 'sonner';
 import { useStore } from '@/store';
 import { LANG_CONFIGS } from '@/constants';
+import * as monaco from 'monaco-editor';
 
 interface Props {
     data: IProblem;
 }
 
 const Right: React.FC<Props> = ({ data }) => {
-    const { theme, resolvedTheme } = useTheme();
+    const { theme } = useTheme();
     const [loading, setLoading] = useState(false);
     const queryClient = useQueryClient();
     const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
@@ -65,6 +66,12 @@ const Right: React.FC<Props> = ({ data }) => {
         };
     }, [getAccessToken()]);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            monaco?.editor?.setTheme(theme === 'dark' ? 'vs-dark' : 'vs-light');
+        }
+    }, [theme]);
+
     const handleSubmit = () => {
         const socket = getSocket();
         if (!socket) return;
@@ -79,8 +86,6 @@ const Right: React.FC<Props> = ({ data }) => {
             problemId: data.id,
         });
     };
-
-    if (!resolvedTheme) return null;
 
     return (
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
@@ -110,6 +115,9 @@ const Right: React.FC<Props> = ({ data }) => {
                     language={language}
                     value={code}
                     onChange={(e) => setCode(e!)}
+                    onMount={(_editor, monaco) => {
+                        monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs-light');
+                    }}
                 />
             </div>
             <div className="flex gap-5">
