@@ -43,6 +43,15 @@ WORKDIR /app
 RUN turbo run build --filter=${SERVICE_NAME}
 
 # -------------------------------------------------------------------------------------
+# TEST STAGE (Runs unit tests)
+# -------------------------------------------------------------------------------------
+FROM builder AS test
+ARG SERVICE_NAME
+
+# Run service-specific tests
+RUN turbo run test --filter=${SERVICE_NAME}
+
+# -------------------------------------------------------------------------------------
 # RUNTIME (Minimal clean container)
 # -------------------------------------------------------------------------------------
 FROM node:20-alpine AS runner
