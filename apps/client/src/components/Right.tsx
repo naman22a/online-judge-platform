@@ -22,7 +22,7 @@ interface Props {
 }
 
 const Right: React.FC<Props> = ({ data }) => {
-    const { theme, resolvedTheme } = useTheme();
+    const { resolvedTheme } = useTheme();
     const [loading, setLoading] = useState(false);
     const queryClient = useQueryClient();
     const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
@@ -110,9 +110,6 @@ const Right: React.FC<Props> = ({ data }) => {
                     language={language}
                     value={code}
                     onChange={(e) => setCode(e!)}
-                    onMount={(_editor, monaco) => {
-                        monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs-light');
-                    }}
                 />
             </div>
             <div className="flex gap-5">
