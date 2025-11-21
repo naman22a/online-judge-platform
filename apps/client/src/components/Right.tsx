@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import type { IProblem } from '@/api/problems/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
-import { useTheme } from 'next-themes';
 import { getAccessToken, languages } from '@/global';
 import { connectSocket, getSocket } from '@/lib/socket';
 import { Spinner } from '@/components/ui/spinner';
@@ -22,7 +21,6 @@ interface Props {
 }
 
 const Right: React.FC<Props> = ({ data }) => {
-    const { resolvedTheme } = useTheme();
     const [loading, setLoading] = useState(false);
     const queryClient = useQueryClient();
     const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
@@ -80,8 +78,6 @@ const Right: React.FC<Props> = ({ data }) => {
         });
     };
 
-    if (!resolvedTheme) return null;
-
     return (
         <div className="w-full overflow-y-scroll md:w-1/2 p-5">
             Language:{' '}
@@ -106,7 +102,7 @@ const Right: React.FC<Props> = ({ data }) => {
             <div className="mb-10">
                 <Editor
                     height="50vh"
-                    theme={resolvedTheme === 'dark' ? 'vs-dark' : 'vs-light'}
+                    theme="vs-dark"
                     language={language}
                     value={code}
                     onChange={(e) => setCode(e!)}
