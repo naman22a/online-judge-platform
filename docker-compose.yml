@@ -50,6 +50,11 @@ services:
         container_name: leetcode-api-gateway
         ports:
             - '5000:5000'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "api-gateway"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -85,6 +90,11 @@ services:
         container_name: leetcode-users-service
         ports:
             - '5001:5001'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "users-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -120,6 +130,11 @@ services:
         container_name: leetcode-auth-service
         ports:
             - '5002:5002'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "auth-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -155,6 +170,11 @@ services:
         container_name: leetcode-problems-service
         ports:
             - '5003:5003'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "problems-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -188,6 +208,11 @@ services:
         container_name: leetcode-tags-service
         ports:
             - '5004:5004'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "tags-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -221,6 +246,11 @@ services:
         container_name: leetcode-companies-service
         ports:
             - '5005:5005'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "companies-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -254,6 +284,11 @@ services:
         container_name: leetcode-submissions-service
         ports:
             - '5006:5006'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "submissions-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -289,6 +324,11 @@ services:
         container_name: leetcode-execution-service
         ports:
             - '5007:5007'
+        logging:
+            driver: loki
+            options:
+                loki-url: "http://loki:3100/loki/api/v1/push"
+                labels: "execution-service"
         environment:
             - NODE_ENV=production
             - API_GATEWAY_PORT=5000
@@ -354,6 +394,8 @@ services:
         ports:
             - "3100:3100"
         restart: unless-stopped
+        volumes:
+            - ./loki-data:/loki
 
 volumes:
     pgdata:
