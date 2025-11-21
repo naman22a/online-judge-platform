@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { LANG_CONFIGS } from '../constants';
 
 interface GlobalState {
     code: string;
@@ -14,7 +15,7 @@ interface GlobalState {
 
 export const useStore = create<GlobalState>()(
     subscribeWithSelector((set) => ({
-        code: '',
+        code: LANG_CONFIGS['cpp'].defaultCode ?? '',
         tabValue: 'description',
         language: 'cpp',
         errors: [],
