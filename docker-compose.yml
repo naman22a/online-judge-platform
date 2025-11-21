@@ -329,6 +329,17 @@ services:
     #         - NODE_ENV=production
     #         - VITE_API_ENDPOINT=http://api-gateway:5000
 
+    # =======================================
+    #        PROMETHEUS + GRAFANA + LOKI
+    # =======================================
+
+    prometheus-server:
+        image: prom/prometheus
+        ports:
+            - 9090:9090
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
 volumes:
     pgdata:
     redis-data:

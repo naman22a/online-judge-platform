@@ -20,7 +20,9 @@
     },
     "dependencies": {
         "@nestjs/microservices": "^11.1.8",
+        "@willsoto/nestjs-prometheus": "^6.0.2",
         "dotenv": "^17.2.3",
-        "dotenv-cli": "^11.0.0"
+        "dotenv-cli": "^11.0.0",
+        "prom-client": "^15.1.3"
     }
 }

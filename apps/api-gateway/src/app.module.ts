@@ -12,6 +12,7 @@ import { SubmissionsController } from './controllers/submissions/submissions.con
 import { EventsGateway } from './gateways/events.gateway';
 import { BullModule } from '@nestjs/bullmq';
 import { NotificationConsumer } from './workers/notification.worker';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -109,6 +110,7 @@ import { NotificationConsumer } from './workers/notification.worker';
         BullModule.registerQueue({
             name: 'notifications-queue',
         }),
+        PrometheusModule.register(),
     ],
     controllers: [
         UsersController,
