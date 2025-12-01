@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 declare global {
     namespace Express {
@@ -49,6 +50,7 @@ async function bootstrap() {
         preflightContinue: false,
         optionsSuccessStatus: 204,
     });
+    app.useWebSocketAdapter(new IoAdapter(app));
 
     app.setGlobalPrefix('api', {
         exclude: [{ path: 'metrics', method: RequestMethod.GET }],
