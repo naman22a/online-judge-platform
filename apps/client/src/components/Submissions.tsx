@@ -26,7 +26,8 @@ const Submissions: React.FC<Props> = ({ id }) => {
         queryKey: ['submissions'],
         queryFn: () => api.submissions.findAll(id),
         select(data) {
-            return data.reverse();
+            data.reverse();
+            return data;
         },
     });
 
@@ -56,7 +57,9 @@ const Submissions: React.FC<Props> = ({ id }) => {
                     >
                         <TableCell
                             className={cn(
-                                submission.status === 'WA' ? 'text-red-600' : 'text-green-500',
+                                submission.status === 'WrongAnswer'
+                                    ? 'text-red-600'
+                                    : 'text-green-500',
                             )}
                         >
                             {submission.status}
