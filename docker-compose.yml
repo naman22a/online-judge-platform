@@ -324,6 +324,8 @@ services:
         container_name: leetcode-execution-service
         ports:
             - '5007:5007'
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
         logging:
             driver: loki
             options:

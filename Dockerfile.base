@@ -59,6 +59,9 @@ ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}
 WORKDIR /app
 
+# Install Docker
+RUN apk add --no-cache docker-cli
+
 # Copy built code
 COPY --from=builder /app .
 
