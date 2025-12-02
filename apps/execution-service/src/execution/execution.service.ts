@@ -33,13 +33,8 @@ export class ExecutionService {
             return { success: false, output: 'Unsupported language' };
         }
 
-        // Use OS temp directory or project root, not __dirname
-        const tempDir = path.join(
-            process.cwd(),
-            'temp',
-            'sandbox',
-            `exec_${Date.now()}_${Math.random().toString(36).substring(7)}`,
-        );
+        const executionId = `exec_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+        const tempDir = path.join('/tmp/leetcode-sandbox', executionId);
         if (!fsSync.existsSync(tempDir)) {
             fsSync.mkdirSync(tempDir, { recursive: true });
         }
