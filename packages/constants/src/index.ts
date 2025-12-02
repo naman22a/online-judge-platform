@@ -57,8 +57,8 @@ export const LANG_CONFIGS: Record<
 > = {
     cpp: {
         image: 'gcc:latest',
-        compile: ['g++', '/sandbox/solution.cpp', '-o', '/sandbox/solution'],
-        run: ['/sandbox/solution'],
+        compile: ['g++', '/app/solution.cpp', '-o', '/app/solution'],
+        run: ['/app/solution'],
         defaultCode: `#include<iostream>
 using namespace std;
 
@@ -70,20 +70,20 @@ int main(){
 
     python: {
         image: 'python:3.9',
-        run: ['python3', '/sandbox/solution.py'],
+        run: ['python3', '/app/solution.py'],
         defaultCode: '',
     },
 
     javascript: {
         image: 'node:18',
-        run: ['node', '/sandbox/solution.js'],
+        run: ['node', '/app/solution.js'],
         defaultCode: '',
     },
 
     java: {
         image: 'openjdk:17',
-        compile: ['javac', '/sandbox/Solution.java'],
-        run: ['java', '-cp', '/sandbox', 'Solution'],
+        compile: ['javac', '/app/Solution.java'],
+        run: ['java', '-cp', '/app', 'Solution'],
         defaultCode: `public class Solution {
     public static void main(String[] args) {
     }
@@ -92,8 +92,8 @@ int main(){
 
     go: {
         image: 'golang:1.20',
-        compile: ['go', 'build', '-o', '/sandbox/solution', '/sandbox/solution.go'],
-        run: ['/sandbox/solution'],
+        compile: ['go', 'build', '-o', '/app/solution', '/app/solution.go'],
+        run: ['/app/solution'],
         defaultCode: `package main
 func main() {
 }`,
@@ -101,72 +101,66 @@ func main() {
 
     rust: {
         image: 'rust:1.69',
-        compile: ['rustc', '/sandbox/solution.rs', '-o', '/sandbox/solution'],
-        run: ['/sandbox/solution'],
+        compile: ['rustc', '/app/solution.rs', '-o', '/app/solution'],
+        run: ['/app/solution'],
         defaultCode: `fn main() {
 }`,
     },
 
     csharp: {
         image: 'mcr.microsoft.com/dotnet/sdk:7.0',
-        compile: ['csc', '/sandbox/Solution.cs'],
-        run: ['dotnet', '/sandbox/Solution.dll'],
+        compile: ['csc', '/app/Solution.cs'],
+        run: ['dotnet', '/app/Solution.dll'],
     },
 
     ruby: {
         image: 'ruby:3.2',
-        run: ['ruby', '/sandbox/solution.rb'],
+        run: ['ruby', '/app/solution.rb'],
     },
 
     swift: {
         image: 'swift:5.8',
-        compile: ['swiftc', '/sandbox/solution.swift', '-o', '/sandbox/solution'],
-        run: ['/sandbox/solution'],
+        compile: ['swiftc', '/app/solution.swift', '-o', '/app/solution'],
+        run: ['/app/solution'],
     },
 
     php: {
         image: 'php:8.2',
-        run: ['php', '/sandbox/solution.php'],
+        run: ['php', '/app/solution.php'],
     },
 
     kotlin: {
         image: 'openjdk:17',
-        compile: [
-            'kotlinc',
-            '/sandbox/Solution.kt',
-            '-include-runtime',
-            '-d',
-            '/sandbox/Solution.jar',
-        ],
-        run: ['java', '-jar', '/sandbox/Solution.jar'],
+        compile: ['kotlinc', '/app/Solution.kt', '-include-runtime', '-d', '/app/Solution.jar'],
+        run: ['java', '-jar', '/app/Solution.jar'],
     },
 
     dart: {
         image: 'dart:3.0',
-        compile: ['dart', 'compile', 'exe', '/sandbox/solution.dart', '-o', '/sandbox/solution'],
-        run: ['/sandbox/solution'],
+        compile: ['dart', 'compile', 'exe', '/app/solution.dart', '-o', '/app/solution'],
+        run: ['/app/solution'],
     },
 
     r: {
         image: 'r-base:latest',
-        run: ['Rscript', '/sandbox/solution.R'],
+        run: ['Rscript', '/app/solution.R'],
     },
 
     perl: {
         image: 'perl:5.36',
-        run: ['perl', '/sandbox/solution.pl'],
+        run: ['perl', '/app/solution.pl'],
     },
 
     typescript: {
         image: 'node:18',
-        compile: ['tsc', '/sandbox/solution.ts'],
-        run: ['node', '/sandbox/solution.js'],
+        compile: ['tsc', '/app/solution.ts'],
+        run: ['node', '/app/solution.js'],
         defaultCode: '',
     },
 
     haskell: {
         image: 'haskell:9.6',
-        compile: ['ghc', '/sandbox/solution.hs', '-o', '/sandbox/solution'],
-        run: ['/sandbox/solution'],
+        compile: ['ghc', '/app/solution.hs', '-o', '/app/solution'],
+        run: ['/app/solution'],
     },
 };

@@ -35,7 +35,7 @@ export class ExecutionService {
             return { success: false, output: 'Unsupported language' };
         }
 
-        const tempDir = '/sandbox';
+        const tempDir = path.join(__dirname, 'sandbox');
         if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
         const fileExtension = {
@@ -71,7 +71,7 @@ export class ExecutionService {
             '--cpus=0.5',
             '--pids-limit=50',
             '-v',
-            `./sandbox:/sandbox`,
+            `${tempDir}:/app`,
             LANG_CONFIGS[language].image,
         ];
 
