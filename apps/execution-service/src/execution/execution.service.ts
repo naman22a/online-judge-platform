@@ -148,7 +148,7 @@ export class ExecutionService {
 
             if (compileCommand) {
                 executeProcess(compileCommand, (compileResult) => {
-                    if (!compileResult.success) {
+                    if (!compileResult.success && compileResult.output) {
                         cleanup();
                         resolve({
                             success: false,
