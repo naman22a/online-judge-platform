@@ -58,9 +58,9 @@ export class ExecutionService {
         }
 
         // Cleanup function
-        const cleanup = async () => {
+        const cleanup = () => {
             try {
-                await fs.rm(tempDir, { recursive: true, force: true });
+                fsSync.rmSync(tempDir, { recursive: true, force: true });
             } catch (error) {
                 console.error('Cleanup error:', error);
             }
@@ -149,21 +149,22 @@ export class ExecutionService {
             if (compileCommand) {
                 executeProcess(compileCommand, (compileResult) => {
                     if (!compileResult.success) {
-                        cleanup().finally(() => {
-                            resolve({
-                                success: false,
-                                output: 'Compilation Error: ' + compileResult.output,
-                            });
+                        cleanup();
+                        resolve({
+                            success: false,
+                            output: 'Compilation Error: ' + compileResult.output,
                         });
                     } else {
                         executeProcess(runCommand, (runResult) => {
-                            cleanup().finally(() => resolve(runResult));
+                            cleanup();
+                            resolve(runResult);
                         });
                     }
                 });
             } else {
                 executeProcess(runCommand, (runResult) => {
-                    cleanup().finally(() => resolve(runResult));
+                    cleanup();
+                    resolve(runResult);
                 });
             }
         });
