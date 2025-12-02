@@ -17,7 +17,10 @@ async function bootstrap() {
             port: configService.get('problems_service_port'),
         },
     });
-    startMetricsServer(register, configService.get('problems_service_port')!);
+    startMetricsServer(
+        register,
+        Number(String(configService.get('problems_service_port')!).replace('500', '900')),
+    );
     await app.listen();
 }
 bootstrap();
