@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Configuration, configuration, validate } from '@leetcode/config';
 import { BullModule } from '@nestjs/bullmq';
 import { ResultsConsumer } from './submissions/submissions.worker';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { ResultsConsumer } from './submissions/submissions.worker';
         BullModule.registerQueue({
             name: 'notifications-queue',
         }),
+        PrometheusModule.register(),
     ],
     controllers: [SubmissionsController],
     providers: [ResultsConsumer],

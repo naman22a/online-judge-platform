@@ -3,6 +3,7 @@ import { DatabaseModule } from '@leetcode/database';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TagsController } from './tags/tags.controller';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { TagsController } from './tags/tags.controller';
             validate,
         }),
         DatabaseModule,
+        PrometheusModule.register(),
     ],
     controllers: [TagsController],
     providers: [],
