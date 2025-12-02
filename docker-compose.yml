@@ -325,6 +325,7 @@ services:
         ports:
             - '5007:5007'
         volumes:
+            - /tmp/leetcode-sandbox:/tmp/leetcode-sandbox
             - /var/run/docker.sock:/var/run/docker.sock
         logging:
             driver: loki
