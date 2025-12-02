@@ -45,9 +45,9 @@ export class ExecutionService {
 
         try {
             if (fsSync.existsSync(filePath)) {
-                await fs.unlink(filePath);
+                fsSync.unlinkSync(filePath);
             }
-            await fs.writeFile(filePath, code);
+            fsSync.writeFileSync(filePath, code);
         } catch (error) {
             return { success: false, output: 'Failed to write code file' };
         }
