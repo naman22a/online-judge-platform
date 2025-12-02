@@ -4,7 +4,7 @@ import { DatabaseModule } from '@leetcode/database';
 import { ConfigModule } from '@nestjs/config';
 import { configuration, validate } from '@leetcode/config';
 import { ProblemsService } from './problems/problems.service';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -18,7 +18,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         DatabaseModule,
         PrometheusModule.register(),
     ],
-    controllers: [ProblemsController],
+    controllers: [ProblemsController, PrometheusController],
     providers: [ProblemsService],
 })
 export class AppModule {}

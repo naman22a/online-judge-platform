@@ -5,7 +5,7 @@ import { Configuration, configuration, validate } from '@leetcode/config';
 import { DatabaseModule } from '@leetcode/database';
 import { ExecutionConsumer } from './execution/execution.worker';
 import { BullModule } from '@nestjs/bullmq';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -35,7 +35,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         }),
         PrometheusModule.register(),
     ],
-    controllers: [],
+    controllers: [PrometheusController],
     providers: [ExecutionService, ExecutionConsumer],
 })
 export class AppModule {}

@@ -3,7 +3,7 @@ import { UsersController } from './users/users.controller';
 import { DatabaseModule } from '@leetcode/database';
 import { ConfigModule } from '@nestjs/config';
 import { configuration, validate } from '@leetcode/config';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
     imports: [
@@ -17,7 +17,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         DatabaseModule,
         PrometheusModule.register(),
     ],
-    controllers: [UsersController],
+    controllers: [UsersController, PrometheusController],
     providers: [],
 })
 export class AppModule {}
