@@ -1,9 +1,10 @@
-import { Language } from '@leetcode/database';
 import { Injectable } from '@nestjs/common';
-import { ExecutionResult } from '@leetcode/types';
 import { spawn } from 'child_process';
-import fs from 'fs';
+import fs from 'fs/promises';
+import fsSync from 'fs';
 import path from 'path';
+import { Language } from '@leetcode/database';
+import { ExecutionResult } from '@leetcode/types';
 import { LANG_CONFIGS } from '@leetcode/constants';
 
 @Injectable()
@@ -11,10 +12,7 @@ export class ExecutionService {
     async runTestCases(
         language: Language,
         code: string,
-        testCases: {
-            input: string;
-            output: string;
-        }[],
+        testCases: { input: string; output: string }[],
     ) {
         const results: ExecutionResult[] = [];
         for (const testCase of testCases) {
@@ -35,33 +33,38 @@ export class ExecutionService {
             return { success: false, output: 'Unsupported language' };
         }
 
-        const tempDir = path.resolve(process.cwd(), 'sandbox');
-        if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
+        // Use OS temp directory or project root, not __dirname
+        const tempDir = path.join(
+            process.cwd(),
+            'temp',
+            'sandbox',
+            `exec_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+        );
+        if (!fsSync.existsSync(tempDir)) {
+            fsSync.mkdirSync(tempDir, { recursive: true });
+        }
 
-        const fileExtension = {
-            cpp: 'cpp',
-            python: 'py',
-            java: 'java',
-            javascript: 'js',
-            go: 'go',
-            rust: 'rs',
-            csharp: 'cs',
-            ruby: 'rb',
-            swift: 'swift',
-            php: 'php',
-            kotlin: 'kt',
-            dart: 'dart',
-            r: 'R',
-            perl: 'pl',
-            typescript: 'ts',
-            haskell: 'hs',
-        }[language];
-
+        const fileExtension = this.getFileExtension(language);
         const fileName = language === 'java' ? 'Solution' : 'solution';
         const filePath = path.join(tempDir, `${fileName}.${fileExtension}`);
 
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        fs.writeFileSync(filePath, code);
+        try {
+            if (fsSync.existsSync(filePath)) {
+                await fs.unlink(filePath);
+            }
+            await fs.writeFile(filePath, code);
+        } catch (error) {
+            return { success: false, output: 'Failed to write code file' };
+        }
+
+        // Cleanup function
+        const cleanup = async () => {
+            try {
+                await fs.rm(tempDir, { recursive: true, force: true });
+            } catch (error) {
+                console.error('Cleanup error:', error);
+            }
+        };
 
         const dockerArgs = [
             'run',
@@ -84,36 +87,54 @@ export class ExecutionService {
                 callback: (result: ExecutionResult) => void,
             ) => {
                 try {
-                    const fullCommand = input
-                        ? ['sh', '-c', `echo "${input}" | ${command.join(' ')}`]
-                        : command;
-
-                    const process = spawn('docker', [...dockerArgs, ...fullCommand]);
-
+                    const process = spawn('docker', [...dockerArgs, ...command]);
                     let output = '';
                     let errorOutput = '';
+                    let isTimedOut = false;
 
-                    process.stdin.write(input + '\n');
+                    const timer = setTimeout(() => {
+                        isTimedOut = true;
+                        process.kill('SIGKILL');
+                    }, timeout);
+
+                    // Write input to stdin
+                    if (input) {
+                        process.stdin.write(input + '\n');
+                    }
                     process.stdin.end();
 
-                    process.stdout.on('data', (data) => (output += data.toString()));
-                    process.stderr.on('data', (data) => (errorOutput += data.toString()));
+                    process.stdout.on('data', (data) => {
+                        output += data.toString();
+                    });
+
+                    process.stderr.on('data', (data) => {
+                        errorOutput += data.toString();
+                    });
+
+                    process.on('error', (error) => {
+                        clearTimeout(timer);
+                        callback({
+                            success: false,
+                            output: `Process error: ${error.message}`,
+                        });
+                    });
 
                     process.on('close', (code) => {
+                        clearTimeout(timer);
+
+                        if (isTimedOut) {
+                            callback({
+                                success: false,
+                                output: 'Time Limit Exceeded',
+                            });
+                            return;
+                        }
+
                         callback({
                             success: code === 0 && expectedOutput.trim() === output.trim(),
                             output: output || errorOutput,
                         });
                     });
-
-                    const timer = setTimeout(() => {
-                        process.kill();
-                        callback({
-                            success: false,
-                            output: 'Time Limit Exceeded',
-                        });
-                    }, timeout);
-                    process.on('close', () => clearTimeout(timer));
                 } catch (error) {
                     console.error(error);
                     callback({
@@ -125,18 +146,46 @@ export class ExecutionService {
 
             if (compileCommand) {
                 executeProcess(compileCommand, (compileResult) => {
-                    if (!compileResult.success && compileResult.output) {
-                        resolve({
-                            success: false,
-                            output: 'Compilation Error: ' + compileResult.output,
+                    if (!compileResult.success) {
+                        cleanup().finally(() => {
+                            resolve({
+                                success: false,
+                                output: 'Compilation Error: ' + compileResult.output,
+                            });
                         });
                     } else {
-                        executeProcess(runCommand, resolve);
+                        executeProcess(runCommand, (runResult) => {
+                            cleanup().finally(() => resolve(runResult));
+                        });
                     }
                 });
             } else {
-                executeProcess(runCommand, resolve);
+                executeProcess(runCommand, (runResult) => {
+                    cleanup().finally(() => resolve(runResult));
+                });
             }
         });
+    }
+
+    private getFileExtension(language: string): string {
+        const extensions: Record<string, string> = {
+            cpp: 'cpp',
+            python: 'py',
+            java: 'java',
+            javascript: 'js',
+            go: 'go',
+            rust: 'rs',
+            csharp: 'cs',
+            ruby: 'rb',
+            swift: 'swift',
+            php: 'php',
+            kotlin: 'kt',
+            dart: 'dart',
+            r: 'R',
+            perl: 'pl',
+            typescript: 'ts',
+            haskell: 'hs',
+        };
+        return extensions[language] || 'txt';
     }
 }
