@@ -69,7 +69,9 @@ export class ExecutionService {
             '--cpus=0.5',
             '--pids-limit=50',
             '-v',
-            `${tempDir}:/app`,
+            `${tempDir}:/workspace`,
+            '-w',
+            '/workspace',
             LANG_CONFIGS[language].image,
         ];
 
