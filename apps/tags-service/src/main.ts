@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { startMetricsServer } from './metrics-server';
+import { register } from 'prom-client';
 
 async function bootstrap() {
     const appContext = await NestFactory.createApplicationContext(AppModule);
@@ -15,6 +17,7 @@ async function bootstrap() {
             port: configService.get('tags_service_port'),
         },
     });
+    startMetricsServer(register, configService.get('tags_service_port')!);
     await app.listen();
 }
 bootstrap();
