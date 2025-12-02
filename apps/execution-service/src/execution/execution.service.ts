@@ -44,11 +44,16 @@ export class ExecutionService {
         const filePath = path.join(tempDir, `${fileName}.${fileExtension}`);
 
         try {
-            if (fsSync.existsSync(filePath)) {
-                fsSync.unlinkSync(filePath);
-            }
             fsSync.writeFileSync(filePath, code);
+
+            // Verify file was created
+            if (!fsSync.existsSync(filePath)) {
+                return { success: false, output: 'Failed to create code file' };
+            }
+
+            console.log(`File created at: ${filePath}`); // Debug log
         } catch (error) {
+            console.error('File write error:', error);
             return { success: false, output: 'Failed to write code file' };
         }
 
