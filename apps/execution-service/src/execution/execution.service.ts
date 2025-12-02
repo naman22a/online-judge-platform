@@ -89,7 +89,12 @@ export class ExecutionService {
                 callback: (result: ExecutionResult) => void,
             ) => {
                 try {
-                    const process = spawn('docker', [...dockerArgs, ...command]);
+                    const fullCommand = input
+                        ? ['sh', '-c', `echo "${input}" | ${command.join(' ')}`]
+                        : command;
+
+                    const process = spawn('docker', [...dockerArgs, ...fullCommand]);
+
                     let output = '';
                     let errorOutput = '';
                     let isTimedOut = false;
