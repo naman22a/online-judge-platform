@@ -35,7 +35,7 @@ export class ExecutionService {
             return { success: false, output: 'Unsupported language' };
         }
 
-        const tempDir = path.join(__dirname, 'sandbox');
+        const tempDir = path.resolve(process.cwd(), 'sandbox');
         if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
         const fileExtension = {
