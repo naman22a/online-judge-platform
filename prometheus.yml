@@ -7,11 +7,11 @@ scrape_configs:
           - targets:
                 [
                     'api-gateway:5000',
-                    'users-service:5001',
-                    'auth-service:5002',
-                    'problems-service:5003',
-                    'tags-service:5004',
-                    'companies-service:5005',
-                    'submissions-service:5006',
-                    'execution-service:5007',
+                    'users-service:9001',
+                    'auth-service:9002',
+                    'problems-service:9003',
+                    'tags-service:9004',
+                    'companies-service:9005',
+                    'submissions-service:9006',
+                    'execution-service:9007',
                 ]
