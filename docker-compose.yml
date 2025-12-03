@@ -400,7 +400,9 @@ services:
             - "3100:3100"
         restart: unless-stopped
         volumes:
+            - ./loki-config.yml:/etc/loki/local-config.yaml
             - ./loki-data:/loki
+        command: -config.file=/etc/loki/local-config.yaml
 
 volumes:
     pgdata:
