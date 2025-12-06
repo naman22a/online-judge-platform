@@ -58,7 +58,7 @@ function Login() {
     }
 
     return (
-        <div className="min-h-screen w-full flex justify-center items-center">
+        <div className="min-h-screen w-full flex flex-col justify-center items-center">
             <Card className="w-full sm:max-w-md">
                 <CardHeader>
                     <CardTitle className="text-center text-4xl">Login</CardTitle>
@@ -113,6 +113,12 @@ function Login() {
                     </Button>
                 </CardFooter>
             </Card>
+
+            <div className="mt-5">
+                <h3 className="mb-2 text-2xl font-semibold">Guest Login</h3>
+                <p>Email: test@gmail.com</p>
+                <p>Password: test123</p>
+            </div>
         </div>
     );
 }

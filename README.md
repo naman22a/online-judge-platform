@@ -117,7 +117,10 @@ $ cp ./apps/client/.env.example ./apps/client/.env
 
 run the backend (microservices)
 
+- add `/tmp` to docker desktop file sharing
+
 ```bash
+$ docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
 $ docker compose up
 ```
 
