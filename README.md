@@ -1,4 +1,4 @@
-# Leetcode Microservices
+# 🟨 Leetcode Microservices
 
 A fully-featured, scalable LeetCode-style online judge built using a modern microservices architecture.
 Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Docker-based isolated execution.
@@ -260,4 +260,4 @@ Contributions, issues, and suggestions are welcome! Feel free to fork the reposi
 
 ## 🗒️ License
 
-Leetcode is [GPL V3](./LICENSE)
+Leetcode Microservices is [GPL V3](./LICENSE)
