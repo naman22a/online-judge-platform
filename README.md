@@ -1,4 +1,4 @@
-# 🟨 Leetcode Microservices
+# 👨🏻‍⚖️ Online Judge System
 
 A fully-featured, scalable LeetCode-style online judge built using a modern microservices architecture.
 Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Docker-based isolated execution.
@@ -104,8 +104,8 @@ This project uses a microservices architecture with 7 independent services commu
 Clone the repo
 
 ```bash
-$ git clone https://github.com/naman22a/leetcode-microservices
-$ cd leetcode-microservices
+$ git clone https://github.com/naman22a/online-judge-platform
+$ cd online-judge-platform
 ```
 
 copy env files
@@ -260,4 +260,4 @@ Contributions, issues, and suggestions are welcome! Feel free to fork the reposi
 
 ## 🗒️ License
 
-Leetcode Microservices is [GPL V3](./LICENSE)
+Online Judge System is [GPL V3](./LICENSE)
