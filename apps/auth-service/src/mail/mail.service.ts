@@ -29,7 +29,7 @@ export class MailService {
         });
 
         let info = await transporter.sendMail({
-            from: '"Leetcode" <leetcode@leetcode.com>',
+            from: '"Online Judge Platform" <oj@oj.com>',
             to: email,
             subject,
             html: `<a href="${url}">${url}</a>`,

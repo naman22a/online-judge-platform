@@ -31,7 +31,7 @@ async function bootstrap() {
     app.use(cookieParser());
     app.enableCors({
         origin: (origin: string, callback: Function) => {
-            const allowedOrigins = ['https://leetcode.namanarora.xyz', 'http://localhost:3000'];
+            const allowedOrigins = ['https://judge.namanarora.xyz', 'http://localhost:3000'];
 
             if (!origin) {
                 return callback(null, true);

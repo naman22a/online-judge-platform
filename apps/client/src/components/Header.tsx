@@ -11,7 +11,7 @@ const Header: React.FC = () => {
     return (
         <header className="shadow py-5 px-10 flex items-center justify-between">
             <Link to="/">
-                <h1 className="font-semibold text-4xl">Leetcode</h1>
+                <h1 className="font-semibold text-4xl">Online Judge Platform</h1>
             </Link>
             <div className="flex items-center gap-5">
                 <h2>
