@@ -31,7 +31,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'users-service',
+                        host: configService.get('users_service_host'),
                         port: configService.get('users_service_port'),
                     },
                 }),
@@ -43,7 +43,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'auth-service',
+                        host: configService.get('auth_service_host'),
                         port: configService.get('auth_service_port'),
                     },
                 }),
@@ -55,7 +55,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'problems-service',
+                        host: configService.get('problems_service_host'),
                         port: configService.get('problems_service_port'),
                     },
                 }),
@@ -67,7 +67,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'tags-service',
+                        host: configService.get('tags_service_host'),
                         port: configService.get('tags_service_port'),
                     },
                 }),
@@ -79,7 +79,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'companies-service',
+                        host: configService.get('companies_service_host'),
                         port: configService.get('companies_service_port'),
                     },
                 }),
@@ -91,7 +91,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
                 useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
                     transport: Transport.TCP,
                     options: {
-                        host: 'submissions-service',
+                        host: configService.get('submissions_service_host'),
                         port: configService.get('submissions_service_port'),
                     },
                 }),
