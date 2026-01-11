@@ -21,6 +21,7 @@
         "test:e2e": "dotenv -e ../../.env.test -- jest --config ./test/jest-e2e.json --passWithNoTests"
     },
     "dependencies": {
+        "@leetcode/common": "workspace:*",
         "@leetcode/config": "workspace:*",
         "@leetcode/constants": "workspace:*",
         "@leetcode/database": "workspace:*",

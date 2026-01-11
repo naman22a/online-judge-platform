@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -208,7 +208,32 @@ export default function CreateProblemModal() {
                                         Difficulty <span className="text-red-500">*</span>
                                     </Label>
 
-                                    <Select {...register('difficulty')}>
+                                    <Controller
+                                        control={control}
+                                        name="difficulty"
+                                        render={({ field }) => (
+                                            <Select
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select a difficulty" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>Difficulty</SelectLabel>
+                                                        <SelectItem value="Easy">Easy</SelectItem>
+                                                        <SelectItem value="Medium">
+                                                            Medium
+                                                        </SelectItem>
+                                                        <SelectItem value="Hard">Hard</SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+
+                                    {/* <Select {...register('difficulty')}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select a difficulty" />
                                         </SelectTrigger>
@@ -220,7 +245,7 @@ export default function CreateProblemModal() {
                                                 <SelectItem value="Hard">Hard</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
-                                    </Select>
+                                    </Select> */}
                                 </div>
                             </div>
 

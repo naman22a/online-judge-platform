@@ -1,0 +1,17 @@
+{
+    "name": "@leetcode/common",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@leetcode/types": "workspace:*",
+        "@nestjs/common": "^11.0.1"
+    }
+}

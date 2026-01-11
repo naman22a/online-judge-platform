@@ -2,14 +2,17 @@ import { PrismaService, User } from '@leetcode/database';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { USERS } from '@leetcode/constants';
-import { OkResponse } from '@leetcode/types';
+import type { InternalMessage, OkResponse } from '@leetcode/types';
+import { InternalAuth } from '@leetcode/common';
 
 @Controller('users')
 export class UsersController {
     constructor(private prisma: PrismaService) {}
 
+    @InternalAuth('users:findAll')
     @MessagePattern(USERS.FIND_ALL)
-    async find({ userId }: { userId: number }) {
+    async find(message: InternalMessage<{ userId: number }>) {
+        const { userId } = message.payload;
         const currentUser = await this.prisma.user.findUnique({
             where: { id: userId },
             omit: { password: true, emailVerfied: true, tokenVersion: true },
@@ -23,16 +26,21 @@ export class UsersController {
         return [currentUser, ...otherUsers];
     }
 
+    @InternalAuth('users:me')
     @MessagePattern(USERS.CURRENT)
-    async me({ userId }: { userId: number }) {
+    async me(message: InternalMessage<{ userId: number }>) {
+        const { userId } = message.payload;
         return await this.prisma.user.findUnique({
             where: { id: userId },
             omit: { password: true, emailVerfied: true, tokenVersion: true },
         });
     }
 
+    @InternalAuth('users:findOne')
     @MessagePattern(USERS.FIND_ONE)
-    async findOne({ id, userId }: { id: number; userId: number }) {
+    async findOne(message: InternalMessage<{ id: number; userId: number }>) {
+        const { id, userId } = message.payload;
+
         if (id === userId) {
             return await this.prisma.user.findUnique({
                 where: { id },
@@ -55,26 +63,29 @@ export class UsersController {
                 ],
             };
         }
+
+        return user;
     }
 
+    @InternalAuth('users:update')
     @MessagePattern(USERS.UPDATE)
-    async updateOne({
-        userId,
-        body,
-    }: {
-        userId: number;
-        body: Omit<
-            Partial<User>,
-            | 'password'
-            | 'email'
-            | 'emailVerfied'
-            | 'tokenVersion'
-            | 'is_admin'
-            | 'id'
-            | 'created_at'
-            | 'updated_at'
-        >;
-    }): Promise<OkResponse> {
+    async updateOne(
+        message: InternalMessage<{
+            userId: number;
+            body: Omit<
+                Partial<User>,
+                | 'password'
+                | 'email'
+                | 'emailVerfied'
+                | 'tokenVersion'
+                | 'is_admin'
+                | 'id'
+                | 'created_at'
+                | 'updated_at'
+            >;
+        }>,
+    ): Promise<OkResponse> {
+        const { body, userId } = message.payload;
         if (!body)
             return { ok: false, errors: [{ field: 'all', message: 'atleast provide one field' }] };
 

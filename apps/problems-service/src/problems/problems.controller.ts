@@ -4,7 +4,8 @@ import { MessagePattern } from '@nestjs/microservices';
 import { PrismaService } from '@leetcode/database';
 import { GetProblemsQueryDto } from './types';
 import { ProblemsService } from './problems.service';
-import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
+import type { CreateProblemDto, InternalMessage, UpdateProblemDto } from '@leetcode/types';
+import { InternalAuth } from '@leetcode/common';
 
 @Controller('problems')
 export class ProblemsController {
@@ -100,9 +101,10 @@ export class ProblemsController {
         return problem;
     }
 
+    @InternalAuth('problems:create')
     @MessagePattern(PROBLEMS.CREATE)
-    async createProblem({ userId, dto }: { userId: number; dto: CreateProblemDto }) {
-        return await this.problemsService.create({ userId, dto });
+    async createProblem(message: InternalMessage<{ userId: number; dto: CreateProblemDto }>) {
+        return await this.problemsService.create(message.payload);
     }
 
     @MessagePattern(PROBLEMS.DELETE)

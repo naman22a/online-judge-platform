@@ -379,3 +379,8 @@ export interface ExecutionResult {
     success: boolean;
     output: string;
 }
+
+export interface InternalMessage<T> {
+    internalToken: string;
+    payload: T;
+}

@@ -19,6 +19,7 @@ import { GetProblemsQueryDto } from './types';
 import { AdminGuard } from '../../guards/admin.guard';
 import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
 import type { Request } from 'express';
+import { signInternalToken } from '../../utils';
 
 @Controller('problems')
 export class ProblemsController {
@@ -47,7 +48,15 @@ export class ProblemsController {
     @Post()
     createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
         const userId = req.userId;
-        return this.client.send(PROBLEMS.CREATE, { userId, dto: body });
+        const internalToken = signInternalToken('api-gateway', ['problems:create']);
+
+        return this.client.send(PROBLEMS.CREATE, {
+            internalToken,
+            payload: {
+                userId,
+                dto: body,
+            },
+        });
     }
 
     @UseGuards(AdminGuard)

@@ -8,7 +8,7 @@ import AdminDashboard from '@/components/AdminDashboard';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
-    const meQuery = useQuery({ queryKey: ['users', 'me'], queryFn: api.users.me });
+    const meQuery = useQuery({ queryKey: ['users', 'me'], queryFn: api.users.me, retry: 0 });
 
     // protected route
     useEffect(() => {
