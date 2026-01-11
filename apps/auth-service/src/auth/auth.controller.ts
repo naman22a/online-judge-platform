@@ -7,10 +7,16 @@ import { MailService } from '../mail/mail.service';
 import { redis } from '../redis';
 import { CONFIRMATION_PREFIX, FORGOT_PASSWORD_PREFIX } from '../constants';
 import { AUTH } from '@leetcode/constants';
-import { LoginResponse, OkResponse, RefreshTokenPayload } from '@leetcode/types';
+import type {
+    InternalMessage,
+    LoginResponse,
+    OkResponse,
+    RefreshTokenPayload,
+} from '@leetcode/types';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { verify } from 'jsonwebtoken';
+import { InternalAuth } from '@leetcode/common';
 
 @Controller('auth')
 export class AuthController {
@@ -133,8 +139,9 @@ export class AuthController {
         return { accessToken, refreshToken };
     }
 
+    @InternalAuth('auth:logout')
     @MessagePattern(AUTH.LOGOUT)
-    logout(): OkResponse {
+    logout(_message: InternalMessage<{}>): OkResponse {
         return { ok: true };
     }
 

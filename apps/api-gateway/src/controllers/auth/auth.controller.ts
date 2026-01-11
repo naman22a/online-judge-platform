@@ -18,6 +18,7 @@ import type { Request, Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './types';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { signInternalToken } from '../../utils';
 
 const __prod__ = process.env.NODE_ENV === 'production';
 
@@ -58,8 +59,9 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: Response): Promise<OkResponse> {
+        const internalToken = signInternalToken('api-gateway', ['auth:logout']);
         res.clearCookie(COOKIE_NAME);
-        return await firstValueFrom(this.client.send(AUTH.LOGOUT, {}));
+        return await firstValueFrom(this.client.send(AUTH.LOGOUT, { internalToken }));
     }
 
     @Post('refresh_token')
