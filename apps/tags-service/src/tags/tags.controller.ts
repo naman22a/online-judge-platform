@@ -2,7 +2,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { TAGS } from '@leetcode/constants';
 import { PrismaService } from '@leetcode/database';
-import { BulkCreateTagsDto } from '@leetcode/types';
+import type { BulkCreateTagsDto, InternalMessage } from '@leetcode/types';
+import { InternalAuth } from '@leetcode/common';
 
 @Controller('tags')
 export class TagsController {
@@ -20,10 +21,11 @@ export class TagsController {
         return tag;
     }
 
+    @InternalAuth('tags:create')
     @MessagePattern(TAGS.CREATE)
-    async create({ tags }: BulkCreateTagsDto) {
+    async create({ payload }: InternalMessage<BulkCreateTagsDto>) {
         return await this.prisma.tag.createMany({
-            data: tags,
+            data: payload.tags,
             skipDuplicates: true,
         });
     }

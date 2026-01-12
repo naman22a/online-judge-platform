@@ -898,6 +898,9 @@ importers:
 
   apps/tags-service:
     dependencies:
+      '@leetcode/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@leetcode/config':
         specifier: workspace:*
         version: link:../../packages/config
