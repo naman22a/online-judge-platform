@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AdminGuard } from '../../guards/admin.guard';
+import { signInternalToken } from '../../utils';
 
 @Controller('companies')
 export class CompaniesController {
@@ -30,6 +31,7 @@ export class CompaniesController {
     @UseGuards(AdminGuard)
     @Post('bulk')
     create(@Body() body: BulkCreateCompaniesDto) {
-        return this.client.send(COMPANIES.CREATE, { dto: body });
+        const internalToken = signInternalToken('api-gateway', ['companies:create']);
+        return this.client.send(COMPANIES.CREATE, { internalToken, payload: { dto: body } });
     }
 }

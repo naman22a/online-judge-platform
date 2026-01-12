@@ -2,7 +2,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { COMPANIES } from '@leetcode/constants';
 import { PrismaService } from '@leetcode/database';
-import { BulkCreateCompaniesDto } from '@leetcode/types';
+import type { BulkCreateCompaniesDto, InternalMessage } from '@leetcode/types';
+import { InternalAuth } from '@leetcode/common';
 
 @Controller('companies')
 export class CompaniesController {
@@ -20,8 +21,9 @@ export class CompaniesController {
         return company;
     }
 
+    @InternalAuth('companies:create')
     @MessagePattern(COMPANIES.CREATE)
-    async create({ dto }: { dto: BulkCreateCompaniesDto }) {
+    async create({ payload: { dto } }: InternalMessage<{ dto: BulkCreateCompaniesDto }>) {
         return await this.prisma.company.createMany({
             data: dto.companies,
             skipDuplicates: true,
