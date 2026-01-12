@@ -49,10 +49,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const req = socket.request as Request;
         const userId = req.userId;
         const internalToken = signInternalToken('api-gateway', ['submissions:create']);
-        this.client.emit(SUBMISSIONS.CREATE, {
+        return this.client.send(SUBMISSIONS.CREATE, {
             internalToken,
             payload: { ...data, userId },
         });
-        return { ok: true };
     }
 }
