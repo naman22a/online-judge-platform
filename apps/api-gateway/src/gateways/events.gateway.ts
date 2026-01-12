@@ -11,11 +11,10 @@ import { Server, Socket } from 'socket.io';
 import { SocketAuthMiddleware } from '../middleware/ws.middleware';
 import { MICROSERVICES, SUBMISSIONS } from '@leetcode/constants';
 import { ClientProxy } from '@nestjs/microservices';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { CreateSubmissionDto } from '@leetcode/types';
 import type { Request } from 'express';
 import { signInternalToken } from '../utils';
-import { WsThrottlerGuard } from '../guards/ws-throttle.guard';
 
 @WebSocketGateway({
     cors: {
@@ -41,7 +40,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log('Client disconnected:', client.id);
     }
 
-    @UseGuards(WsThrottlerGuard)
+    // @UseGuards(WsThrottlerGuard)
     @SubscribeMessage('create-submission')
     handleCreateSubmission(
         @ConnectedSocket() socket: Socket,
