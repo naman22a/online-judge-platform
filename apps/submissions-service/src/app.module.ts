@@ -6,6 +6,8 @@ import { Configuration, configuration, validate } from '@leetcode/config';
 import { BullModule } from '@nestjs/bullmq';
 import { ResultsConsumer } from './submissions/submissions.worker';
 import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { ClientsModule, TcpClientOptions, Transport } from '@nestjs/microservices';
+import { MICROSERVICES } from '@leetcode/constants';
 
 @Module({
     imports: [
@@ -34,6 +36,20 @@ import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometh
             name: 'notifications-queue',
         }),
         PrometheusModule.register(),
+        ClientsModule.registerAsync([
+            {
+                name: MICROSERVICES.PROBLEMS_SERVICE,
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService: ConfigService<Configuration>): TcpClientOptions => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: configService.get('problems_service_host'),
+                        port: configService.get('problems_service_port'),
+                    },
+                }),
+            },
+        ]),
     ],
     controllers: [SubmissionsController, PrometheusController],
     providers: [ResultsConsumer],

@@ -14,6 +14,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
 import { CreateSubmissionDto } from '@leetcode/types';
 import type { Request } from 'express';
+import { signInternalToken } from '../utils';
 
 @WebSocketGateway({
     cors: {
@@ -46,6 +47,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ) {
         const req = socket.request as Request;
         const userId = req.userId;
-        return this.client.send(SUBMISSIONS.CREATE, { ...data, userId });
+        const internalToken = signInternalToken('api-gateway', ['submissions:create']);
+        return this.client.send(SUBMISSIONS.CREATE, {
+            internalToken,
+            payload: { ...data, userId },
+        });
     }
 }

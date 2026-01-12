@@ -101,6 +101,35 @@ export class ProblemsController {
         return problem;
     }
 
+    @MessagePattern(PROBLEMS.FIND_ONE_BY_ID)
+    async findOneProblemById({ id }: { id: number }) {
+        const problem = await this.prisma.problem.findUnique({
+            where: { id },
+            include: {
+                testCases: {
+                    where: { isActive: true, isSample: true },
+                    select: {
+                        id: true,
+                        input: true,
+                        expectedOutput: true,
+                        explanation: true,
+                        isSample: true,
+                        isActive: true,
+                    },
+                },
+                problemTags: { select: { tag: true } },
+                // TODO: add them when you implement on frontend
+                // comments: true,
+                // editorials: true,
+                // submissions: true,
+                problemCompanies: { select: { company: true } },
+            },
+        });
+        if (!problem) return { ok: false, errors: [{ field: 'id', message: 'problem not found' }] };
+
+        return problem;
+    }
+
     @InternalAuth('problems:create')
     @MessagePattern(PROBLEMS.CREATE)
     async createProblem(message: InternalMessage<{ userId: number; dto: CreateProblemDto }>) {

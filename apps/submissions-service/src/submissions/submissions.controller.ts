@@ -1,27 +1,36 @@
-import { SUBMISSIONS } from '@leetcode/constants';
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-import { PrismaService } from '@leetcode/database';
-import { CreateSubmissionDto } from '@leetcode/types';
+import { MICROSERVICES, PROBLEMS, SUBMISSIONS } from '@leetcode/constants';
+import { Controller, Inject } from '@nestjs/common';
+import { ClientProxy, MessagePattern } from '@nestjs/microservices';
+import { PrismaService, Problem } from '@leetcode/database';
+import type { CreateSubmissionDto, InternalMessage } from '@leetcode/types';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import { InternalAuth } from '@leetcode/common';
+import { firstValueFrom } from 'rxjs';
 
 @Controller()
 export class SubmissionsController {
     constructor(
         private prisma: PrismaService,
         @InjectQueue('execution-queue') private executionQueue: Queue,
+        @Inject(MICROSERVICES.PROBLEMS_SERVICE) private client: ClientProxy,
     ) {}
 
+    @InternalAuth('submissions:findAll')
     @MessagePattern(SUBMISSIONS.FIND_ALL)
-    async findAll({ userId, problemId }: { userId: number; problemId: number }) {
+    async findAll({
+        payload: { userId, problemId },
+    }: InternalMessage<{ userId: number; problemId: number }>) {
         return await this.prisma.submission.findMany({
             where: { problemId: problemId, userId: userId },
         });
     }
 
+    @InternalAuth('submissions:create')
     @MessagePattern(SUBMISSIONS.CREATE)
-    async create({ code, language, socketId, problemId, userId }: CreateSubmissionDto) {
+    async create({
+        payload: { code, language, socketId, problemId, userId },
+    }: InternalMessage<CreateSubmissionDto>) {
         // validation
         if (!code) return { jobId: null, errors: [{ field: 'code', message: 'code is required' }] };
         if (!language)
@@ -40,8 +49,11 @@ export class SubmissionsController {
                 errors: [{ field: 'problemId', message: 'problemId is required' }],
             };
 
-        // check if problem exists
-        const problemExists = await this.prisma.problem.findUnique({ where: { id: problemId } });
+        const problemExists = (await firstValueFrom(
+            this.client.send(PROBLEMS.FIND_ONE_BY_ID, {
+                id: problemId,
+            }),
+        )) as Problem;
         if (!problemExists)
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 

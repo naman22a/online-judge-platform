@@ -29,6 +29,7 @@ export const AUTH = {
 export const PROBLEMS = {
     FIND_ALL: 'problems.findAll',
     FIND_ONE: 'problems.findOne',
+    FIND_ONE_BY_ID: 'problems.findOneById',
     CREATE: 'problems.create',
     DELETE: 'problems.delete',
     UPDATE: 'problems.update',
