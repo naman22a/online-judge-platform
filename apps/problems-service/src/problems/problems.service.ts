@@ -13,48 +13,35 @@ export class ProblemsService {
             data: {
                 createdById: userId,
                 ...problemData,
-
-                ...(problemTags?.length
+                problemTags: problemTags?.length
                     ? {
-                          problemTags: {
-                              create: problemTags.map((tag) => ({
-                                  tag: {
-                                      connect: { id: tag.tagId },
-                                  },
-                              })),
-                          },
+                          create: problemTags.map((tag) => ({
+                              tag: { connect: { id: tag.tagId } },
+                          })),
                       }
-                    : {}),
-
-                ...(problemCompanies?.length
+                    : undefined,
+                problemCompanies: problemCompanies?.length
                     ? {
-                          problemCompanies: {
-                              create: problemCompanies.map((company) => ({
-                                  company: {
-                                      connect: { id: company.companyId },
-                                  },
-                                  frequency: company.frequency ?? 1,
-                                  lastAskedDate: company.lastAskedDate
-                                      ? new Date(company.lastAskedDate)
-                                      : undefined,
-                              })),
-                          },
+                          create: problemCompanies.map((company) => ({
+                              company: { connect: { id: company.companyId } },
+                              frequency: company.frequency ?? 1,
+                              lastAskedDate: company.lastAskedDate
+                                  ? new Date(company.lastAskedDate)
+                                  : undefined,
+                          })),
                       }
-                    : {}),
-
-                ...(testCases?.length
+                    : undefined,
+                testCases: testCases?.length
                     ? {
-                          testCases: {
-                              create: testCases.map((t) => ({
-                                  input: t.input,
-                                  expectedOutput: t.expectedOutput,
-                                  isSample: t.isSample ?? false,
-                                  isActive: t.isActive ?? true,
-                                  explanation: t.explanation,
-                              })),
-                          },
+                          create: testCases.map((t) => ({
+                              input: t.input,
+                              expectedOutput: t.expectedOutput,
+                              isSample: t.isSample ?? false,
+                              isActive: t.isActive ?? true,
+                              explanation: t.explanation,
+                          })),
                       }
-                    : {}),
+                    : undefined,
             },
             include: {
                 problemTags: { include: { tag: true } },

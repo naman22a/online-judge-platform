@@ -15,6 +15,7 @@ import { MICROSERVICES, USERS } from '@leetcode/constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { User } from '@leetcode/database';
+import { signInternalToken } from '../utils';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -25,6 +26,9 @@ export class AdminGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest() as Request;
         const authorization = req.headers['authorization'];
+
+        console.log('Raw body:', req.body);
+        console.log('Content-Type:', req.headers['content-type']);
 
         if (!authorization) {
             throw new UnauthorizedException();
@@ -41,8 +45,9 @@ export class AdminGuard implements CanActivate {
             throw new UnauthorizedException();
         }
 
+        const internalToken = signInternalToken('api-gateway', ['users:me']);
         const user = (await firstValueFrom(
-            this.client.send(USERS.CURRENT, { userId: payload.userId }),
+            this.client.send(USERS.CURRENT, { internalToken, payload: { userId: payload.userId } }),
         )) as Omit<User, 'password' | 'emailVerfied' | 'tokenVersion'>;
 
         if (!user.is_admin) {

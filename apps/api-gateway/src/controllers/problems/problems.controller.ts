@@ -46,7 +46,7 @@ export class ProblemsController {
 
     @UseGuards(AdminGuard)
     @Post()
-    createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
+    async createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
         const userId = req.userId;
         const internalToken = signInternalToken('api-gateway', ['problems:create']);
 
@@ -62,12 +62,14 @@ export class ProblemsController {
     @UseGuards(AdminGuard)
     @Delete(':id')
     deleteOneProblem(@Param('id', ParseIntPipe) id: number) {
-        return this.client.send(PROBLEMS.DELETE, { id });
+        const internalToken = signInternalToken('api-gateway', ['problems:delete']);
+        return this.client.send(PROBLEMS.DELETE, { internalToken, payload: { id } });
     }
 
     @UseGuards(AdminGuard)
     @Patch(':id')
     updateProblem(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProblemDto) {
-        return this.client.send(PROBLEMS.UPDATE, { id, dto });
+        const internalToken = signInternalToken('api-gateway', ['problems:update']);
+        return this.client.send(PROBLEMS.UPDATE, { internalToken, payload: { id, dto } });
     }
 }

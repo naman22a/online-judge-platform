@@ -107,8 +107,9 @@ export class ProblemsController {
         return await this.problemsService.create(message.payload);
     }
 
+    @InternalAuth('problems:delete')
     @MessagePattern(PROBLEMS.DELETE)
-    async deleteProblem({ id }: { id: number }) {
+    async deleteProblem({ payload: { id } }: InternalMessage<{ id: number }>) {
         try {
             await this.prisma.problem.delete({ where: { id } });
 
@@ -121,8 +122,11 @@ export class ProblemsController {
         }
     }
 
+    @InternalAuth('problems:update')
     @MessagePattern(PROBLEMS.UPDATE)
-    async updateProblem({ id, dto }: { id: number; dto: UpdateProblemDto }) {
+    async updateProblem({
+        payload: { id, dto },
+    }: InternalMessage<{ id: number; dto: UpdateProblemDto }>) {
         return this.problemsService.update(id, dto);
     }
 }
