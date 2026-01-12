@@ -24,6 +24,10 @@ const configuration = () => ({
     redis_port: parseInt(process.env.REDIS_PORT!, 10),
     access_token_secret: process.env.ACCESS_TOKEN_SECRET,
     refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
+    postgres_user: process.env.POSTGRES_USER,
+    postgres_password: process.env.POSTGRES_PASSWORD,
+    internal_jwt_secret: process.env.INTERNAL_JWT_SECRET,
+    internal_jwt_issuer: process.env.INTERNAL_JWT_ISSUER,
 });
 
 export type Configuration = ConfigType<typeof configuration>;
