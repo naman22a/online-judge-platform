@@ -25,7 +25,7 @@ const Left: React.FC<Props> = ({ data }) => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="description">
-                    <div className="absolute w-1/2 flex flex-col gap-5 items-start h-screen overflow-y-scroll">
+                    <div className="flex flex-col gap-5 items-start md:overflow-y-scroll">
                         <h1 className="text-4xl font-semibold">{data.title}</h1>
                         <span
                             className={cn(
