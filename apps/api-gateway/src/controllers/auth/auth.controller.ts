@@ -19,6 +19,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './types';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { signInternalToken } from '../../utils';
+import { Throttle } from '@nestjs/throttler';
 
 const __prod__ = process.env.NODE_ENV === 'production';
 
@@ -26,16 +27,19 @@ const __prod__ = process.env.NODE_ENV === 'production';
 export class AuthController {
     constructor(@Inject(MICROSERVICES.AUTH_SERVICE) private client: ClientProxy) {}
 
+    @Throttle({ default: { limit: 3, ttl: 3_600_000 } }) // 3 per hour
     @Post('register')
     async register(@Body() body: RegisterDto) {
         return this.client.send(AUTH.REGISTER, body);
     }
 
+    @Throttle({ default: { limit: 3, ttl: 3_600_000 } }) // 3 per hour
     @Post('confirm-email/:token')
     async confirmEmail(@Param('token', new ParseUUIDPipe({ version: '4' })) token: string) {
         return this.client.send(AUTH.CONFIRM_EMAIL, token);
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @Post('login')
     async login(
         @Body() body: LoginDto,
@@ -55,6 +59,7 @@ export class AuthController {
         return { accessToken };
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @ApiBearerAuth()
     @UseGuards(AuthGuard)
     @Post('logout')
@@ -64,6 +69,7 @@ export class AuthController {
         return await firstValueFrom(this.client.send(AUTH.LOGOUT, { internalToken }));
     }
 
+    @Throttle({ default: { limit: 60, ttl: 60_000 } })
     @Post('refresh_token')
     async refreshToken(
         @Req() req: Request,
@@ -84,11 +90,13 @@ export class AuthController {
         return { accessToken };
     }
 
+    @Throttle({ default: { limit: 3, ttl: 3_600_000 } }) // 3 per hour
     @Post('forgot-password')
     async forgotPassword(@Body() { email }: ForgotPasswordDto) {
         return this.client.send(AUTH.FORGOT_PASSWORD, { email });
     }
 
+    @Throttle({ default: { limit: 3, ttl: 3_600_000 } }) // 3 per hour
     @Post('reset-password/:token')
     async resetPassword(
         @Param('token', new ParseUUIDPipe({ version: '4' })) token: string,

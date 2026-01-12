@@ -13,6 +13,8 @@ import { EventsGateway } from './gateways/events.gateway';
 import { BullModule } from '@nestjs/bullmq';
 import { NotificationConsumer } from './workers/notification.worker';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -111,6 +113,12 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
             name: 'notifications-queue',
         }),
         PrometheusModule.register(),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 60000,
+                limit: 10,
+            },
+        ]),
     ],
     controllers: [
         UsersController,
@@ -120,6 +128,13 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         CompaniesController,
         SubmissionsController,
     ],
-    providers: [EventsGateway, NotificationConsumer],
+    providers: [
+        EventsGateway,
+        NotificationConsumer,
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
 })
 export class AppModule {}

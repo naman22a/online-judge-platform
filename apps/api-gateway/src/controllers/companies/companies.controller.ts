@@ -13,6 +13,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { AdminGuard } from '../../guards/admin.guard';
 import { signInternalToken } from '../../utils';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('companies')
 export class CompaniesController {
@@ -28,6 +29,7 @@ export class CompaniesController {
         return this.client.send(COMPANIES.FIND_ONE, { id });
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Post('bulk')
     create(@Body() body: BulkCreateCompaniesDto) {

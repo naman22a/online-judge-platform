@@ -20,6 +20,7 @@ import { AdminGuard } from '../../guards/admin.guard';
 import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
 import type { Request } from 'express';
 import { signInternalToken } from '../../utils';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('problems')
 export class ProblemsController {
@@ -44,6 +45,7 @@ export class ProblemsController {
         return this.client.send(PROBLEMS.FIND_ONE, { slug });
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Post()
     async createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
@@ -59,6 +61,7 @@ export class ProblemsController {
         });
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Delete(':id')
     deleteOneProblem(@Param('id', ParseIntPipe) id: number) {
@@ -66,6 +69,7 @@ export class ProblemsController {
         return this.client.send(PROBLEMS.DELETE, { internalToken, payload: { id } });
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Patch(':id')
     updateProblem(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProblemDto) {

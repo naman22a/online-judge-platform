@@ -4,12 +4,14 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '../../guards/auth.guard';
 import type { Request } from 'express';
 import { signInternalToken } from '../../utils';
+import { Throttle } from '@nestjs/throttler';
 
 @UseGuards(AuthGuard)
 @Controller('submissions')
 export class SubmissionsController {
     constructor(@Inject(MICROSERVICES.SUBMISSIONS_SERVICE) private client: ClientProxy) {}
 
+    @Throttle({ default: { limit: 30, ttl: 60_000 } })
     @Get(':id')
     findAll(@Req() req: Request, @Param('id', ParseIntPipe) problemId: number) {
         const userId = req.userId;

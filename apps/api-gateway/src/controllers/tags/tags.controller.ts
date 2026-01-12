@@ -13,6 +13,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { AdminGuard } from '../../guards/admin.guard';
 import { signInternalToken } from '../../utils';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('tags')
 export class TagsController {
@@ -28,6 +29,7 @@ export class TagsController {
         return this.client.send(TAGS.FIND_ONE, { id });
     }
 
+    @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Post('bulk')
     createTag(@Body() body: BulkCreateTagsDto) {
