@@ -7,6 +7,8 @@ import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InternalAuth } from '@leetcode/common';
 import { firstValueFrom } from 'rxjs';
+import { generateCacheKey } from '../utils';
+import { redis } from '../redis';
 
 @Controller()
 export class SubmissionsController {
@@ -14,6 +16,7 @@ export class SubmissionsController {
         private prisma: PrismaService,
         @InjectQueue('execution-queue') private executionQueue: Queue,
         @Inject(MICROSERVICES.PROBLEMS_SERVICE) private client: ClientProxy,
+        @InjectQueue('notifications-queue') private notificationsQueue: Queue,
     ) {}
 
     @InternalAuth('submissions:findAll')
@@ -57,6 +60,42 @@ export class SubmissionsController {
         if (!problemExists)
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
+        try {
+            const cacheKey = generateCacheKey(language, code, problemId);
+            const cachedResult = await redis.get(cacheKey);
+
+            if (cachedResult) {
+                const results = JSON.parse(cachedResult);
+
+                let correct = true;
+                for (const result of results) {
+                    correct = correct && result.success;
+                }
+
+                // create DB record
+                const submission = await this.prisma.submission.create({
+                    data: {
+                        code,
+                        language,
+                        problemId,
+                        userId,
+                        status: correct ? 'Accepted' : 'WrongAnswer',
+                    },
+                });
+
+                // skip execution queue, go directly to notifications
+                await this.notificationsQueue.add('execution-done', results);
+
+                return {
+                    jobId: null,
+                    cached: true,
+                    submissionId: submission.id,
+                };
+            }
+        } catch (error) {
+            console.error('Cache error:', error);
+        }
+
         // push job into execution queue
         const job = await this.executionQueue.add('execute-job', {
             code,
@@ -66,6 +105,6 @@ export class SubmissionsController {
             userId,
         });
 
-        return { jobId: job.id };
+        return { jobId: job.id, cached: false };
     }
 }
