@@ -23,10 +23,10 @@ jobs:
           echo "Pulling latest images..."
           docker compose pull
 
+          echo "Change directory"
+          cd ~/leetcode-microservices
+
           echo "Rolling update (no downtime)..."
           docker compose up -d --remove-orphans
-
-          echo "Pruning old images..."
-          docker image prune -f
 
           echo "Deployment completed successfully!"
