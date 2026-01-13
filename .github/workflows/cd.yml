@@ -1,42 +1,32 @@
-# name: CD Pipeline
+name: CD Pipeline
 
-# on:
-#   workflow_run:
-#     workflows: ["CI Pipeline"]
-#     types:
-#       - completed
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: self-hosted
 
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-#       - name: Deploy to Server
-#         uses: appleboy/ssh-action@v0.1.10
-#         with:
-#           host: ${{ secrets.SERVER_HOST }}
-#           username: ${{ secrets.SERVER_USER }}
-#           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-#           script: |
-#             echo "Pulling latest images from DockerHub..."
+      - name: Deploy Services
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          set -e
 
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-api-gateway:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-users-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-auth-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-problems-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-tags-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-companies-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-submissions-service:latest
-#             docker pull ${{ secrets.DOCKER_USERNAME }}/leetcode-execution-service:latest
+          echo "Pulling latest images..."
+          docker compose pull
 
-#             echo "Restarting services..."
+          echo "Rolling update (no downtime)..."
+          docker compose up -d --remove-orphans
 
-#             cd ~/leetcode-microservices
+          echo "Pruning old images..."
+          docker image prune -f
 
-#             docker compose down
-#             docker compose up -d
-
-#             echo "Deployment completed successfully!"
+          echo "Deployment completed successfully!"
