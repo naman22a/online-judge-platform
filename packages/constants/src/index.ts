@@ -78,7 +78,7 @@ int main(){
         defaultCode: '',
     },
     java: {
-        image: 'openjdk:17',
+        image: 'eclipse-temurin:17-jdk',
         compile: ['javac', 'Solution.java'],
         run: ['java', 'Solution'],
         defaultCode: `public class Solution {
@@ -124,7 +124,7 @@ func main() {
         run: ['php', 'solution.php'],
     },
     kotlin: {
-        image: 'openjdk:17',
+        image: 'eclipse-temurin:17-jdk',
         compile: ['kotlinc', 'Solution.kt', '-include-runtime', '-d', 'Solution.jar'],
         run: ['java', '-jar', 'Solution.jar'],
     },
