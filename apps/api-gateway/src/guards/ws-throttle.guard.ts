@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerRequest } from '@nestjs/throttler';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
@@ -8,16 +9,14 @@ export class WsThrottlerGuard extends ThrottlerGuard {
             requestProps;
 
         const client = context.switchToWs().getClient();
-        const tracker = client._socket.remoteAddress;
+        const tracker = client?._socket?.remoteAddress;
         const key = generateKey(context, tracker, throttler.name!);
         const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
             await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name!);
 
-        const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
-
-        // Throw an error when the user reached their limit.
+        console.log(isBlocked);
         if (isBlocked) {
-            await this.throwThrottlingException(context, {
+            throw new WsException({
                 limit,
                 ttl,
                 key,
