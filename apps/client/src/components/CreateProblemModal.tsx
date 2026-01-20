@@ -127,7 +127,6 @@ export default function CreateProblemModal() {
     });
 
     const onSubmit = async (data: ProblemFormData) => {
-        console.log(data);
         const newProblem = await mutation.mutateAsync(data);
         if (newProblem) {
             toast.success('Problem created');

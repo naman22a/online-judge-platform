@@ -27,9 +27,6 @@ export class AdminGuard implements CanActivate {
         const req = context.switchToHttp().getRequest() as Request;
         const authorization = req.headers['authorization'];
 
-        console.log('Raw body:', req.body);
-        console.log('Content-Type:', req.headers['content-type']);
-
         if (!authorization) {
             throw new UnauthorizedException();
         }

@@ -49,8 +49,6 @@ export class ExecutionService {
             if (!fsSync.existsSync(filePath)) {
                 return { success: false, output: 'Failed to create code file' };
             }
-
-            console.log(`File created at: ${filePath}`); // Debug log
         } catch (error) {
             console.error('File write error:', error);
             return { success: false, output: 'Failed to write code file' };
