@@ -9,7 +9,7 @@ import { generateCacheKey } from '../utils';
 
 @Processor('execution-queue')
 export class ExecutionConsumer extends WorkerHost {
-    private readonly CACHE_TTL = 60 * 60 * 24;
+    private readonly CACHE_TTL = 60; // secs
 
     constructor(
         private prisma: PrismaService,
