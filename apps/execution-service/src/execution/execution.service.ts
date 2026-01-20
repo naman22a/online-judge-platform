@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'child_process';
-import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { Language } from '@leetcode/database';

@@ -15,15 +15,22 @@ import {
 import { toast } from 'sonner';
 import { useStore } from '@/store';
 import { LANG_CONFIGS } from '@/constants';
+import { cn } from '../lib/utils';
 
 interface Props {
     data: IProblem;
 }
 
+export interface ExecutionResult {
+    success: boolean;
+    output: string;
+}
+
 const Right: React.FC<Props> = ({ data }) => {
     const [loading, setLoading] = useState(false);
+    const [results, setResults] = useState<ExecutionResult[]>([]);
     const queryClient = useQueryClient();
-    const { language, code, setCode, setLanguage, errors, setErrors } = useStore();
+    const { language, code, setCode, setLanguage } = useStore();
 
     useEffect(() => {
         const token = getAccessToken();
@@ -41,12 +48,12 @@ const Right: React.FC<Props> = ({ data }) => {
             setLoading(false);
             queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
-            const results = res as any;
+            const results = res as ExecutionResult[];
+            setResults(res as ExecutionResult[]);
             let solved = true;
             for (let result of results) {
                 if (!result.success) {
                     solved = false;
-                    setErrors([...errors, result.output]);
                 }
             }
             if (solved) {
@@ -67,8 +74,7 @@ const Right: React.FC<Props> = ({ data }) => {
         const socket = getSocket();
         if (!socket) return;
 
-        console.log(code, language, socket.id, data.id);
-        setErrors([]);
+        setResults([]);
         setLoading(true);
         socket.emit('create-submission', {
             code,
@@ -105,7 +111,10 @@ const Right: React.FC<Props> = ({ data }) => {
                     theme="vs-dark"
                     language={language}
                     value={code}
-                    onChange={(e) => setCode(e!)}
+                    onChange={(e) => {
+                        setCode(e!);
+                        setResults([]);
+                    }}
                 />
             </div>
             <div className="flex gap-5">
@@ -117,10 +126,18 @@ const Right: React.FC<Props> = ({ data }) => {
                     Submit
                 </Button>
             </div>
-            {errors.length > 0 && (
-                <div className="text-red-500 my-2">
-                    {errors.map((error, index) => (
-                        <p key={index}>{error}</p>
+            {results.length > 0 && (
+                <div className="my-2">
+                    {results.map((result, index) => (
+                        <div
+                            className={cn(
+                                'p-5 my-2 rounded',
+                                result.success ? 'bg-green-500' : 'bg-red-500',
+                            )}
+                        >
+                            <h3 className="font-semibold text-lg">Test Case {index + 1}</h3>
+                            <span className="font-semibold">Your Output:</span> {result.output}
+                        </div>
                     ))}
                 </div>
             )}

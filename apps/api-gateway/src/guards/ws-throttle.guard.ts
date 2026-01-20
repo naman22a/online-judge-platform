@@ -14,7 +14,6 @@ export class WsThrottlerGuard extends ThrottlerGuard {
         const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
             await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name!);
 
-        console.log(isBlocked);
         if (isBlocked) {
             throw new WsException({
                 limit,
