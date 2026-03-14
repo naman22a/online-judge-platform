@@ -5,6 +5,9 @@ on:
     branches: [ "master" ]
 
 jobs:
+    code-quality:
+        uses: ./.github/workflows/code-quality.yml
+
     secrets-scan:
         uses: ./.github/workflows/secrets-scan.yml
         secrets: inherit
@@ -13,6 +16,6 @@ jobs:
         uses: ./.github/workflows/docker-lint.yml
 
     docker-build-and-push:
-      needs: [secrets-scan, docker-scan]
+      needs: [code-quality, secrets-scan, docker-scan]
       uses: ./.github/workflows/docker-build-and-push.yml
       secrets: inherit
