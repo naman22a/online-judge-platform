@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { PrismaService } from '@leetcode/database';
 import { CreateSubmissionDto } from '@leetcode/types';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { TAGS } from '@leetcode/constants';
