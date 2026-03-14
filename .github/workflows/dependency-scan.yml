@@ -1,0 +1,25 @@
+name: Dependency Scan
+
+on:
+    workflow_call:
+
+jobs:
+    dependency-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Code Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup NodeJS
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '20'
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Install Dependencies
+              run: pnpm install
+
+            - name: Run Audit
+              run: pnpm audit --audit-level critical
