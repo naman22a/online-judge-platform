@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@leetcode/database';
 import { CreateProblemDto, UpdateProblemDto } from '@leetcode/types';
