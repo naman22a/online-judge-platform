@@ -69,7 +69,7 @@ export class ProblemsService {
         }
 
         return this.prisma.$transaction(async (tx) => {
-            const updatedProblem = await tx.problem.update({
+            await tx.problem.update({
                 where: { id },
                 data: {
                     ...problemData,

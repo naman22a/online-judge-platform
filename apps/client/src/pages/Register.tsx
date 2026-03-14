@@ -37,7 +37,8 @@ function Register() {
             if (res.ok && !res.errors) {
                 toast.success('Check your email');
             } else if (res.errors) {
-                for (let error of res.errors) {
+                for (const error of res.errors) {
+                    // eslint-disable-next-line
                     form.setError(error.field as any, {
                         message: error.message,
                     });

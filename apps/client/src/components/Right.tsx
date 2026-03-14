@@ -51,7 +51,7 @@ const Right: React.FC<Props> = ({ data }) => {
             const results = res as ExecutionResult[];
             setResults(res as ExecutionResult[]);
             let solved = true;
-            for (let result of results) {
+            for (const result of results) {
                 if (!result.success) {
                     solved = false;
                 }

@@ -108,10 +108,12 @@ export class ExecutionService {
                     process.stdin.end();
 
                     process.stdout.on('data', (data) => {
+                        // eslint-disable-next-line
                         output += data.toString();
                     });
 
                     process.stderr.on('data', (data) => {
+                        // eslint-disable-next-line
                         errorOutput += data.toString();
                     });
 

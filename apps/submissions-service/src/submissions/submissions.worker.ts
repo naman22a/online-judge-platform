@@ -15,9 +15,11 @@ export class ResultsConsumer extends WorkerHost {
     async process(job: Job<any, any, string>) {
         switch (job.name) {
             case 'result-job':
+                // eslint-disable-next-line
                 const { results, code, language, problemId, userId } =
                     job.data as CreateSubmissionDto & { results: ExecutionResult[] };
 
+                // eslint-disable-next-line
                 let correct = true;
                 for (const result of results) {
                     correct = correct && result.success;

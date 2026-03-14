@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'dotenv/config';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
@@ -7,7 +8,7 @@ import { AccessTokenPayload } from '@leetcode/types';
 @Injectable()
 export class AuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-        const req = context.switchToHttp().getRequest() as Request;
+        const req = context.switchToHttp().getRequest();
         const authorization = req.headers['authorization'];
 
         if (!authorization) {

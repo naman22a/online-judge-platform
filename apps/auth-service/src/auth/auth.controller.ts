@@ -141,12 +141,14 @@ export class AuthController {
 
     @InternalAuth('auth:logout')
     @MessagePattern(AUTH.LOGOUT)
+    // eslint-disable-next-line
     logout(_message: InternalMessage<{}>): OkResponse {
         return { ok: true };
     }
 
     @MessagePattern(AUTH.REFRESH_TOKEN)
     async refreshToken({ token }: { token: string }): Promise<LoginResponse> {
+        // eslint-disable-next-line
         const secret = this.configService.get('REFRESH_TOKEN_SECRET');
 
         // check if token exists

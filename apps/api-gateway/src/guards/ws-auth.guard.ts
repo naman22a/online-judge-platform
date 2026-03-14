@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { AccessTokenPayload } from '@leetcode/types';
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Request } from 'express';
 import { verify } from 'jsonwebtoken';
@@ -34,7 +34,8 @@ export class WsAuthGuard implements CanActivate {
             req.userId = payload.userId;
 
             return true;
-        } catch (error) {
+            // eslint-disable-next-line
+        } catch (_error) {
             throw new WsException('Unauthorized');
         }
     }

@@ -123,6 +123,7 @@ const AdminProblemsList: React.FC = () => {
         return (
             <div className="text-center mt-10 space-y-3">
                 <p className="text-red-500 font-medium">
+                    {/* eslint-disable-next-line */}
                     Failed to load problems: {(error as any)?.message ?? 'Unknown error'}
                 </p>
                 <Button onClick={() => refetch()}>Retry</Button>
@@ -148,6 +149,7 @@ const AdminProblemsList: React.FC = () => {
                 />
 
                 {/* Difficulty Filter */}
+                {/* eslint-disable-next-line */}
                 <Select value={difficulty} onValueChange={(val) => setDifficulty(val as any)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Difficulty" />

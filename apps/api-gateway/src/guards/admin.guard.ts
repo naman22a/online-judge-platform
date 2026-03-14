@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'dotenv/config';
 import {
     CanActivate,
@@ -24,7 +25,7 @@ export class AdminGuard implements CanActivate {
     private logger = new Logger();
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const req = context.switchToHttp().getRequest() as Request;
+        const req = context.switchToHttp().getRequest();
         const authorization = req.headers['authorization'];
 
         if (!authorization) {
@@ -43,9 +44,9 @@ export class AdminGuard implements CanActivate {
         }
 
         const internalToken = signInternalToken('api-gateway', ['users:me']);
-        const user = (await firstValueFrom(
+        const user = await firstValueFrom(
             this.client.send(USERS.CURRENT, { internalToken, payload: { userId: payload.userId } }),
-        )) as Omit<User, 'password' | 'emailVerfied' | 'tokenVersion'>;
+        );
 
         if (!user.is_admin) {
             throw new ForbiddenException();

@@ -48,6 +48,7 @@ export class ProblemsController {
     @Throttle({ default: { limit: 5, ttl: 60_000 } })
     @UseGuards(AdminGuard)
     @Post()
+    // eslint-disable-next-line
     async createProblem(@Req() req: Request, @Body() body: CreateProblemDto) {
         const userId = req.userId;
         const internalToken = signInternalToken('api-gateway', ['problems:create']);

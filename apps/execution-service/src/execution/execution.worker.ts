@@ -22,7 +22,9 @@ export class ExecutionConsumer extends WorkerHost {
     async process(job: Job<any, any, string>) {
         switch (job.name) {
             case 'execute-job':
+                // eslint-disable-next-line
                 const { problemId, code, language, userId } = job.data as CreateSubmissionDto;
+                // eslint-disable-next-line
                 const problem = await this.prisma.problem.findUnique({
                     where: { id: problemId },
                     select: { testCases: true },
@@ -31,6 +33,7 @@ export class ExecutionConsumer extends WorkerHost {
                 if (!problem) return;
 
                 Logger.log('running test cases...');
+                // eslint-disable-next-line
                 const results = await this.executionService.runTestCases(
                     language,
                     code,

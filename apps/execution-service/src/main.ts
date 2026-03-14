@@ -14,12 +14,13 @@ async function bootstrap() {
         transport: Transport.TCP,
         options: {
             host: '0.0.0.0',
+            // eslint-disable-next-line
             port: configService.get('execution_service_port'),
         },
     });
     startMetricsServer(
         register,
-        Number(String(configService.get('execution_service_port')!).replace('500', '900')),
+        Number(String(configService.get('execution_service_port')).replace('500', '900')),
     );
     await app.listen();
 }

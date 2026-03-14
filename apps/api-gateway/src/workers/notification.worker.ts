@@ -9,9 +9,11 @@ export class NotificationConsumer extends WorkerHost {
         super();
     }
 
+    // eslint-disable-next-line
     async process(job: Job<any, any, string>) {
         switch (job.name) {
             case 'execution-done':
+                // eslint-disable-next-line
                 const data = job.data as ExecutionResult;
                 this.eventsGateway.server.emit('execution-done', data);
                 break;

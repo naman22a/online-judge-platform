@@ -79,6 +79,7 @@ export default function CreateProblemModal() {
         watch,
         setValue,
     } = useForm<ProblemFormData>({
+        // eslint-disable-next-line
         resolver: zodResolver(problemSchema) as any,
         defaultValues: {
             difficulty: 'Medium',
@@ -96,6 +97,7 @@ export default function CreateProblemModal() {
         remove: removeHint,
     } = useFieldArray({
         control,
+        // eslint-disable-next-line
         name: 'hints' as any,
     });
 

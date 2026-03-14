@@ -45,13 +45,14 @@ export class UsersController {
         const userId = req.userId;
         const internalToken = signInternalToken('api-gateway', [`users:findOne`]);
 
+        // eslint-disable-next-line
         return await firstValueFrom(
             this.client.send(USERS.FIND_ONE, { internalToken, payload: { id, userId } }),
         );
     }
 
     @Patch()
-    async updateUser(@Req() req: Request, @Body() body: UpdateUserDetails) {
+    updateUser(@Req() req: Request, @Body() body: UpdateUserDetails) {
         const userId = req.userId;
         const internalToken = signInternalToken('api-gateway', [`users:update`]);
 

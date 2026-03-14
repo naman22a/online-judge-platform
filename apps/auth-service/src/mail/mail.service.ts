@@ -16,9 +16,9 @@ export class MailService {
     constructor(private configService: ConfigService<EnvironmentVariables>) {}
 
     async sendEmail(email: string, { url, subject }: Metadata) {
-        let testAccount = await nodemailer.createTestAccount();
+        const testAccount = await nodemailer.createTestAccount();
 
-        let transporter = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
             host: 'smtp.ethereal.email',
             port: 587,
             secure: false,
@@ -28,7 +28,7 @@ export class MailService {
             },
         });
 
-        let info = await transporter.sendMail({
+        const info = await transporter.sendMail({
             from: '"Online Judge Platform" <oj@oj.com>',
             to: email,
             subject,
@@ -41,6 +41,7 @@ export class MailService {
 
     async createConfirmationMetadata(userId: number): Promise<Metadata> {
         const token = v4();
+        // eslint-disable-next-line
         const client_url = this.configService.get('CLIENT_URL');
 
         await redis.set(
@@ -58,6 +59,7 @@ export class MailService {
 
     async createForgotpasswordMetadata(userId: number): Promise<Metadata> {
         const token = v4();
+        // eslint-disable-next-line
         const client_url = this.configService.get('CLIENT_URL');
 
         await redis.set(

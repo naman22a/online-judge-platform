@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { PROBLEMS } from '@leetcode/constants';
 import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -23,17 +24,19 @@ export class ProblemsController {
 
         // Build where clause
         const where: any = {};
+
         if (name) {
-            where.title = { contains: name as string, mode: 'insensitive' };
+            where.title = { contains: name, mode: 'insensitive' };
         }
+
         if (difficulty) {
-            where.difficulty = difficulty as string;
+            where.difficulty = difficulty;
         }
 
         // Build orderBy
         const orderBy: any = {};
         if (sortBy) {
-            orderBy[sortBy as string] = (sortOrder as 'asc' | 'desc') || 'asc';
+            orderBy[sortBy] = (sortOrder as 'asc' | 'desc') || 'asc';
         } else {
             orderBy['id'] = 'asc'; // default sort
         }

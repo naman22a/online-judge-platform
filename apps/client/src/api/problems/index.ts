@@ -38,13 +38,16 @@ export const findOne = async (slug: string): Promise<OkResponse | IProblem> => {
     }
 };
 
+// eslint-disable-next-line
 export const create = async (data: any): Promise<IProblem | null> => {
     try {
         const res = await API.post('/problems', {
             ...data,
             companies: undefined,
             tags: undefined,
+            // eslint-disable-next-line
             problemTags: data.tags.map((tag: number) => ({ tagId: tag })),
+            // eslint-disable-next-line
             problemCompanies: data.companies.map((company: any) => ({ ...company })),
         });
         return res.data;

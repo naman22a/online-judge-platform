@@ -7,9 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from './ui/spinner';
 
-interface Props extends PropsWithChildren {}
-
-const LogoutButton: React.FC<Props> = ({ children }) => {
+const LogoutButton: React.FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const logoutMut = useMutation({ mutationKey: ['auth', 'logout'], mutationFn: api.auth.logout });

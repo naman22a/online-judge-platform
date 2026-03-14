@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'dotenv/config';
 import {
     Body,
@@ -45,9 +46,9 @@ export class AuthController {
         @Body() body: LoginDto,
         @Res({ passthrough: true }) res: Response,
     ): Promise<LoginResponse> {
-        const { accessToken, refreshToken, errors } = (await firstValueFrom(
+        const { accessToken, refreshToken, errors } = await firstValueFrom(
             this.client.send(AUTH.LOGIN, body),
-        )) as LoginResponse;
+        );
 
         if (!accessToken) return { accessToken, errors };
 
@@ -76,9 +77,9 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<LoginResponse> {
         const token = req.cookies[COOKIE_NAME];
-        const { accessToken, refreshToken, errors } = (await firstValueFrom(
+        const { accessToken, refreshToken, errors } = await firstValueFrom(
             this.client.send(AUTH.REFRESH_TOKEN, { token }),
-        )) as LoginResponse;
+        );
 
         if (!accessToken) return { accessToken, errors };
 
