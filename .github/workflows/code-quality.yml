@@ -15,11 +15,11 @@ jobs:
               with:
                   node-version: '20'
 
-            - name: Install Dependencies
-              run: pnpm install
-
             - name: Install pnpm
               uses: pnpm/action-setup@v4
+
+            - name: Install Dependencies
+              run: pnpm install
 
             - name: Run Linter
               run: pnpm lint
