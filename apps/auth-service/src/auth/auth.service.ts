@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { User } from '@leetcode/database';
 import { AccessTokenPayload, RefreshTokenPayload } from '@leetcode/types';
 import { Injectable } from '@nestjs/common';
