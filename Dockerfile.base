@@ -2,7 +2,7 @@
 # BASE (Contains pnpm, turbo, workspace tools)
 # -------------------------------------------------------------------------------------
 FROM node:20-alpine AS base
-RUN npm install -g pnpm turbo
+RUN npm install -g pnpm@9 turbo@2
 WORKDIR /app
 
 # -------------------------------------------------------------------------------------
@@ -26,10 +26,8 @@ COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install workspace root deps only once — includes NestJS globally
-RUN pnpm install --ignore-scripts
-
 # Install ONLY required deps for pruned project
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --ignore-scripts && pnpm install --frozen-lockfile
 
 # Bring in full source code (still pruned minimal workspace)
 COPY --from=prune /app/out/full/ .
@@ -60,11 +58,11 @@ ENV SERVICE_NAME=${SERVICE_NAME}
 WORKDIR /app
 
 # Install Docker
-RUN apk add --no-cache docker-cli
+RUN apk add --no-cache docker-cli=26.1.4-r0
 
 # Copy built code
 COPY --from=builder /app .
 
 # Default port (overridden by each service)
 EXPOSE 5000
-CMD sh -c "node apps/${SERVICE_NAME}/dist/main.js"
+CMD ["sh", "-c", "node apps/${SERVICE_NAME}/dist/main.js"]
