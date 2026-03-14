@@ -7,10 +7,10 @@ jobs:
     validate-dockerfile:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Validate Dockerfile
-              uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: "**/Dockerfile*"
+            - uses: actions/checkout@v4
+            
+            - name: Install Hadolint
+              run: sudo apt-get update && sudo apt-get install -y hadolint
+              
+            - name: Find and Lint all Dockerfiles
+              run: find . -name "Dockerfile*" -print0 | xargs -0 hadolint
