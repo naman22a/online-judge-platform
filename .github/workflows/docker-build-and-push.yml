@@ -2,11 +2,6 @@ name: Docker Build and Push
 
 on:
   workflow_call:
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
 
 jobs:
   build:
