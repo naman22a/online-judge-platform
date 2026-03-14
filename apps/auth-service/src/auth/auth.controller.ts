@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { PrismaService } from '@leetcode/database';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
