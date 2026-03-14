@@ -5,47 +5,12 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    secrets-scan:
+        uses: ./.github/workflows/secrets-scan.yml
+        secrets: inherit
 
-    strategy:
-      matrix:
-        service:
-          - api-gateway
-          - users-service
-          - auth-service
-          - problems-service
-          - tags-service
-          - companies-service
-          - submissions-service
-          - execution-service
+    docker-scan:
+        uses: ./.github/workflows/docker-lint.yml
 
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Login to DockerHub
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
-    - name: Run tests in Docker for ${{ matrix.service }}
-      run: |
-        docker build \
-        -f Dockerfile.base \
-        --target test \
-        --build-arg SERVICE_NAME=${{ matrix.service }} \
-        --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-        .
-
-    - name: Build Docker Image for ${{ matrix.service }}
-      run: |
-        docker build \
-          -f Dockerfile.base \
-          --build-arg SERVICE_NAME=${{ matrix.service }} \
-          --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-          -t ${{ secrets.DOCKER_USERNAME }}/leetcode-${{ matrix.service }}:latest \
-          .
-
-    - name: Push Docker Image for ${{ matrix.service }}
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/leetcode-${{ matrix.service }}:latest
+    docker-build-and-push:
+      uses: ./.github/workflows/docker-build-and-push.yml
