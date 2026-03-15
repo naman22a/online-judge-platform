@@ -66,5 +66,4 @@ COPY --from=builder /app .
 # Default port (overridden by each service)
 EXPOSE 5000
 
-ENTRYPOINT ["node"]
-CMD ["apps/${SERVICE_NAME}/dist/main.js"]
+CMD ["sh", "-c", "node apps/${SERVICE_NAME}/dist/main.js"]
