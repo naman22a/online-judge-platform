@@ -1,10 +1,11 @@
-name: CI Pipeline
+name: CI CD Pipeline
 
 on:
   push:
     branches: [ "master" ]
 
 jobs:
+    # CI
     code-quality:
         uses: ./.github/workflows/code-quality.yml
 
@@ -22,3 +23,8 @@ jobs:
       needs: [code-quality, secrets-scan, dependency-scan, docker-scan]
       uses: ./.github/workflows/docker-build-test-and-push.yml
       secrets: inherit
+
+    # CD
+    deploy:
+      needs: [docker-build-test-and-push]
+      uses: ./.github/workflows/deploy.yml
