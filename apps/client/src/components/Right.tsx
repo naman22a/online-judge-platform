@@ -44,7 +44,7 @@ const Right: React.FC<Props> = ({ data }) => {
             console.log('Connected:', socket.id);
         });
 
-        socket.on('execution-done', (res) => {
+        socket.on('execution-done', (res: any) => {
             setLoading(false);
             queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
@@ -111,7 +111,7 @@ const Right: React.FC<Props> = ({ data }) => {
                     theme="vs-dark"
                     language={language}
                     value={code}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                         setCode(e!);
                         setResults([]);
                     }}
@@ -130,6 +130,7 @@ const Right: React.FC<Props> = ({ data }) => {
                 <div className="my-2">
                     {results.map((result, index) => (
                         <div
+                            key={index}
                             className={cn(
                                 'p-5 my-2 rounded',
                                 result.success ? 'bg-green-500' : 'bg-red-500',

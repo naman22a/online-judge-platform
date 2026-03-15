@@ -15,7 +15,7 @@
             ]
         },
         "lint": {
-            "dependsOn": ["^lint"]
+            "outputs": []
         },
         "test": {},
         "check-types": {
