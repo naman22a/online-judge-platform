@@ -65,4 +65,6 @@ COPY --from=builder /app .
 
 # Default port (overridden by each service)
 EXPOSE 5000
-CMD ["sh", "-c", "node apps/${SERVICE_NAME}/dist/main.js"]
+
+ENTRYPOINT ["node"]
+CMD ["apps/submissions-service/dist/main.js"]
