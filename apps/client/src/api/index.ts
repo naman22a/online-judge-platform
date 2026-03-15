@@ -6,8 +6,6 @@ const API = axios.create({
     withCredentials: true,
 });
 
-// This is for a useless commit
-
 API.interceptors.request.use(
     (config) => {
         const token = getAccessToken();
