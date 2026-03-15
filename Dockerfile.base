@@ -67,4 +67,4 @@ COPY --from=builder /app .
 EXPOSE 5000
 
 ENTRYPOINT ["node"]
-CMD ["apps/submissions-service/dist/main.js"]
+CMD ["apps/${SERVICE_NAME}/dist/main.js"]
