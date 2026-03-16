@@ -32,7 +32,7 @@ services:
             retries: 5
 
     prisma-migrate:
-        image: naman22a/leetcode-problems-service
+        image: naman22a/leetcode-problems-service:latest
         container_name: leetcode-prisma-migrate
         command: sh -c "cd /app/packages/database && npx prisma migrate deploy"
         environment:
@@ -46,7 +46,7 @@ services:
     #        API GATEWAY
     # ============================
     api-gateway:
-        image: naman22a/leetcode-api-gateway
+        image: naman22a/leetcode-api-gateway:latest
         container_name: leetcode-api-gateway
         ports:
             - '5000:5000'
@@ -97,7 +97,7 @@ services:
     #        USERS SERVICE
     # ============================
     users-service:
-        image: naman22a/leetcode-users-service
+        image: naman22a/leetcode-users-service:latest
         container_name: leetcode-users-service
         ports:
             - '5001:5001'
@@ -147,7 +147,7 @@ services:
     #        AUTH SERVICE
     # ============================
     auth-service:
-        image: naman22a/leetcode-auth-service
+        image: naman22a/leetcode-auth-service:latest
         container_name: leetcode-auth-service
         ports:
             - '5002:5002'
@@ -197,7 +197,7 @@ services:
     #        PROBLEMS SERVICE
     # ============================
     problems-service:
-        image: naman22a/leetcode-problems-service
+        image: naman22a/leetcode-problems-service:latest
         container_name: leetcode-problems-service
         ports:
             - '5003:5003'
@@ -245,7 +245,7 @@ services:
     #        TAGS SERVICE
     # ============================
     tags-service:
-        image: naman22a/leetcode-tags-service
+        image: naman22a/leetcode-tags-service:latest
         container_name: leetcode-tags-service
         ports:
             - '5004:5004'
@@ -293,7 +293,7 @@ services:
     #        COMPANIES SERVICE
     # ============================
     companies-service:
-        image: naman22a/leetcode-companies-service
+        image: naman22a/leetcode-companies-service:latest
         container_name: leetcode-companies-service
         ports:
             - '5005:5005'
@@ -341,7 +341,7 @@ services:
     #        SUBMISSIONS SERVICE
     # ============================
     submissions-service:
-        image: naman22a/leetcode-submissions-service
+        image: naman22a/leetcode-submissions-service:latest
         container_name: leetcode-submissions-service
         ports:
             - '5006:5006'
@@ -391,7 +391,7 @@ services:
     #        EXECUTION SERVICE
     # ============================
     execution-service:
-        image: naman22a/leetcode-execution-service
+        image: naman22a/leetcode-execution-service:latest
         container_name: leetcode-execution-service
         ports:
             - '5007:5007'
