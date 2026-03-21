@@ -48,7 +48,6 @@ export class ProblemsService {
                 problemTags: { include: { tag: true } },
                 problemCompanies: { include: { company: true } },
                 testCases: true,
-                createdBy: true,
             },
         });
     }
