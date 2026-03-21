@@ -233,19 +233,19 @@ async function main() {
             testCases: {
                 create: [
                     {
-                        input: '[2,7,11,15]\n9',
-                        expectedOutput: '[0,1]',
+                        input: '4\n2 7 11 15\n9',
+                        expectedOutput: '0 1',
                         isSample: true,
                         explanation: 'nums[0] + nums[1] = 2 + 7 = 9',
                     },
                     {
-                        input: '[3,2,4]\n6',
-                        expectedOutput: '[1,2]',
+                        input: '3\n3 2 4\n6',
+                        expectedOutput: '1 2',
                         isSample: true,
                         explanation: 'nums[1] + nums[2] = 2 + 4 = 6',
                     },
-                    { input: '[3,3]\n6', expectedOutput: '[0,1]', isSample: false },
-                    { input: '[1,2,3,4,5]\n9', expectedOutput: '[3,4]', isSample: false },
+                    { input: '2\n3 3\n6', expectedOutput: '0 1', isSample: false },
+                    { input: '5\n1 2 3 4 5\n9', expectedOutput: '3 4', isSample: false },
                 ],
             },
             problemTags: {
@@ -352,18 +352,18 @@ async function main() {
             testCases: {
                 create: [
                     {
-                        input: '[7,1,5,3,6,4]',
+                        input: '6\n7 1 5 3 6 4',
                         expectedOutput: '5',
                         isSample: true,
                         explanation: 'Buy on day 2, sell on day 5',
                     },
                     {
-                        input: '[7,6,4,3,1]',
+                        input: '5\n7 6 4 3 1',
                         expectedOutput: '0',
                         isSample: true,
                         explanation: 'No profit possible',
                     },
-                    { input: '[2,4,1]', expectedOutput: '2', isSample: false },
+                    { input: '3\n2 4 1', expectedOutput: '2', isSample: false },
                 ],
             },
             problemTags: {
