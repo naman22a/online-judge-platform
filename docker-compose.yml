@@ -42,6 +42,14 @@ services:
                 condition: service_healthy
         restart: on-failure
 
+    seed:
+        image: naman22a/leetcode-problems-service:latest
+        container_name: leetcode-prisma-seed
+        command: sh -c "cd /app/packages/database && npx ts-node prisma/seed.ts"
+        depends_on:
+            postgres:
+                condition: service_healthy
+
     # ============================
     #        API GATEWAY
     # ============================
