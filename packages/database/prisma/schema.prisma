@@ -5,7 +5,12 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["users", "problems", "submissions", "contests"]
 }
+
+// ===========================
+//        USERS SCHEMA
+// ===========================
 
 model User {
   id           Int      @id @default(autoincrement())
@@ -24,20 +29,13 @@ model User {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  // Relations
-  problemsCreated     Problem[]            @relation("CreatedProblems")
-  submissions         Submission[]
-  userProblemStatus   UserProblemStatus[]
-  editorials          Editorial[]
-  contestsCreated     Contest[]            @relation("CreatedContests")
-  contestParticipants ContestParticipant[]
-  comments            Comment[]
-  discussionVotes     DiscussionVote[]
-  bookmarks           Bookmark[]
-  problemLikes        ProblemLike[]
-
   @@map("users")
+  @@schema("users")
 }
+
+// ===========================
+//      PROBLEMS SCHEMA
+// ===========================
 
 model Problem {
   id               Int        @id @default(autoincrement())
@@ -57,22 +55,18 @@ model Problem {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  // Relations
-  createdBy         User                @relation("CreatedProblems", fields: [createdById], references: [id])
-  problemTags       ProblemTag[]
-  problemCompanies  ProblemCompany[]
-  testCases         TestCase[]
-  submissions       Submission[]
-  userProblemStatus UserProblemStatus[]
-  editorials        Editorial[]
-  contestProblems   ContestProblem[]
-  comments          Comment[]
-  bookmarks         Bookmark[]
-  problemLikes      ProblemLike[]
+  problemTags      ProblemTag[]
+  problemCompanies ProblemCompany[]
+  testCases        TestCase[]
+  editorials       Editorial[]
+  comments         Comment[]
+  bookmarks        Bookmark[]
+  problemLikes     ProblemLike[]
 
   @@index([difficulty])
   @@index([slug])
   @@map("problems")
+  @@schema("problems")
 }
 
 model Tag {
@@ -82,22 +76,22 @@ model Tag {
   description String?  @db.Text
   createdAt   DateTime @default(now())
 
-  // Relations
   problemTags ProblemTag[]
 
   @@map("tags")
+  @@schema("problems")
 }
 
 model ProblemTag {
   problemId Int
   tagId     Int
 
-  // Relations
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
   tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([problemId, tagId])
   @@map("problem_tags")
+  @@schema("problems")
 }
 
 model Company {
@@ -107,10 +101,10 @@ model Company {
   logoUrl   String?  @db.VarChar(500)
   createdAt DateTime @default(now())
 
-  // Relations
   problemCompanies ProblemCompany[]
 
   @@map("companies")
+  @@schema("problems")
 }
 
 model ProblemCompany {
@@ -119,12 +113,12 @@ model ProblemCompany {
   frequency     Int       @default(1)
   lastAskedDate DateTime? @db.Date
 
-  // Relations
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@id([problemId, companyId])
   @@map("problem_companies")
+  @@schema("problems")
 }
 
 model TestCase {
@@ -137,11 +131,207 @@ model TestCase {
   explanation    String?  @db.Text
   createdAt      DateTime @default(now())
 
-  // Relations
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   @@index([problemId])
   @@map("test_cases")
+  @@schema("problems")
+}
+
+model Editorial {
+  id              Int      @id @default(autoincrement())
+  problemId       Int
+  title           String   @db.VarChar(255)
+  approach        String?  @db.VarChar(100)
+  content         String   @db.Text
+  codeSnippets    Json?
+  timeComplexity  String?  @db.VarChar(100)
+  spaceComplexity String?  @db.VarChar(100)
+  isOfficial      Boolean  @default(true)
+  createdById     Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("editorials")
+  @@schema("problems")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  problemId  Int
+  userId     Int
+  parentId   Int?
+  title      String?  @db.VarChar(255)
+  content    String   @db.Text
+  isSolution Boolean  @default(false)
+  language   String?  @db.VarChar(50)
+  upvotes    Int      @default(0)
+  downvotes  Int      @default(0)
+  isPinned   Boolean  @default(false)
+  isDeleted  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  problem         Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  parent          Comment?         @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies         Comment[]        @relation("CommentReplies")
+  discussionVotes DiscussionVote[]
+
+  @@index([problemId])
+  @@index([userId])
+  @@map("comments")
+  @@schema("problems")
+}
+
+model DiscussionVote {
+  userId    Int
+  commentId Int
+  voteType  VoteType
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, commentId])
+  @@map("discussion_votes")
+  @@schema("problems")
+}
+
+model Bookmark {
+  userId    Int
+  problemId Int
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([userId, problemId])
+  @@index([userId])
+  @@map("bookmarks")
+  @@schema("problems")
+}
+
+model ProblemLike {
+  userId    Int
+  problemId Int
+  isLike    Boolean
+  createdAt DateTime @default(now())
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([userId, problemId])
+  @@map("problem_likes")
+  @@schema("problems")
+}
+
+// ===========================
+//     SUBMISSIONS SCHEMA
+// ===========================
+
+model Submission {
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  problemId       Int
+  language        Language
+  code            String           @db.Text
+  status          SubmissionStatus
+  runtime         Int?
+  memory          Int?
+  testCasesPassed Int              @default(0)
+  totalTestCases  Int              @default(0)
+  errorMessage    String?          @db.Text
+  submittedAt     DateTime         @default(now())
+
+  userProblemStatus UserProblemStatus[]
+
+  @@index([userId, problemId])
+  @@index([status])
+  @@map("submissions")
+  @@schema("submissions")
+}
+
+model UserProblemStatus {
+  userId           Int
+  problemId        Int
+  status           ProblemStatus
+  lastAttemptedAt  DateTime?
+  solvedAt         DateTime?
+  attempts         Int           @default(0)
+  lastSubmissionId Int?
+
+  submission Submission? @relation(fields: [lastSubmissionId], references: [id])
+
+  @@id([userId, problemId])
+  @@index([userId, problemId])
+  @@map("user_problem_status")
+  @@schema("submissions")
+}
+
+// ===========================
+//      CONTESTS SCHEMA
+// ===========================
+
+model Contest {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  duration    Int
+  isPublic    Boolean  @default(true)
+  createdById Int
+  createdAt   DateTime @default(now())
+
+  contestProblems     ContestProblem[]
+  contestParticipants ContestParticipant[]
+
+  @@index([startTime])
+  @@map("contests")
+  @@schema("contests")
+}
+
+model ContestProblem {
+  contestId    Int
+  problemId    Int
+  problemOrder Int
+  points       Int @default(100)
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  @@id([contestId, problemId])
+  @@map("contest_problems")
+  @@schema("contests")
+}
+
+model ContestParticipant {
+  id           Int       @id @default(autoincrement())
+  contestId    Int
+  userId       Int
+  score        Int       @default(0)
+  rank         Int?
+  finishTime   DateTime?
+  registeredAt DateTime  @default(now())
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  @@unique([contestId, userId])
+  @@index([userId])
+  @@map("contest_participants")
+  @@schema("contests")
+}
+
+// ===========================
+//          ENUMS
+// ===========================
+
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+
+  @@schema("problems")
 }
 
 enum Language {
@@ -161,197 +351,8 @@ enum Language {
   perl
   typescript
   haskell
-}
 
-model Submission {
-  id              Int              @id @default(autoincrement())
-  userId          Int
-  problemId       Int
-  language        Language
-  code            String           @db.Text
-  status          SubmissionStatus
-  runtime         Int?
-  memory          Int?
-  testCasesPassed Int              @default(0)
-  totalTestCases  Int              @default(0)
-  errorMessage    String?          @db.Text
-  submittedAt     DateTime         @default(now())
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@index([userId, problemId])
-  @@index([status])
-  @@map("submissions")
-}
-
-model UserProblemStatus {
-  userId          Int
-  problemId       Int
-  status          ProblemStatus
-  lastAttemptedAt DateTime?
-  solvedAt        DateTime?
-  attempts        Int           @default(0)
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@id([userId, problemId])
-  @@index([userId, problemId])
-  @@map("user_problem_status")
-}
-
-model Editorial {
-  id              Int      @id @default(autoincrement())
-  problemId       Int
-  title           String   @db.VarChar(255)
-  approach        String?  @db.VarChar(100)
-  content         String   @db.Text
-  codeSnippets    Json?
-  timeComplexity  String?  @db.VarChar(100)
-  spaceComplexity String?  @db.VarChar(100)
-  isOfficial      Boolean  @default(true)
-  createdById     Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
-  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  createdBy User    @relation(fields: [createdById], references: [id])
-
-  @@map("editorials")
-}
-
-model Contest {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  slug        String   @unique @db.VarChar(255)
-  description String?  @db.Text
-  startTime   DateTime
-  endTime     DateTime
-  duration    Int
-  isPublic    Boolean  @default(true)
-  createdById Int
-  createdAt   DateTime @default(now())
-
-  // Relations
-  createdBy           User                 @relation("CreatedContests", fields: [createdById], references: [id])
-  contestProblems     ContestProblem[]
-  contestParticipants ContestParticipant[]
-
-  @@index([startTime])
-  @@map("contests")
-}
-
-model ContestProblem {
-  contestId    Int
-  problemId    Int
-  problemOrder Int
-  points       Int @default(100)
-
-  // Relations
-  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@id([contestId, problemId])
-  @@map("contest_problems")
-}
-
-model ContestParticipant {
-  id           Int       @id @default(autoincrement())
-  contestId    Int
-  userId       Int
-  score        Int       @default(0)
-  rank         Int?
-  finishTime   DateTime?
-  registeredAt DateTime  @default(now())
-
-  // Relations
-  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([contestId, userId])
-  @@index([userId])
-  @@map("contest_participants")
-}
-
-model Comment {
-  id         Int      @id @default(autoincrement())
-  problemId  Int
-  userId     Int
-  parentId   Int?
-  title      String?  @db.VarChar(255)
-  content    String   @db.Text
-  isSolution Boolean  @default(false)
-  language   String?  @db.VarChar(50)
-  upvotes    Int      @default(0)
-  downvotes  Int      @default(0)
-  isPinned   Boolean  @default(false)
-  isDeleted  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
-  problem         Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parent          Comment?         @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies         Comment[]        @relation("CommentReplies")
-  discussionVotes DiscussionVote[]
-
-  @@index([problemId])
-  @@index([userId])
-  @@map("comments")
-}
-
-model DiscussionVote {
-  userId    Int
-  commentId Int
-  voteType  VoteType
-  createdAt DateTime @default(now())
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-
-  @@id([userId, commentId])
-  @@map("discussion_votes")
-}
-
-model Bookmark {
-  userId    Int
-  problemId Int
-  notes     String?  @db.Text
-  createdAt DateTime @default(now())
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@id([userId, problemId])
-  @@index([userId])
-  @@map("bookmarks")
-}
-
-model ProblemLike {
-  userId    Int
-  problemId Int
-  isLike    Boolean
-  createdAt DateTime @default(now())
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@id([userId, problemId])
-  @@map("problem_likes")
-}
-
-enum Difficulty {
-  Easy
-  Medium
-  Hard
+  @@schema("submissions")
 }
 
 enum SubmissionStatus {
@@ -362,15 +363,21 @@ enum SubmissionStatus {
   RuntimeError
   CompileError
   Pending
+
+  @@schema("submissions")
 }
 
 enum ProblemStatus {
   Solved
   Attempted
   Todo
+
+  @@schema("submissions")
 }
 
 enum VoteType {
   Upvote
   Downvote
+
+  @@schema("problems")
 }
