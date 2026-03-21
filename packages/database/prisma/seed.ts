@@ -1,4 +1,3 @@
-// packages/database/prisma/seed.ts
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -177,14 +176,7 @@ async function main() {
     // ===========================
     const admin = await prisma.user.upsert({
         where: { email: 'admin@gmail.com' },
-        update: {
-            username: 'admin',
-            email: 'admin@gmail.com',
-            password: await argon2.hash(process.env.ADMIN_PASSWORD),
-            emailVerfied: true,
-            is_admin: true,
-            full_name: 'Admin',
-        },
+        update: {},
         create: {
             username: 'admin',
             email: 'admin@gmail.com',
