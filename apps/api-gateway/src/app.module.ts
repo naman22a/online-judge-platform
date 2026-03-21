@@ -110,6 +110,15 @@ import { APP_GUARD } from '@nestjs/core';
             }),
         }),
         BullModule.registerQueue({
+            name: 'execution-queue',
+        }),
+        BullModule.registerQueue({
+            name: 'results-queue',
+        }),
+        BullModule.registerQueue({
+            name: 'execution-dlq',
+        }),
+        BullModule.registerQueue({
             name: 'notifications-queue',
         }),
         PrometheusModule.register(),

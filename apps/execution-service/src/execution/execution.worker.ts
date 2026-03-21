@@ -16,49 +16,68 @@ export class ExecutionConsumer extends WorkerHost {
         private prisma: PrismaService,
         private executionService: ExecutionService,
         @InjectQueue('results-queue') private resultsQueue: Queue,
+        @InjectQueue('execution-dlq') private dlqQueue: Queue,
     ) {
         super();
     }
 
     async process(job: Job<any, any, string>) {
-        switch (job.name) {
-            case 'execute-job':
-                // eslint-disable-next-line
-                const { problemId, code, language, userId } = job.data as CreateSubmissionDto;
-                // eslint-disable-next-line
-                const problem = await this.prisma.problem.findUnique({
-                    where: { id: problemId },
-                    select: { testCases: true },
-                });
+        try {
+            switch (job.name) {
+                case 'execute-job':
+                    // eslint-disable-next-line
+                    const { problemId, code, language, userId } = job.data as CreateSubmissionDto;
+                    // eslint-disable-next-line
+                    const problem = await this.prisma.problem.findUnique({
+                        where: { id: problemId },
+                        select: { testCases: true },
+                    });
 
-                if (!problem) return;
+                    if (!problem) return;
 
-                Logger.log('running test cases...');
-                // eslint-disable-next-line
-                const results = await this.executionService.runTestCases(
-                    language,
-                    code,
-                    problem.testCases.map((tc) => ({
-                        input: tc.input,
-                        output: tc.expectedOutput,
-                    })),
-                );
-                Logger.log('done running test cases');
+                    Logger.log('running test cases...');
+                    // eslint-disable-next-line
+                    const results = await this.executionService.runTestCases(
+                        language,
+                        code,
+                        // @ts-ignore
+                        problem.testCases.map((tc) => ({
+                            input: tc.input,
+                            output: tc.expectedOutput,
+                        })),
+                    );
+                    Logger.log('done running test cases');
 
-                try {
-                    const cacheKey = generateCacheKey(language, code, problemId);
-                    const cacheValue = results;
+                    try {
+                        const cacheKey = generateCacheKey(language, code, problemId);
+                        const cacheValue = results;
 
-                    await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(cacheValue));
-                } catch (cacheError) {
-                    console.error('Cache storage error:', cacheError);
-                }
+                        await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(cacheValue));
+                    } catch (cacheError) {
+                        console.error('Cache storage error:', cacheError);
+                    }
 
-                this.resultsQueue.add('result-job', { code, language, problemId, results, userId });
-                break;
+                    this.resultsQueue.add('result-job', {
+                        code,
+                        language,
+                        problemId,
+                        results,
+                        userId,
+                    });
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
+        } catch (error) {
+            Logger.error(`Execution job failed: ${job.id}`, error);
+
+            await this.dlqQueue.add('execution-failed', {
+                payload: job.data,
+                retries: job.data.retries ?? 0,
+            });
+
+            throw error;
         }
     }
 }

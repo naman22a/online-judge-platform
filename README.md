@@ -70,11 +70,14 @@ This project uses a microservices architecture with 7 independent services commu
 - User clicks "Submit" → Frontend sends code via WebSocket to API Gateway
 - API Gateway → TCP request to Submission Service
 - Submission Service → Publishes job to execution-queue (BullMQ)
-- Execution Service → Consumes job from queue
+- Execution Service → Consumes job from execution-queue
 - Execution Service → Runs code in sandboxed Docker container
 - Workers → Return execution result
+- If execution fails due to infrastructure error:
+    - → Job is moved to execution-dlq (Dead Letter Queue)
+- DLQ Worker → Retries job once by re-publishing to execution-queue
 - Execution Service → Publishes result to results-queue
-- Submission Service → Consumes result from queue
+- Submission Service → Consumes result from results-queue
 - Submission Service → Updates database with status/results
 - Submission Service → Publishes notification to notifications-queue
 - API Gateway → Consumes notification event
@@ -133,6 +136,10 @@ model User {
 ### Grafana
 
 ![Grafana Metrics](./assets/grafana.png)
+
+### BullMQ Dashboard
+
+![BullMQ Dashboard](./assets/bullmq.png)
 
 ## 🚶🏻‍♂️ Getting started and 🏃🏻‍♂️ Running the app
 
