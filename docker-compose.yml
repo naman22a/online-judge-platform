@@ -45,7 +45,7 @@ services:
     seed:
         image: naman22a/leetcode-problems-service:latest
         container_name: leetcode-prisma-seed
-        command: sh -c "cd /app/packages/database && npx ts-node prisma/seed.ts"
+        command: sh -c "cd /app/packages/database && pnpm db:seed"
         environment:
             - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/leetcode?schema=public
         depends_on:
