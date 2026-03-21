@@ -88,6 +88,41 @@ This project uses a microservices architecture with 7 independent services commu
 - Services communicate through queues → highly resilient
 - Matches real LeetCode-scale architecture
 
+## 🗄️ Database Architecture
+
+All services use PostgreSQL with **logical isolation using database schemas**.
+
+Instead of each service sharing tables, every microservice owns its own schema using Prisma's `@@schema` feature.
+
+| Service             | Schema      |
+| ------------------- | ----------- |
+| users-service       | users       |
+| problems-service    | problems    |
+| submissions-service | submissions |
+
+<!-- TODO: add this when contests service is added -->
+<!-- | contests-service    | contests    | -->
+
+This provides **microservice-level data ownership** while still using a single PostgreSQL instance.
+
+### Benefits
+
+- Clear service data boundaries
+- Prevents accidental cross-service table access
+- Easier migration to independent databases later
+- Maintains microservice architecture principles
+
+Example Prisma model:
+
+```prisma
+model User {
+  id    String @id @default(uuid())
+  email String @unique
+
+  @@schema("users")
+}
+```
+
 ## 📷 Screenshots
 
 ### Application
