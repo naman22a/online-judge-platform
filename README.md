@@ -58,7 +58,7 @@ This project uses a microservices architecture with 7 independent services commu
 ### DevOps & Infrastructure
 
 - **Docker & Docker Compose** - Containerized microservices orchestration
-- **GitHub Actions** - Automated CI/CD pipeline
+- **GitHub Actions** - CI/CD pipelines for automated linting, testing, building Docker images, and service deployment
 - **Prometheus** - Metrics collection and monitoring
 - **Grafana** - Visualization dashboards for system metrics
 - **Loki** - Centralized log aggregation
