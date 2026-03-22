@@ -69,8 +69,14 @@ async function bootstrap() {
     // QUEUES
     const executionQueue = app.get<Queue>(getQueueToken('execution-queue'));
     const resultsQueue = app.get<Queue>(getQueueToken('results-queue'));
+    const notificationsQueue = app.get<Queue>(getQueueToken('notifications-queue'));
     const dlqQueue = app.get<Queue>(getQueueToken('execution-dlq'));
-    const serverAdapter = setupBullBoard(executionQueue, resultsQueue, dlqQueue);
+    const serverAdapter = setupBullBoard(
+        executionQueue,
+        resultsQueue,
+        notificationsQueue,
+        dlqQueue,
+    );
     app.use(
         '/queues',
         basicAuth({
