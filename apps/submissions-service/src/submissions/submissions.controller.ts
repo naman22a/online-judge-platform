@@ -97,13 +97,23 @@ export class SubmissionsController {
         }
 
         // push job into execution queue
-        const job = await this.executionQueue.add('execute-job', {
-            code,
-            language,
-            problemId,
-            socketId,
-            userId,
-        });
+        const job = await this.executionQueue.add(
+            'execute-job',
+            {
+                code,
+                language,
+                problemId,
+                socketId,
+                userId,
+            },
+            {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 5000,
+                },
+            },
+        );
 
         return { jobId: job.id, cached: false };
     }

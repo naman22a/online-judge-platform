@@ -1,4 +1,5 @@
 /* eslint-disable */
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { RequestMethod, ValidationPipe } from '@nestjs/common';
@@ -8,6 +9,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import { Queue } from 'bullmq';
+import { getQueueToken } from '@nestjs/bullmq';
+import { setupBullBoard } from './queues/bull-board';
+import basicAuth from 'express-basic-auth';
 
 declare global {
     namespace Express {
@@ -32,7 +37,11 @@ async function bootstrap() {
     app.use(cookieParser());
     app.enableCors({
         origin: (origin: string, callback: Function) => {
-            const allowedOrigins = ['https://judge.namanarora.xyz', 'http://localhost:3000'];
+            const allowedOrigins = [
+                'https://judge.namanarora.xyz',
+                'http://localhost:3000',
+                client_url,
+            ];
 
             if (!origin) {
                 return callback(null, true);
@@ -56,6 +65,20 @@ async function bootstrap() {
     app.setGlobalPrefix('api', {
         exclude: [{ path: 'metrics', method: RequestMethod.GET }],
     });
+
+    // QUEUES
+    const executionQueue = app.get<Queue>(getQueueToken('execution-queue'));
+    const resultsQueue = app.get<Queue>(getQueueToken('results-queue'));
+    const dlqQueue = app.get<Queue>(getQueueToken('execution-dlq'));
+    const serverAdapter = setupBullBoard(executionQueue, resultsQueue, dlqQueue);
+    app.use(
+        '/queues',
+        basicAuth({
+            users: { admin: process.env.ADMIN_PASSWORD! },
+            challenge: true,
+        }),
+        serverAdapter.getRouter(),
+    );
 
     // SWAGGER
     const config = new DocumentBuilder().setTitle('Leetcode API').setVersion('1.0').build();

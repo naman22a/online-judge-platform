@@ -20,6 +20,8 @@
         "test:e2e": "dotenv -e ../../.env.test -- jest --config ./test/jest-e2e.json --passWithNoTests"
     },
     "dependencies": {
+        "@bull-board/api": "^6.20.6",
+        "@bull-board/express": "^6.20.6",
         "@leetcode/config": "workspace:*",
         "@leetcode/constants": "workspace:*",
         "@leetcode/database": "workspace:*",
@@ -39,6 +41,7 @@
         "class-validator": "^0.14.2",
         "cookie-parser": "^1.4.7",
         "dotenv": "^17.2.3",
+        "express-basic-auth": "^1.2.1",
         "jsonwebtoken": "^9.0.2",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",

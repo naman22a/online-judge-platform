@@ -33,6 +33,9 @@ import { PrometheusController, PrometheusModule } from '@willsoto/nestjs-prometh
         BullModule.registerQueue({
             name: 'results-queue',
         }),
+        BullModule.registerQueue({
+            name: 'execution-dlq',
+        }),
         PrometheusModule.register(),
     ],
     controllers: [PrometheusController],
