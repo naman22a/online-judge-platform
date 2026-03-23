@@ -17,13 +17,16 @@ jobs:
         run: |
           set -e
 
-          echo "Pulling latest images..."
-          docker compose pull
-
           echo "Change directory"
           cd ~/leetcode-microservices
+
+          echo "Pulling latest images..."
+          docker compose pull
 
           echo "Rolling update (no downtime)..."
           docker compose up -d --remove-orphans
 
           echo "Deployment completed successfully!"
+
+          echo "Cleaning unused Docker images..."
+          docker system prune -af

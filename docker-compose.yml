@@ -47,6 +47,7 @@ services:
         container_name: leetcode-prisma-seed
         command: sh -c "cd /app/packages/database && pnpm db:seed"
         environment:
+            - ADMIN_PASSWORD=${ADMIN_PASSWORD}
             - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/leetcode?schema=public
         depends_on:
             postgres:
