@@ -30,7 +30,8 @@ const Right: React.FC<Props> = ({ data }) => {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<ExecutionResult[]>([]);
     const queryClient = useQueryClient();
-    const { language, code, setCode, setLanguage } = useStore();
+    const { language, code, setCode, setLanguage, idempotencyKey, resetIdempotencyKey } =
+        useStore();
 
     useEffect(() => {
         const token = getAccessToken();
@@ -46,6 +47,7 @@ const Right: React.FC<Props> = ({ data }) => {
 
         socket.on('execution-done', (res: any) => {
             setLoading(false);
+            resetIdempotencyKey();
             queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
             const results = res as ExecutionResult[];
@@ -81,6 +83,7 @@ const Right: React.FC<Props> = ({ data }) => {
             language,
             socketId: socket.id,
             problemId: data.id,
+            idempotencyKey,
         });
     };
 
@@ -120,6 +123,7 @@ const Right: React.FC<Props> = ({ data }) => {
             <div className="flex gap-5">
                 <Button
                     onClick={() => handleSubmit()}
+                    disabled={loading}
                     className="text-white bg-green-500 hover:bg-green-600 font-semibold"
                 >
                     {loading && <Spinner />}
