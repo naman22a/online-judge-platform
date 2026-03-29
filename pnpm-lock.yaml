@@ -43,6 +43,7 @@ overrides:
   file-type@>=13.0.0 <21.3.1: '>=21.3.1'
   flatted@<3.4.0: '>=3.4.0'
   file-type@>=20.0.0 <=21.3.1: '>=21.3.2'
+  handlebars: ^4.7.9
 
 importers:
 
@@ -3465,7 +3466,7 @@ packages:
   ajv-keywords@3.5.2:
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
     peerDependencies:
-      ajv: '>=6.14.0'
+      ajv: '>=8.18.0'
 
   ajv-keywords@5.1.0:
     resolution: {integrity: sha512-YCS/JNFAUyr5vAuhk1DWm1CBxRHW9LbJ2ozWeemrIqpbsqKjHVxYPyi5GC0rjZIT5JxJ3virVTS8wk4i/Z+krw==}
@@ -4481,7 +4482,7 @@ packages:
     engines: {node: '>=14.21.3'}
     peerDependencies:
       typescript: '>3.6.0'
-      webpack: '>=5.104.0'
+      webpack: '>=5.104.1'
 
   form-data@4.0.5:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
@@ -6178,7 +6179,7 @@ packages:
       '@swc/core': '*'
       esbuild: '*'
       uglify-js: '*'
-      webpack: '>=5.104.0'
+      webpack: '>=5.104.1'
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -6260,7 +6261,7 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       typescript: '*'
-      webpack: '>=5.104.0'
+      webpack: '>=5.104.1'
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
