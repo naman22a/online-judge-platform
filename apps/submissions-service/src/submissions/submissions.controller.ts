@@ -32,7 +32,7 @@ export class SubmissionsController {
     @InternalAuth('submissions:create')
     @MessagePattern(SUBMISSIONS.CREATE)
     async create({
-        payload: { code, language, socketId, problemId, userId },
+        payload: { code, language, socketId, problemId, userId, idempotencyKey },
     }: InternalMessage<CreateSubmissionDto>) {
         // validation
         if (!code) return { jobId: null, errors: [{ field: 'code', message: 'code is required' }] };
@@ -73,15 +73,27 @@ export class SubmissionsController {
                 }
 
                 // create DB record
-                const submission = await this.prisma.submission.create({
-                    data: {
-                        code,
-                        language,
-                        problemId,
-                        userId,
-                        status: correct ? 'Accepted' : 'WrongAnswer',
-                    },
-                });
+                let submission: any;
+                try {
+                    submission = await this.prisma.submission.create({
+                        data: {
+                            code,
+                            language,
+                            problemId,
+                            userId,
+                            status: correct ? 'Accepted' : 'WrongAnswer',
+                            idempotencyKey,
+                        },
+                    });
+                } catch (e: any) {
+                    if (e?.code === 'P2002') {
+                        submission = await this.prisma.submission.findFirst({
+                            where: { userId, idempotencyKey },
+                        });
+                        return { jobId: null, cached: true, submissionId: submission?.id };
+                    }
+                    throw e;
+                }
 
                 // skip execution queue, go directly to notifications
                 await this.notificationsQueue.add('execution-done', results);
@@ -96,6 +108,28 @@ export class SubmissionsController {
             console.error('Cache error:', error);
         }
 
+        let submission: any;
+        try {
+            submission = await this.prisma.submission.create({
+                data: {
+                    code,
+                    language,
+                    problemId,
+                    userId,
+                    status: 'Pending',
+                    idempotencyKey,
+                },
+            });
+        } catch (e: any) {
+            if (e?.code === 'P2002') {
+                const existing = await this.prisma.submission.findFirst({
+                    where: { userId, idempotencyKey },
+                });
+                return { jobId: null, submissionId: existing?.id };
+            }
+            throw e;
+        }
+
         // push job into execution queue
         const job = await this.executionQueue.add(
             'execute-job',
@@ -105,6 +139,7 @@ export class SubmissionsController {
                 problemId,
                 socketId,
                 userId,
+                idempotencyKey,
             },
             {
                 attempts: 3,
@@ -115,6 +150,6 @@ export class SubmissionsController {
             },
         );
 
-        return { jobId: job.id, cached: false };
+        return { jobId: job.id, cached: false, submissionId: submission.id };
     }
 }

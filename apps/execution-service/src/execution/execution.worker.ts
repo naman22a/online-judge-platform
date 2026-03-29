@@ -26,7 +26,8 @@ export class ExecutionConsumer extends WorkerHost {
             switch (job.name) {
                 case 'execute-job':
                     // eslint-disable-next-line
-                    const { problemId, code, language, userId } = job.data as CreateSubmissionDto;
+                    const { problemId, code, language, userId, idempotencyKey } =
+                        job.data as CreateSubmissionDto;
                     // eslint-disable-next-line
                     const problem = await this.prisma.problem.findUnique({
                         where: { id: problemId },
@@ -57,12 +58,13 @@ export class ExecutionConsumer extends WorkerHost {
                         console.error('Cache storage error:', cacheError);
                     }
 
-                    this.resultsQueue.add('result-job', {
+                    await this.resultsQueue.add('result-job', {
                         code,
                         language,
                         problemId,
                         results,
                         userId,
+                        idempotencyKey,
                     });
                     break;
 
