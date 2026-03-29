@@ -2,16 +2,34 @@ global:
     scrape_interval: 4s
 
 scrape_configs:
-    - job_name: 'prometheus'
+    - job_name: 'api-gateway'
       static_configs:
-          - targets:
-                [
-                    'api-gateway:5000',
-                    'users-service:9001',
-                    'auth-service:9002',
-                    'problems-service:9003',
-                    'tags-service:9004',
-                    'companies-service:9005',
-                    'submissions-service:9006',
-                    'execution-service:9007',
-                ]
+          - targets: ['api-gateway:5000']
+
+    - job_name: 'users-service'
+      static_configs:
+          - targets: ['users-service:9001']
+
+    - job_name: 'auth-service'
+      static_configs:
+          - targets: ['auth-service:9002']
+
+    - job_name: 'problems-service'
+      static_configs:
+          - targets: ['problems-service:9003']
+
+    - job_name: 'tags-service'
+      static_configs:
+          - targets: ['tags-service:9004']
+
+    - job_name: 'companies-service'
+      static_configs:
+          - targets: ['companies-service:9005']
+
+    - job_name: 'submissions-service'
+      static_configs:
+          - targets: ['submissions-service:9006']
+
+    - job_name: 'execution-service'
+      static_configs:
+          - targets: ['execution-service:9007']
