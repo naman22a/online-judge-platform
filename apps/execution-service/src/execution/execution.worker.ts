@@ -7,6 +7,7 @@ import { ExecutionService } from './execution.service';
 import { Logger } from '@nestjs/common';
 import { redis } from '../redis';
 import { generateCacheKey } from '../utils';
+import { jobExecutionDuration, jobFailures, workersActive } from '../metrics/metrics';
 
 @Processor('execution-queue')
 export class ExecutionConsumer extends WorkerHost {
@@ -35,6 +36,8 @@ export class ExecutionConsumer extends WorkerHost {
                         return;
                     }
 
+                    workersActive.inc();
+
                     try {
                         const problem = await this.prisma.problem.findUnique({
                             where: { id: problemId },
@@ -42,6 +45,7 @@ export class ExecutionConsumer extends WorkerHost {
                         });
                         if (!problem) return;
 
+                        const end = jobExecutionDuration.startTimer();
                         Logger.log('running test cases...');
                         const results = await this.executionService.runTestCases(
                             language,
@@ -53,6 +57,7 @@ export class ExecutionConsumer extends WorkerHost {
                             })),
                         );
                         Logger.log('done running test cases');
+                        end();
 
                         try {
                             const cacheKey = generateCacheKey(language, code, problemId);
@@ -71,6 +76,7 @@ export class ExecutionConsumer extends WorkerHost {
                         });
                     } finally {
                         await redis.del(lockKey);
+                        workersActive.dec();
                     }
                     break;
 
@@ -78,6 +84,7 @@ export class ExecutionConsumer extends WorkerHost {
                     break;
             }
         } catch (error) {
+            jobFailures.inc();
             Logger.error(`Execution job failed: ${job.id}`, error);
             await this.dlqQueue.add('execution-failed', {
                 payload: job.data,
