@@ -61,7 +61,7 @@ export class SubmissionsController {
         if (!problemExists)
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
 
-        submissionsTotal.inc();
+        submissionsTotal.inc({ queue: 'submission' });
 
         try {
             const cacheKey = generateCacheKey(language, code, problemId);
@@ -158,7 +158,7 @@ export class SubmissionsController {
             },
         );
         const waiting = await this.executionQueue.getWaitingCount();
-        queueDepth.set(waiting);
+        queueDepth.set({ queue: 'submission' }, waiting);
 
         return { jobId: job.id, cached: false, submissionId: submission.id };
     }
