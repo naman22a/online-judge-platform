@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { IProblem } from '@/api/problems/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
@@ -30,8 +30,13 @@ const Right: React.FC<Props> = ({ data }) => {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<ExecutionResult[]>([]);
     const queryClient = useQueryClient();
-    const { language, code, setCode, setLanguage } = useStore();
+    const { language, code, setCode, setLanguage, idempotencyKey, resetIdempotencyKey } =
+        useStore();
+    const idempotencyKeyRef = useRef(idempotencyKey);
 
+    useEffect(() => {
+        idempotencyKeyRef.current = idempotencyKey;
+    }, [idempotencyKey]);
     useEffect(() => {
         const token = getAccessToken();
         if (!token) return;
@@ -45,22 +50,26 @@ const Right: React.FC<Props> = ({ data }) => {
         });
 
         socket.on('execution-done', (res: any) => {
-            setLoading(false);
-            queryClient.invalidateQueries({ queryKey: ['submissions'] });
+            console.log(res);
+            if (!res) return;
 
-            const results = res as ExecutionResult[];
-            setResults(res as ExecutionResult[]);
-            let solved = true;
-            for (const result of results) {
-                if (!result.success) {
-                    solved = false;
-                }
-            }
+            setLoading(false);
+            resetIdempotencyKey();
+
+            // handle both shapes — array directly or wrapped in { results }
+            const results = Array.isArray(res) ? res : res.results;
+
+            if (!results) return;
+
+            setResults(results);
+            const solved = results.every((r: ExecutionResult) => r.success);
             if (solved) {
                 toast.success('Solved');
             } else {
                 toast.error('Try again');
             }
+
+            queryClient.invalidateQueries({ queryKey: ['submissions'] });
         });
 
         return () => {
@@ -81,6 +90,7 @@ const Right: React.FC<Props> = ({ data }) => {
             language,
             socketId: socket.id,
             problemId: data.id,
+            idempotencyKey: idempotencyKeyRef.current,
         });
     };
 
@@ -120,6 +130,7 @@ const Right: React.FC<Props> = ({ data }) => {
             <div className="flex gap-5">
                 <Button
                     onClick={() => handleSubmit()}
+                    disabled={loading}
                     className="text-white bg-green-500 hover:bg-green-600 font-semibold"
                 >
                     {loading && <Spinner />}

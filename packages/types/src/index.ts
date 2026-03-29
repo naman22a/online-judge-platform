@@ -13,6 +13,7 @@ import {
     IsOptional,
     IsString,
     IsUrl,
+    IsUUID,
     Length,
     Matches,
     Max,
@@ -373,6 +374,10 @@ export class CreateSubmissionDto {
     @IsInt()
     @IsNotEmpty()
     userId: number;
+
+    @IsUUID('4')
+    @IsNotEmpty()
+    idempotencyKey: string;
 }
 
 export interface ExecutionResult {

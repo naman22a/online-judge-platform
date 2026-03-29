@@ -242,9 +242,11 @@ model Submission {
   totalTestCases  Int              @default(0)
   errorMessage    String?          @db.Text
   submittedAt     DateTime         @default(now())
+  idempotencyKey  String?
 
   userProblemStatus UserProblemStatus[]
 
+  @@unique([userId, idempotencyKey])
   @@index([userId, problemId])
   @@index([status])
   @@map("submissions")

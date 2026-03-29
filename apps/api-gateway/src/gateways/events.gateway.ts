@@ -11,11 +11,12 @@ import { Server, Socket } from 'socket.io';
 import { SocketAuthMiddleware } from '../middleware/ws.middleware';
 import { MICROSERVICES, SUBMISSIONS } from '@leetcode/constants';
 import { ClientProxy } from '@nestjs/microservices';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, Logger, UseGuards } from '@nestjs/common';
 import { CreateSubmissionDto } from '@leetcode/types';
 import type { Request } from 'express';
 import { signInternalToken } from '../utils';
 import { WsThrottlerGuard } from '../guards/ws-throttle.guard';
+import { redis } from '../redis';
 
 @WebSocketGateway({
     cors: {
@@ -43,12 +44,27 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @UseGuards(WsThrottlerGuard)
     @SubscribeMessage('create-submission')
-    handleCreateSubmission(
+    async handleCreateSubmission(
         @ConnectedSocket() socket: Socket,
         @MessageBody() data: Omit<CreateSubmissionDto, 'userId'>,
     ) {
         const req = socket.request as Request;
         const userId = req.userId;
+
+        const { idempotencyKey } = data;
+        if (idempotencyKey) {
+            const cached = await redis.get(`idempotency:${idempotencyKey}`);
+            Logger.log(`cached value: ${cached}`);
+            if (cached && cached !== '"pending"') {
+                const results = JSON.parse(cached);
+                if (results) {
+                    socket.emit('execution-done', { results });
+                }
+                return;
+            }
+            await redis.set(`idempotency:${idempotencyKey}`, '"pending"', 'EX', 86400, 'NX');
+        }
+
         const internalToken = signInternalToken('api-gateway', ['submissions:create']);
         return this.client.send(SUBMISSIONS.CREATE, {
             internalToken,
