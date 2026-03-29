@@ -67,21 +67,24 @@ This project uses a microservices architecture with 7 independent services commu
 
 ## ⚙️ Execution Pipeline
 
-- User clicks "Submit" → Frontend sends code via WebSocket to API Gateway
-- API Gateway → TCP request to Submission Service
-- Submission Service → Publishes job to execution-queue (BullMQ)
-- Execution Service → Consumes job from execution-queue
-- Execution Service → Runs code in sandboxed Docker container
-- Workers → Return execution result
+- User clicks **Submit** → Frontend sends code via WebSocket to **API Gateway**
+- **API Gateway** checks Redis for `idempotencyKey` → cache hit returns result immediately
+- **API Gateway** → TCP request to **Submission Service**
+- **Submission Service** checks DB unique constraint on `(userId, idempotencyKey)` → duplicate returns existing row
+- **Submission Service** → Publishes job to `execution-queue` (BullMQ) with `jobId: idempotencyKey`
+- **Execution Service** → Consumes job from `execution-queue`
+- **Execution Service** → Acquires distributed Redis lock before execution
+- **Execution Service** → Runs code in sandboxed Docker container
+- **Execution Service** → Publishes result to `results-queue`
 - If execution fails due to infrastructure error:
-    - → Job is moved to execution-dlq (Dead Letter Queue)
-- DLQ Worker → Retries job once by re-publishing to execution-queue
-- Execution Service → Publishes result to results-queue
-- Submission Service → Consumes result from results-queue
-- Submission Service → Updates database with status/results
-- Submission Service → Publishes notification to notifications-queue
-- API Gateway → Consumes notification event
-- API Gateway → Pushes real-time update through WebSocket to user's browser
+    - → Job is moved to `execution-dlq` (Dead Letter Queue)
+    - → DLQ Worker retries job once by re-publishing to `execution-queue`
+- **Submission Service** → Consumes result from `results-queue`
+- **Submission Service** → Updates database row `Pending` → `Accepted` / `WrongAnswer`
+- **Submission Service** → Publishes notification to `notifications-queue`
+- **API Gateway** → Consumes notification event
+- **API Gateway** → Updates Redis cache with final result (closes idempotency loop)
+- **API Gateway** → Pushes real-time update through WebSocket to user's browser
 
 ## ✨ Why Microservices?
 
