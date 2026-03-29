@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { IProblem } from '@/api/problems/types';
 import { Button } from '@/components/ui/button';
 import Editor from '@monaco-editor/react';
@@ -32,7 +32,11 @@ const Right: React.FC<Props> = ({ data }) => {
     const queryClient = useQueryClient();
     const { language, code, setCode, setLanguage, idempotencyKey, resetIdempotencyKey } =
         useStore();
+    const idempotencyKeyRef = useRef(idempotencyKey);
 
+    useEffect(() => {
+        idempotencyKeyRef.current = idempotencyKey;
+    }, [idempotencyKey]);
     useEffect(() => {
         const token = getAccessToken();
         if (!token) return;
@@ -46,23 +50,26 @@ const Right: React.FC<Props> = ({ data }) => {
         });
 
         socket.on('execution-done', (res: any) => {
+            console.log(res);
+            if (!res) return;
+
             setLoading(false);
             resetIdempotencyKey();
-            queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
-            const results = res as ExecutionResult[];
-            setResults(res as ExecutionResult[]);
-            let solved = true;
-            for (const result of results) {
-                if (!result.success) {
-                    solved = false;
-                }
-            }
+            // handle both shapes — array directly or wrapped in { results }
+            const results = Array.isArray(res) ? res : res.results;
+
+            if (!results) return;
+
+            setResults(results);
+            const solved = results.every((r: ExecutionResult) => r.success);
             if (solved) {
                 toast.success('Solved');
             } else {
                 toast.error('Try again');
             }
+
+            queryClient.invalidateQueries({ queryKey: ['submissions'] });
         });
 
         return () => {
@@ -83,7 +90,7 @@ const Right: React.FC<Props> = ({ data }) => {
             language,
             socketId: socket.id,
             problemId: data.id,
-            idempotencyKey,
+            idempotencyKey: idempotencyKeyRef.current,
         });
     };
 

@@ -96,7 +96,7 @@ export class SubmissionsController {
                 }
 
                 // skip execution queue, go directly to notifications
-                await this.notificationsQueue.add('execution-done', results);
+                await this.notificationsQueue.add('execution-done', { results, idempotencyKey });
 
                 return {
                     jobId: null,
@@ -142,6 +142,7 @@ export class SubmissionsController {
                 idempotencyKey,
             },
             {
+                jobId: idempotencyKey,
                 attempts: 3,
                 backoff: {
                     type: 'exponential',
