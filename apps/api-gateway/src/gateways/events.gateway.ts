@@ -16,6 +16,7 @@ import { CreateSubmissionDto } from '@leetcode/types';
 import type { Request } from 'express';
 import { signInternalToken } from '../utils';
 import { WsThrottlerGuard } from '../guards/ws-throttle.guard';
+import { redis } from '../redis';
 
 @WebSocketGateway({
     cors: {
@@ -43,12 +44,23 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @UseGuards(WsThrottlerGuard)
     @SubscribeMessage('create-submission')
-    handleCreateSubmission(
+    async handleCreateSubmission(
         @ConnectedSocket() socket: Socket,
         @MessageBody() data: Omit<CreateSubmissionDto, 'userId'>,
     ) {
         const req = socket.request as Request;
         const userId = req.userId;
+
+        const { idempotencyKey } = data;
+        if (idempotencyKey) {
+            const cached = await redis.get(`idempotency:${idempotencyKey}`);
+            if (cached && cached !== '"pending"') {
+                socket.emit('execution-done', JSON.parse(cached));
+                return;
+            }
+            await redis.set(`idempotency:${idempotencyKey}`, '"pending"', 'EX', 86400, 'NX');
+        }
+
         const internalToken = signInternalToken('api-gateway', ['submissions:create']);
         return this.client.send(SUBMISSIONS.CREATE, {
             internalToken,
