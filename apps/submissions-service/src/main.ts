@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { startMetricsServer } from './metrics-server';
-import { register } from 'prom-client';
 
 async function bootstrap() {
     const appContext = await NestFactory.createApplicationContext(AppModule);
@@ -19,7 +18,6 @@ async function bootstrap() {
         },
     });
     startMetricsServer(
-        register,
         Number(String(configService.get('submissions_service_port')).replace('500', '900')),
     );
     await app.listen();

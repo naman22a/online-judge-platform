@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from '@leetcode/config';
-import { register } from 'prom-client';
 import { startMetricsServer } from './metrics-server';
 
 async function bootstrap() {
@@ -19,7 +18,6 @@ async function bootstrap() {
         },
     });
     startMetricsServer(
-        register,
         Number(String(configService.get('execution_service_port')).replace('500', '900')),
     );
     await app.listen();
