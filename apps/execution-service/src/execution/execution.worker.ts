@@ -7,7 +7,12 @@ import { ExecutionService } from './execution.service';
 import { Logger } from '@nestjs/common';
 import { redis } from '../redis';
 import { generateCacheKey } from '../utils';
-import { jobExecutionDuration, jobFailures, workersActive } from '../metrics/metrics';
+import {
+    jobExecutionDuration,
+    jobFailures,
+    submissionsTotal,
+    workersActive,
+} from '../metrics/metrics';
 
 @Processor('execution-queue')
 export class ExecutionConsumer extends WorkerHost {
@@ -36,7 +41,7 @@ export class ExecutionConsumer extends WorkerHost {
                         return;
                     }
 
-                    workersActive.inc();
+                    workersActive.labels('execution').inc();
 
                     try {
                         const problem = await this.prisma.problem.findUnique({
@@ -45,7 +50,7 @@ export class ExecutionConsumer extends WorkerHost {
                         });
                         if (!problem) return;
 
-                        const end = jobExecutionDuration.startTimer();
+                        const end = jobExecutionDuration.startTimer({ queue: 'execution' });
                         Logger.log('running test cases...');
                         const results = await this.executionService.runTestCases(
                             language,
@@ -66,6 +71,8 @@ export class ExecutionConsumer extends WorkerHost {
                             console.error('Cache storage error:', cacheError);
                         }
 
+                        submissionsTotal.labels('submission').inc();
+
                         await this.resultsQueue.add('result-job', {
                             code,
                             language,
@@ -76,7 +83,7 @@ export class ExecutionConsumer extends WorkerHost {
                         });
                     } finally {
                         await redis.del(lockKey);
-                        workersActive.dec();
+                        workersActive.labels('execution').dec();
                     }
                     break;
 
@@ -84,7 +91,7 @@ export class ExecutionConsumer extends WorkerHost {
                     break;
             }
         } catch (error) {
-            jobFailures.inc();
+            jobFailures.labels('execution').inc();
             Logger.error(`Execution job failed: ${job.id}`, error);
             await this.dlqQueue.add('execution-failed', {
                 payload: job.data,

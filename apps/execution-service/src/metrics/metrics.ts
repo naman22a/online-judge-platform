@@ -18,3 +18,9 @@ export const workersActive = new Gauge({
     help: 'Active workers processing jobs',
     labelNames: ['queue'],
 });
+
+export const submissionsTotal = new Counter({
+    name: 'bullmq_queue_completed',
+    help: 'Total completed jobs',
+    labelNames: ['queue'],
+});

@@ -9,7 +9,7 @@ import { InternalAuth } from '@leetcode/common';
 import { firstValueFrom } from 'rxjs';
 import { generateCacheKey } from '../utils';
 import { redis } from '../redis';
-import { queueDepth, submissionsTotal } from '../metrics/metrics';
+import { queueDepth } from '../metrics/metrics';
 
 @Controller()
 export class SubmissionsController {
@@ -60,8 +60,6 @@ export class SubmissionsController {
         )) as Problem;
         if (!problemExists)
             return { jobId: null, errors: [{ field: 'problemId', message: 'problem not found' }] };
-
-        submissionsTotal.inc({ queue: 'submission' });
 
         try {
             const cacheKey = generateCacheKey(language, code, problemId);
