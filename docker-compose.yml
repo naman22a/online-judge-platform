@@ -485,6 +485,7 @@ services:
         restart: unless-stopped
         volumes:
             - ./grafana-data:/var/lib/grafana
+            - ./provisioning:/etc/grafana/provisioning
 
     loki:
         image: grafana/loki:latest
