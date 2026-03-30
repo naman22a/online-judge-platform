@@ -1,12 +1,12 @@
 import express from 'express';
-import { Registry } from 'prom-client';
+import { register } from './metrics/metrics';
 
-export function startMetricsServer(registry: Registry, port: number) {
+export function startMetricsServer(port: number) {
     const app = express();
 
     app.get('/metrics', async (_req, res) => {
-        res.set('Content-Type', registry.contentType);
-        res.send(await registry.metrics());
+        res.set('Content-Type', register.contentType);
+        res.send(await register.metrics());
     });
 
     app.listen(port, () => {
