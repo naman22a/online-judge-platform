@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: auth-backend
+        image: naman22a/leetcode-auth-service:latest
+        ports:
+        - containerPort: 5002
+        envFrom:
+        - secretRef:
+            name: oj-env

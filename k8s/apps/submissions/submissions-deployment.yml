@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: submissions-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: submissions
+  template:
+    metadata:
+      labels:
+        app: submissions
+    spec:
+      containers:
+      - name: submissions-backend
+        image: naman22a/leetcode-submissions-service:latest
+        ports:
+        - containerPort: 5006
+        envFrom:
+        - secretRef:
+            name: oj-env

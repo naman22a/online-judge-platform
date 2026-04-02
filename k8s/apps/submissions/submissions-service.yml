@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: submissions-service
+  namespace: oj
+spec:
+  selector:
+    app: submissions
+  ports:
+  - port: 5006
+    targetPort: 5006

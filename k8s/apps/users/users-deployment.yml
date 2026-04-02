@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users-backend
+        image: naman22a/leetcode-users-service:latest
+        ports:
+        - containerPort: 5001
+        envFrom:
+        - secretRef:
+            name: oj-env

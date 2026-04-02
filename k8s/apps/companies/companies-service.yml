@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: companies-service
+  namespace: oj
+spec:
+  selector:
+    app: companies
+  ports:
+  - port: 5005
+    targetPort: 5005

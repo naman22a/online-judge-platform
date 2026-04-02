@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway-backend
+        image: naman22a/leetcode-api-gateway:latest
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - secretRef:
+            name: oj-env

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: problems-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: problems
+  template:
+    metadata:
+      labels:
+        app: problems
+    spec:
+      containers:
+      - name: problems-backend
+        image: naman22a/leetcode-problems-service:latest
+        ports:
+        - containerPort: 5003
+        envFrom:
+        - secretRef:
+            name: oj-env

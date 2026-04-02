@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: execution-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: execution
+  template:
+    metadata:
+      labels:
+        app: execution
+    spec:
+      serviceAccountName: execution-service-sa
+      containers:
+      - name: execution-backend
+        imagePullPolicy: Always
+        image: naman22a/leetcode-execution-service:k8s
+        ports:
+        - containerPort: 5007
+        envFrom:
+        - secretRef:
+            name: oj-env
