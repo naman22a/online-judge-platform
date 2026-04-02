@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prisma-migrate-seed
+  namespace: oj
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: prisma
+          image: naman22a/leetcode-problems-service:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Postgres..."
+
+              until nc -z postgres 5432; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+
+              echo "Postgres started"
+
+              cd /app/packages/database
+              npx prisma migrate deploy
+              npx prisma db seed
+          envFrom:
+          - secretRef:
+              name: oj-env
+

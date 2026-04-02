@@ -1,7 +1,7 @@
 # 👨🏻‍⚖️ Online Judge Platform
 
 A fully-featured, scalable LeetCode-style online judge built using a modern microservices architecture.
-Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Docker-based isolated execution.
+Includes real-time code execution, WebSockets, problem solving interface with Monaco Editor, authenticated user system, distributed queues, and Kubernetes Job-based isolated execution.
 
 ## 🏗️ Architecture
 
@@ -24,7 +24,7 @@ This project uses a microservices architecture with 7 independent services commu
 
 - Real-time code execution with live feedback
 - Monaco Editor with syntax highlighting
-- Docker-based sandboxed execution environment
+- Kubernetes Job-based sandboxed execution environment
 - Distributed job processing with BullMQ
 - Full monitoring stack (Prometheus + Grafana + Loki)
 - CI/CD pipeline with GitHub Actions
@@ -51,13 +51,14 @@ This project uses a microservices architecture with 7 independent services commu
 - Redis + BullMQ for distributed queues
 - PostgreSQL (shared DB, Prisma ORM)
 - Socket.IO (real-time communication)
-- Docker containers for isolated code execution
+- Kubernetes Jobs for isolated, resource-limited code execution
 - JWT authentication
 - Event-driven architecture
 
 ### DevOps & Infrastructure
 
-- **Docker & Docker Compose** - Containerized microservices orchestration
+- **Docker & Docker Compose** - Containerized microservices orchestration for local development
+- **Kubernetes (kind)** - Job-based execution sandbox with CPU/memory resource limits, security contexts, and automatic TTL cleanup
 - **GitHub Actions** - CI/CD pipelines for automated linting, testing, building Docker images, and service deployment
 - **Prometheus** - Metrics collection and monitoring
 - **Grafana** - Visualization dashboards for system metrics
@@ -74,7 +75,13 @@ This project uses a microservices architecture with 7 independent services commu
 - **Submission Service** → Publishes job to `execution-queue` (BullMQ) with `jobId: idempotencyKey`
 - **Execution Service** → Consumes job from `execution-queue`
 - **Execution Service** → Acquires distributed Redis lock before execution
-- **Execution Service** → Runs code in sandboxed Docker container
+- **Execution Service** → Spawns a Kubernetes Job with CPU/memory resource limits and runs user code in an isolated container
+    - `backoffLimit: 0` — no retries on user code failure
+    - `activeDeadlineSeconds` — hard kill on TLE
+    - `ttlSecondsAfterFinished: 60` — automatic Job cleanup
+    - `automountServiceAccountToken: false` — no cluster API access for user code
+    - `allowPrivilegeEscalation: false` — process cannot gain additional privileges
+    - `readOnlyRootFilesystem: false` — write access scoped to `/workspace` only
 - **Execution Service** → Publishes result to `results-queue`
 - If execution fails due to infrastructure error:
     - → Job is moved to `execution-dlq` (Dead Letter Queue)
@@ -153,23 +160,41 @@ $ git clone https://github.com/naman22a/online-judge-platform
 $ cd online-judge-platform
 ```
 
-copy env files
+Copy env files
 
 ```bash
 $ cp .env.example .env
 $ cp ./apps/client/.env.example ./apps/client/.env
 ```
 
-run the backend (microservices)
+### 🐳 Docker Compose (local development)
 
-- add `/tmp` to docker desktop file sharing
+Add `/tmp` to Docker Desktop file sharing, then:
 
 ```bash
 $ docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
 $ docker compose up
 ```
 
-run the frontend
+### ☸️ Kubernetes (kind)
+
+Create a local kind cluster and deploy all services:
+
+```bash
+# Create cluster
+$ kind create cluster --name oj
+
+# Build and load images into kind
+$ docker build -t online-judge/<service>:latest .
+$ kind load docker-image online-judge/<service>:latest --name oj
+
+# Apply manifests
+$ kubectl apply -f k8s/ -n oj
+```
+
+The execution service spawns Kubernetes Jobs dynamically for each submission. Ensure the execution service's ServiceAccount has permission to create/get/delete Jobs in the `oj` namespace.
+
+### 💻 Frontend
 
 ```bash
 $ cd ./apps/client
@@ -274,6 +299,7 @@ This project includes a complete OAS 3.0 compliant REST API.
 ├── .env.example
 ├── .env.test
 ├── .gitignore
+├── k8s
 ├── LICENSE
 ├── nginx.conf
 ├── .npmrc

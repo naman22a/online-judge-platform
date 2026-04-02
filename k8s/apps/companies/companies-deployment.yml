@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: companies-deployment
+  namespace: oj
+spec:
+  selector:
+    matchLabels:
+      app: companies
+  template:
+    metadata:
+      labels:
+        app: companies
+    spec:
+      containers:
+      - name: companies-backend
+        image: naman22a/leetcode-companies-service:latest
+        ports:
+        - containerPort: 5005
+        envFrom:
+        - secretRef:
+            name: oj-env
