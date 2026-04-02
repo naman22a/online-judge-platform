@@ -16,14 +16,14 @@ jobs:
           set -e
 
           echo "Pulling latest images..."
-          kubectl set image deployment/api-gateway-deployment api-gateway-backend=$DOCKER_USERNAME/api-gateway:latest -n oj
-          kubectl set image deployment/auth-deployment auth-backend=$DOCKER_USERNAME/auth-service:latest -n oj
-          kubectl set image deployment/companies-deployment companies-backend=$DOCKER_USERNAME/companies-service:latest -n oj
-          kubectl set image deployment/execution-deployment execution-backend=$DOCKER_USERNAME/execution-service:latest -n oj
-          kubectl set image deployment/problems-deployment problems-backend=$DOCKER_USERNAME/problems-service:latest -n oj
-          kubectl set image deployment/submissions-deployment submissions-backend=$DOCKER_USERNAME/submissions-service:latest -n oj
-          kubectl set image deployment/tags-deployment tags-backend=$DOCKER_USERNAME/tags-service:latest -n oj
-          kubectl set image deployment/users-deployment users-backend=$DOCKER_USERNAME/users-service:latest -n oj
+          kubectl set image deployment/api-gateway-deployment api-gateway-backend=$DOCKER_USERNAME/leetcode-api-gateway:latest -n oj
+          kubectl set image deployment/auth-deployment auth-backend=$DOCKER_USERNAME/leetcode-auth-service:latest -n oj
+          kubectl set image deployment/companies-deployment companies-backend=$DOCKER_USERNAME/leetcode-companies-service:latest -n oj
+          kubectl set image deployment/execution-deployment execution-backend=$DOCKER_USERNAME/leetcode-execution-service:latest -n oj
+          kubectl set image deployment/problems-deployment problems-backend=$DOCKER_USERNAME/leetcode-problems-service:latest -n oj
+          kubectl set image deployment/submissions-deployment submissions-backend=$DOCKER_USERNAME/leetcode-submissions-service:latest -n oj
+          kubectl set image deployment/tags-deployment tags-backend=$DOCKER_USERNAME/leetcode-tags-service:latest -n oj
+          kubectl set image deployment/users-deployment users-backend=$DOCKER_USERNAME/leetcode-users-service:latest -n oj
 
           echo "Waiting for rollouts..."
           kubectl rollout status deployment/api-gateway-deployment -n oj
