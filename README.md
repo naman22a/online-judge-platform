@@ -184,10 +184,6 @@ Create a local kind cluster and deploy all services:
 # Create cluster
 $ kind create cluster --name oj
 
-# Build and load images into kind
-$ docker build -t online-judge/<service>:latest .
-$ kind load docker-image online-judge/<service>:latest --name oj
-
 # Apply manifests
 $ kubectl apply -f k8s/ -n oj
 ```
