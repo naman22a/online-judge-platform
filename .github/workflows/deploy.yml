@@ -1,12 +1,10 @@
 name: Deploy
-
 on:
   workflow_call:
 
 jobs:
   deploy:
     runs-on: self-hosted
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,19 +15,32 @@ jobs:
         run: |
           set -e
 
-          echo "Change directory"
-          cd ~/leetcode-microservices
-
           echo "Pulling latest images..."
-          docker compose pull
+          kubectl set image deployment/api-gateway-deployment api-gateway=$DOCKER_USERNAME/api-gateway:latest -n oj
+          kubectl set image deployment/auth-deployment auth-service=$DOCKER_USERNAME/auth-service:latest -n oj
+          kubectl set image deployment/client-deployment client=$DOCKER_USERNAME/client:latest -n oj
+          kubectl set image deployment/companies-deployment companies-service=$DOCKER_USERNAME/companies-service:latest -n oj
+          kubectl set image deployment/execution-deployment execution-service=$DOCKER_USERNAME/execution-service:latest -n oj
+          kubectl set image deployment/problems-deployment problems-service=$DOCKER_USERNAME/problems-service:latest -n oj
+          kubectl set image deployment/submissions-deployment submissions-service=$DOCKER_USERNAME/submissions-service:latest -n oj
+          kubectl set image deployment/tags-deployment tags-service=$DOCKER_USERNAME/tags-service:latest -n oj
+          kubectl set image deployment/users-deployment users-service=$DOCKER_USERNAME/users-service:latest -n oj
 
-          echo "Rolling update (no downtime)..."
-          docker compose up -d --remove-orphans
-
-          echo "Deployment completed successfully!"
+          echo "Waiting for rollouts..."
+          kubectl rollout status deployment/api-gateway-deployment -n oj
+          kubectl rollout status deployment/auth-deployment -n oj
+          kubectl rollout status deployment/client-deployment -n oj
+          kubectl rollout status deployment/companies-deployment -n oj
+          kubectl rollout status deployment/execution-deployment -n oj
+          kubectl rollout status deployment/problems-deployment -n oj
+          kubectl rollout status deployment/submissions-deployment -n oj
+          kubectl rollout status deployment/tags-deployment -n oj
+          kubectl rollout status deployment/users-deployment -n oj
 
           echo "Cleaning unused Docker images..."
           docker system prune -af
 
-          echo "Pulling GCC images..."
+          echo "Pulling GCC image on node..."
           docker pull gcc:latest
+
+          echo "Deployment completed successfully!"

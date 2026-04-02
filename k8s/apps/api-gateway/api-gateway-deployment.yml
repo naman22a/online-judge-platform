@@ -15,6 +15,7 @@ spec:
       containers:
       - name: api-gateway-backend
         image: naman22a/leetcode-api-gateway:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         envFrom:

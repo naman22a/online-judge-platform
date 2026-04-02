@@ -15,6 +15,7 @@ spec:
       containers:
       - name: problems-backend
         image: naman22a/leetcode-problems-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5003
         envFrom:

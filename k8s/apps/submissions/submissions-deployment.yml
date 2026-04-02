@@ -15,6 +15,7 @@ spec:
       containers:
       - name: submissions-backend
         image: naman22a/leetcode-submissions-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5006
         envFrom:
