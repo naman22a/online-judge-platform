@@ -36,10 +36,10 @@ jobs:
           kubectl rollout status deployment/tags-deployment -n oj
           kubectl rollout status deployment/users-deployment -n oj
 
-          echo "Cleaning unused Docker images..."
-          docker system prune -af
+          echo "Cleaning unused images..."
+          sudo k3s crictl rmi --prune
 
           echo "Pulling GCC image on node..."
-          docker pull gcc:latest
+          sudo k3s ctr images pull docker.io/library/gcc:latest
 
           echo "Deployment completed successfully!"

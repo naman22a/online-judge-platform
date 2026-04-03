@@ -32,11 +32,11 @@ export class ExecutionService implements OnModuleInit {
         code: string,
         testCases: { input: string; output: string }[],
     ) {
-        const results: ExecutionResult[] = [];
-        for (const testCase of testCases) {
-            const result = await this.executeCode(language, code, testCase.input, testCase.output);
-            results.push(result);
-        }
+        const results = await Promise.all(
+            testCases.map((testCase) =>
+                this.executeCode(language, code, testCase.input, testCase.output),
+            ),
+        );
         return results;
     }
 
@@ -95,6 +95,7 @@ LEETCODE_EOF
                                     {
                                         name: 'runner',
                                         image: langConfig.image,
+                                        imagePullPolicy: 'IfNotPresent',
                                         command: ['sh', '-c', script],
                                         workingDir: '/workspace',
                                         resources: {
