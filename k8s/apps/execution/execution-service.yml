@@ -3,9 +3,15 @@ kind: Service
 metadata:
   name: execution-service
   namespace: oj
+  labels:
+    app: execution
 spec:
   selector:
     app: execution
   ports:
-  - port: 5007
+  - name: tcp
+    port: 5007
     targetPort: 5007
+  - name: metrics
+    port: 9007
+    targetPort: 9007

@@ -3,9 +3,15 @@ kind: Service
 metadata:
   name: submissions-service
   namespace: oj
+  labels:
+    app: submissions
 spec:
   selector:
     app: submissions
   ports:
-  - port: 5006
+  - name: tcp
+    port: 5006
     targetPort: 5006
+  - name: metrics
+    port: 9006
+    targetPort: 9006

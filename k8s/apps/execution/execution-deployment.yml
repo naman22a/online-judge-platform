@@ -19,6 +19,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5007
+        - containerPort: 9007
         envFrom:
         - secretRef:
             name: oj-env

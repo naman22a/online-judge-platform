@@ -8,9 +8,12 @@ import { Logger } from '@nestjs/common';
 import { redis } from '../redis';
 import { generateCacheKey } from '../utils';
 import {
-    jobExecutionDuration,
-    jobFailures,
-    submissionsTotal,
+    dlqJobs,
+    executionDuration,
+    queueCompleted,
+    queueFailed,
+    redisLockFailures,
+    verdicts,
     workersActive,
 } from '../metrics/metrics';
 
@@ -37,6 +40,7 @@ export class ExecutionConsumer extends WorkerHost {
                     const lockKey = `lock:${idempotencyKey}`;
                     const acquired = await redis.set(lockKey, '1', 'PX', 300_000, 'NX');
                     if (!acquired) {
+                        redisLockFailures.inc();
                         Logger.warn(`Job ${job.id} already being processed, skipping`);
                         return;
                     }
@@ -50,7 +54,7 @@ export class ExecutionConsumer extends WorkerHost {
                         });
                         if (!problem) return;
 
-                        const end = jobExecutionDuration.startTimer({ queue: 'execution' });
+                        const timer = executionDuration.startTimer();
                         Logger.log('running test cases...');
                         const results = await this.executionService.runTestCases(
                             language,
@@ -62,7 +66,7 @@ export class ExecutionConsumer extends WorkerHost {
                             })),
                         );
                         Logger.log('done running test cases');
-                        end();
+                        timer();
 
                         try {
                             const cacheKey = generateCacheKey(language, code, problemId);
@@ -70,8 +74,6 @@ export class ExecutionConsumer extends WorkerHost {
                         } catch (cacheError) {
                             console.error('Cache storage error:', cacheError);
                         }
-
-                        submissionsTotal.labels('submission').inc();
 
                         await this.resultsQueue.add('result-job', {
                             code,
@@ -81,6 +83,8 @@ export class ExecutionConsumer extends WorkerHost {
                             userId,
                             idempotencyKey,
                         });
+
+                        queueCompleted.labels('execution').inc();
                     } finally {
                         await redis.del(lockKey);
                         workersActive.labels('execution').dec();
@@ -91,8 +95,9 @@ export class ExecutionConsumer extends WorkerHost {
                     break;
             }
         } catch (error) {
-            jobFailures.labels('execution').inc();
+            queueFailed.labels('execution').inc();
             Logger.error(`Execution job failed: ${job.id}`, error);
+            dlqJobs.inc();
             await this.dlqQueue.add('execution-failed', {
                 payload: job.data,
                 retries: job.data.retries ?? 0,
