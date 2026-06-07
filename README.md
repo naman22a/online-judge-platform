@@ -31,6 +31,19 @@ This project uses a microservices architecture with 7 independent services commu
 - JWT authentication with refresh tokens
 - Email verification and password reset
 
+## ⚡ Performance Test Results
+
+- 500 concurrent virtual users
+- 841,759 submission requests generated
+- Sustained throughput of 2,804 requests/sec
+- Average request latency: 178 ms
+- P95 request latency: 206 ms
+- Peak concurrent Kubernetes Jobs: 12
+- Peak CPU usage: 1.08 vCPU
+- Peak memory usage: 209 MiB
+- Kubernetes API Server P95 latency: 60 ms
+- Failed execution jobs: 0
+
 ## ⚙️ Tech Stack
 
 ### Frontend
