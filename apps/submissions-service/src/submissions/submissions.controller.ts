@@ -9,7 +9,14 @@ import { InternalAuth } from '@leetcode/common';
 import { firstValueFrom } from 'rxjs';
 import { generateCacheKey } from '../utils';
 import { redis } from '../redis';
-import { queueDepth } from '../metrics/metrics';
+import {
+    cacheHits,
+    dbWriteDuration,
+    duplicateSubmissions,
+    submissionQueueWaiting,
+    submissionsQueued,
+    submissionsReceived,
+} from '../metrics/metrics';
 
 @Controller()
 export class SubmissionsController {
@@ -35,6 +42,8 @@ export class SubmissionsController {
     async create({
         payload: { code, language, socketId, problemId, userId, idempotencyKey },
     }: InternalMessage<CreateSubmissionDto>) {
+        submissionsReceived.inc();
+
         // validation
         if (!code) return { jobId: null, errors: [{ field: 'code', message: 'code is required' }] };
         if (!language)
@@ -66,6 +75,7 @@ export class SubmissionsController {
             const cachedResult = await redis.get(cacheKey);
 
             if (cachedResult) {
+                cacheHits.inc();
                 const results = JSON.parse(cachedResult);
 
                 let correct = true;
@@ -76,6 +86,7 @@ export class SubmissionsController {
                 // create DB record
                 // eslint-disable-next-line
                 let submission: any;
+                const timer = dbWriteDuration.startTimer();
                 try {
                     submission = await this.prisma.submission.create({
                         data: {
@@ -90,12 +101,15 @@ export class SubmissionsController {
                     // eslint-disable-next-line
                 } catch (e: any) {
                     if (e?.code === 'P2002') {
+                        duplicateSubmissions.inc();
                         submission = await this.prisma.submission.findFirst({
                             where: { userId, idempotencyKey },
                         });
                         return { jobId: null, cached: true, submissionId: submission?.id };
                     }
                     throw e;
+                } finally {
+                    timer();
                 }
 
                 // skip execution queue, go directly to notifications
@@ -113,6 +127,7 @@ export class SubmissionsController {
 
         // eslint-disable-next-line
         let submission: any;
+        const timer = dbWriteDuration.startTimer();
         try {
             submission = await this.prisma.submission.create({
                 data: {
@@ -133,6 +148,8 @@ export class SubmissionsController {
                 return { jobId: null, submissionId: existing?.id };
             }
             throw e;
+        } finally {
+            timer();
         }
 
         // push job into execution queue
@@ -155,8 +172,8 @@ export class SubmissionsController {
                 },
             },
         );
-        const waiting = await this.executionQueue.getWaitingCount();
-        queueDepth.set({ queue: 'submission' }, waiting);
+        submissionsQueued.inc();
+        submissionQueueWaiting.set(await this.executionQueue.getWaitingCount());
 
         return { jobId: job.id, cached: false, submissionId: submission.id };
     }

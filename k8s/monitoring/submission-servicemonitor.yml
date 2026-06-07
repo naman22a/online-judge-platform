@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: submissions-service
+  namespace: monitoring
+  labels:
+    release: monitoring
+
+spec:
+  namespaceSelector:
+    matchNames:
+      - oj
+
+  selector:
+    matchLabels:
+      app: submissions
+
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s

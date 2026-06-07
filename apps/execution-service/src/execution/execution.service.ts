@@ -3,6 +3,7 @@ import { Language } from '@leetcode/database';
 import { ExecutionResult } from '@leetcode/types';
 import { LANG_CONFIGS } from '@leetcode/constants';
 import * as k8s from '@kubernetes/client-node';
+import { k8sJobCreationDuration, k8sJobsRunning } from '../metrics/metrics';
 
 @Injectable()
 export class ExecutionService implements OnModuleInit {
@@ -32,11 +33,18 @@ export class ExecutionService implements OnModuleInit {
         code: string,
         testCases: { input: string; output: string }[],
     ) {
+        k8sJobsRunning.inc();
+
+        const timer = k8sJobCreationDuration.startTimer();
         const results = await Promise.all(
             testCases.map((testCase) =>
                 this.executeCode(language, code, testCase.input, testCase.output),
             ),
         );
+        timer();
+
+        k8sJobsRunning.dec();
+
         return results;
     }
 

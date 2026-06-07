@@ -15,6 +15,8 @@ import { NotificationConsumer } from './workers/notification.worker';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { SubmissionFacade } from './services/submissionFacade.service';
+import { InternalController } from './controllers/submissions/internal.controller';
 
 @Module({
     imports: [
@@ -136,6 +138,7 @@ import { APP_GUARD } from '@nestjs/core';
         TagsController,
         CompaniesController,
         SubmissionsController,
+        InternalController,
     ],
     providers: [
         EventsGateway,
@@ -144,6 +147,7 @@ import { APP_GUARD } from '@nestjs/core';
             provide: APP_GUARD,
             useClass: ThrottlerGuard,
         },
+        SubmissionFacade,
     ],
 })
 export class AppModule {}
