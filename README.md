@@ -281,54 +281,6 @@ This project includes a complete OAS 3.0 compliant REST API.
 | ------ | ----------------------- |
 | GET    | `/api/submissions/{id}` |
 
-## 📁 Folder Structure
-
-```
-.
-├── apps
-│   ├── api-gateway
-│   ├── auth-service
-│   ├── client
-│   ├── companies-service
-│   ├── execution-service
-│   ├── problems-service
-│   ├── submissions-service
-│   ├── tags-service
-│   └── users-service
-├── assets
-│   ├── architecture.png
-│   ├── problems.png
-│   └── two-sum.png
-├── docker-compose.dev.yml
-├── docker-compose.yml
-├── Dockerfile.base
-├── Dockerfile.web
-├── .dockerignore
-├── .env
-├── .env.example
-├── .env.test
-├── .gitignore
-├── k8s
-├── LICENSE
-├── nginx.conf
-├── .npmrc
-├── package.json
-├── packages
-│   ├── config
-│   ├── constants
-│   ├── database
-│   ├── eslint-config
-│   ├── types
-│   └── typescript-config
-├── pnpm-lock.yaml
-├── pnpm-workspace.yaml
-├── .prettierignore
-├── .prettierrc
-├── README.md
-├── tsconfig.json
-└── turbo.json
-```
-
 ## 🤝 Contributions
 
 Contributions, issues, and suggestions are welcome! Feel free to fork the repository and submit pull requests.
