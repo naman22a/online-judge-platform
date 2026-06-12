@@ -194,11 +194,21 @@ $ docker compose up
 Create a local kind cluster and deploy all services:
 
 ```bash
-# Create cluster
-$ kind create cluster --name oj
+# Make scripts executable
+$ chmod +x ./scripts/deploy.sh
+$ chmod +x ./scripts/port-forward.sh
+$ chmod +x ./scripts/install-monitoring.sh
+$ chmod +x ./scripts/gp-port-forward.sh
 
-# Apply manifests
-$ kubectl apply -f k8s/ -n oj
+# Deploy the app on kind locally
+$ bash ./scripts/deploy.sh
+
+# Port forwarding
+$ bash ./scripts/port-forward.sh
+
+# Install Monitoring and port forward (Optional)
+$ bash ./scripts/install-monitoring.sh
+$ bash ./scripts/gp-port-forward.sh
 ```
 
 The execution service spawns Kubernetes Jobs dynamically for each submission. Ensure the execution service's ServiceAccount has permission to create/get/delete Jobs in the `oj` namespace.
