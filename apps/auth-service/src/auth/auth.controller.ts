@@ -134,7 +134,7 @@ export class AuthController {
         }
 
         // send access and refresh tokens
-        const accessToken = this.authService.createAcessToken(user);
+        const accessToken = this.authService.createAccessToken(user);
         const refreshToken = this.authService.createRefreshToken(user);
 
         return { accessToken, refreshToken };
@@ -175,7 +175,7 @@ export class AuthController {
         }
 
         // send access and refresh tokens
-        const accessToken = this.authService.createAcessToken(user);
+        const accessToken = this.authService.createAccessToken(user);
         const refreshToken = this.authService.createRefreshToken(user);
 
         return { accessToken, refreshToken };
