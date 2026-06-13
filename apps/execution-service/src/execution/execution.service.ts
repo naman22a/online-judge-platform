@@ -7,8 +7,8 @@ import { k8sJobCreationDuration, k8sJobsRunning } from '../metrics/metrics';
 
 @Injectable()
 export class ExecutionService implements OnModuleInit {
-    private batchV1: k8s.BatchV1Api;
-    private coreV1: k8s.CoreV1Api;
+    private batchV1!: k8s.BatchV1Api;
+    private coreV1!: k8s.CoreV1Api;
 
     onModuleInit() {
         const kc = new k8s.KubeConfig();

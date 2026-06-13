@@ -9,7 +9,7 @@ import { sign } from 'jsonwebtoken';
 export class AuthService {
     constructor(private configService: ConfigService) {}
 
-    createAcessToken(user: User) {
+    createAccessToken(user: User) {
         // eslint-disable-next-line
         const secret = this.configService.get('ACCESS_TOKEN_SECRET');
         return sign({ userId: user.id } as AccessTokenPayload, secret, {
