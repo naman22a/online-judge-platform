@@ -4,7 +4,7 @@ metadata:
   name: client
   namespace: oj
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: client
   ports:
