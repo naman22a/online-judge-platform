@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { getAccessToken, setAccessToken } from '../global';
 
+const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT ?? 'https://api-judge.namanarora.xyz';
+
 const API = axios.create({
-    baseURL: `${import.meta.env.VITE_API_ENDPOINT}/api`,
+    baseURL: `${API_ENDPOINT}/api`,
     withCredentials: true,
 });
 
