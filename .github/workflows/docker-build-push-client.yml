@@ -1,0 +1,27 @@
+name: Docker Build and Push for Client
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build Docker Image for client
+      run: |
+        docker build \
+          -f Dockerfile.web \
+          -t ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest \
+          .
+
+    - name: Push Docker Image for client
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest

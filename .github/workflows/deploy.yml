@@ -20,6 +20,9 @@ jobs:
 
           echo "Updating service images..."
 
+          kubectl set image deployment/client-deployment \
+            client-frontend=$DOCKER_USERNAME/leetcode-client:latest -n oj
+
           kubectl set image deployment/api-gateway-deployment \
             api-gateway-backend=$DOCKER_USERNAME/leetcode-api-gateway:latest -n oj
 
@@ -46,6 +49,7 @@ jobs:
 
           echo "Waiting for rollouts..."
 
+          kubectl rollout status deployment/client-deployment -n oj
           kubectl rollout status deployment/api-gateway-deployment -n oj
           kubectl rollout status deployment/auth-deployment -n oj
           kubectl rollout status deployment/client-deployment -n oj
@@ -55,26 +59,6 @@ jobs:
           kubectl rollout status deployment/submissions-deployment -n oj
           kubectl rollout status deployment/tags-deployment -n oj
           kubectl rollout status deployment/users-deployment -n oj
-
-      - name: Load Runner Images
-        run: |
-          set -e
-
-          echo "Loading OJ runner images..."
-
-          docker save \
-            gcc:15 \
-            python:3.9 \
-            node:18 \
-            eclipse-temurin:17-jdk \
-            -o /tmp/oj-runners.tar
-
-          sudo k3s ctr images import /tmp/oj-runners.tar
-
-          rm -f /tmp/oj-runners.tar
-
-          echo "Runner images loaded:"
-          sudo k3s ctr images list
 
       - name: Deployment Complete
         run: |
