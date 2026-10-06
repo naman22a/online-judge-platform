@@ -30,12 +30,12 @@ jobs:
       secrets: inherit
 
     docker-build-and-push-client:
-      needs: [docker-build-test-and-push]
+      needs: [code-quality, secrets-scan, dependency-scan, docker-scan]
       uses: ./.github/workflows/docker-build-push-client.yml
       secrets: inherit
 
     # CD
     deploy:
-      needs: [docker-build-test-and-push]
+      needs: [docker-build-test-and-push, docker-build-and-push-client]
       uses: ./.github/workflows/deploy.yml
       secrets: inherit
