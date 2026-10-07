@@ -9,6 +9,9 @@ on:
       - 'LICENSE'
       - 'assets/**/*.*'
 
+permissions: 
+  contents: write
+
 jobs:
     # CI
     code-quality:
