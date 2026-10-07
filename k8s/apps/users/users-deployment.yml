@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: users-backend
-        image: naman22a/leetcode-users-service:latest
+        image: naman22a/leetcode-users-service:cedb29b6f36eba5cb1510660711609797bdbef66
         imagePullPolicy: Always
         ports:
         - containerPort: 5001

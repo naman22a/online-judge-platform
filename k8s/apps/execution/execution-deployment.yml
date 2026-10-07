@@ -15,7 +15,7 @@ spec:
       serviceAccountName: execution-service-sa
       containers:
       - name: execution-backend
-        image: naman22a/leetcode-execution-service:latest
+        image: naman22a/leetcode-execution-service:cedb29b6f36eba5cb1510660711609797bdbef66
         imagePullPolicy: Always
         ports:
         - containerPort: 5007

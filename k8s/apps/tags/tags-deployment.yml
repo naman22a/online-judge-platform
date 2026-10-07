@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: tags-backend
-        image: naman22a/leetcode-tags-service:latest
+        image: naman22a/leetcode-tags-service:cedb29b6f36eba5cb1510660711609797bdbef66
         imagePullPolicy: Always
         ports:
         - containerPort: 5004

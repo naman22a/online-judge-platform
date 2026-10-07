@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: client-frontend
-        image: naman22a/leetcode-client:latest
+        image: naman22a/leetcode-client:cedb29b6f36eba5cb1510660711609797bdbef66
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
