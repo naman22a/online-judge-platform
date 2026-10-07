@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: auth-backend
-        image: naman22a/leetcode-auth-service:cedb29b6f36eba5cb1510660711609797bdbef66
+        image: naman22a/leetcode-auth-service:015a29aae044e091d6cd090d1d014730961127a7
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
