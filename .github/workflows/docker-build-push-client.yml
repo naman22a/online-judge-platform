@@ -8,20 +8,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build Docker Image for client
-      run: |
-        docker build \
-          -f Dockerfile.web \
-          -t ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest \
-          .
+      - name: Set image tag
+        id: image
+        run: |
+          echo "tag=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
 
-    - name: Push Docker Image for client
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest
+      - name: Build Docker Image for client
+        run: |
+          docker build \
+            -f Dockerfile.web \
+            -t ${{ secrets.DOCKER_USERNAME }}/leetcode-client:${{ steps.image.outputs.tag }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest \
+            .
+
+      - name: Push Docker Image for client
+        run: |
+          docker push \
+            ${{ secrets.DOCKER_USERNAME }}/leetcode-client:${{ steps.image.outputs.tag }}
+
+          docker push \
+            ${{ secrets.DOCKER_USERNAME }}/leetcode-client:latest

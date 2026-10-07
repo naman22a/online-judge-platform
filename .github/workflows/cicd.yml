@@ -34,8 +34,9 @@ jobs:
       uses: ./.github/workflows/docker-build-push-client.yml
       secrets: inherit
 
-    # CD
-    deploy:
+    update-manifests:
       needs: [docker-build-test-and-push, docker-build-and-push-client]
-      uses: ./.github/workflows/deploy.yml
+      uses: ./.github/workflows/update-manifests.yml
       secrets: inherit
+
+    # CD now handled via ArgoCD
