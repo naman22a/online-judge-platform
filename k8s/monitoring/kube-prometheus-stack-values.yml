@@ -18,6 +18,14 @@ grafana:
 
   defaultDashboardsEnabled: true
 
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.loki.svc.cluster.local:3100
+      isDefault: false
+      editable: true
+
 prometheus:
   enabled: true
 
