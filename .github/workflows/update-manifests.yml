@@ -16,15 +16,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Update image tags
+      - name: Update Kubernetes image tags
         env:
           IMAGE_TAG: ${{ github.sha }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           declare -A SERVICES=(
             [api-gateway]="api-gateway"
-            [users]="users-service"
             [auth]="auth-service"
+            [users]="users-service"
             [problems]="problems-service"
             [tags]="tags-service"
             [companies]="companies-service"
@@ -33,24 +33,40 @@ jobs:
             [client]="client"
           )
 
+          declare -A MANIFESTS=(
+            [api-gateway]="k8s/apps/api-gateway/api-gateway-deployment.yml"
+            [auth]="k8s/apps/auth/auth-deployment.yml"
+            [users]="k8s/apps/users/users-deployment.yml"
+            [problems]="k8s/apps/problems/problems-deployment.yml"
+            [tags]="k8s/apps/tags/tags-deployment.yml"
+            [companies]="k8s/apps/companies/companies-deployment.yml"
+            [submissions]="k8s/apps/submissions/submissions-deployment.yml"
+            [execution]="k8s/apps/execution/execution-deployment.yml"
+            [client]="k8s/apps/client/client-deployment.yml"
+          )
+
           for app in "${!SERVICES[@]}"; do
             service="${SERVICES[$app]}"
-            manifest="k8s/apps/${app}/deployment.yml"
-
-            if [ ! -f "$manifest" ]; then
-              echo "Skipping ${app}: ${manifest} not found"
-              continue
-            fi
-
+            manifest="${MANIFESTS[$app]}"
             image="${DOCKER_USERNAME}/leetcode-${service}"
 
-            echo "Updating ${manifest}"
-            echo "  ${image}:${IMAGE_TAG}"
+            echo "Updating ${app}"
+            echo "  Manifest: ${manifest}"
+            echo "  Image:    ${image}:${IMAGE_TAG}"
+
+            if [ ! -f "$manifest" ]; then
+              echo "ERROR: Manifest not found: $manifest"
+              exit 1
+            fi
 
             sed -i -E \
-              "s|image: ${image}:.*|image: ${image}:${IMAGE_TAG}|" \
+              "s|^([[:space:]]*image:[[:space:]]*)${image}:.*|\1${image}:${IMAGE_TAG}|" \
               "$manifest"
           done
+
+      - name: Show manifest changes
+        run: |
+          git diff -- k8s/apps
 
       - name: Commit manifest changes
         run: |
