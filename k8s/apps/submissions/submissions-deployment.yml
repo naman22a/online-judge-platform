@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: submissions-backend
-        image: naman22a/leetcode-submissions-service:015a29aae044e091d6cd090d1d014730961127a7
+        image: naman22a/leetcode-submissions-service:2e603318006b84dc18238c3a7a48934e2cf7d20e
         imagePullPolicy: Always
         ports:
         - containerPort: 5006
