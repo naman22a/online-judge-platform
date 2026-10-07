@@ -80,6 +80,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore(gitops): update images to ${GITHUB_SHA}"
+          git commit -m "chore(gitops): update images to ${GITHUB_SHA} [skip ci]"
 
           git push
