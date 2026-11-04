@@ -20,6 +20,8 @@ spec:
       containers:
         - name: postgres
           image: postgres:16-alpine
+          command: ["postgres"]
+          args: ["-D", "/var/lib/postgresql/data/pgdata"]
           ports:
             - containerPort: 5432
               name: postgres
