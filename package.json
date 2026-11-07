@@ -20,7 +20,6 @@
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-unused-imports": "^4.4.1",
         "prettier": "^3.6.2",
-        "prisma": "8.0.0-rc.33",
         "ts-node": "^10.9.2",
         "turbo": "^2.6.0",
         "typescript": "5.9.2",
@@ -32,7 +31,6 @@
     },
     "dependencies": {
         "@nestjs/microservices": "^11.1.8",
-        "@prisma/client": "^7.10.1",
         "@willsoto/nestjs-prometheus": "^6.0.2",
         "argon2": "^0.44.0",
         "dotenv": "^17.2.3",
@@ -84,7 +82,6 @@
             "proxy-addr": ">=2.0.8",
             "handlebars": "^4.7.10",
             "dompurify": "^3.4.17",
-            "effect@<3.20.0": ">=3.20.0",
             "picomatch@>=4.0.0 <4.0.4": ">=4.0.4",
             "path-to-regexp@>=8.0.0 <8.4.0": ">=8.4.0",
             "lodash@>=4.0.0 <=4.17.23": ">=4.18.0",
@@ -208,7 +205,8 @@
             "glob@>=9.0.0 <=14.0.1": ">=14.0.2",
             "follow-redirects@<=1.15.11": ">=1.16.0",
             "lodash@=4.17.23": ">=4.18.1",
-            "minimatch@>=7.0.0 <11.0.1": ">=11.0.1"
+            "minimatch@>=7.0.0 <11.0.1": ">=11.0.1",
+            "effect": "~3.10.0"
         }
     }
 }
