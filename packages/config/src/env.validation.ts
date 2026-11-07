@@ -58,7 +58,7 @@ export class EnvironmentVariables {
     @IsNotEmpty()
     SERVER_URL: string;
 
-    @Matches(/^postgresql:\/\/([^:]+):([^@]+)@([^:\/]+):(\d+)\/([^?]+)\?schema=([^&]+)$/)
+    @Matches(/^postgresql:\/\/([^:]+):([^@]+)@([^:/]+)(?::(\d+))?\/([^?]+)(?:\?.*)?$/)
     DATABASE_URL: string;
 
     @IsNotEmpty()
