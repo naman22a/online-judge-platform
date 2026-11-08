@@ -1,0 +1,14 @@
+c6c2bc14d990533e21206ecb9c6fc8c99a754713:k8s/apps/api-gateway/api-gateway-deployment.yml:generic-api-key:17
+c6c2bc14d990533e21206ecb9c6fc8c99a754713:k8s/apps/auth/auth-deployment.yml:generic-api-key:17
+4d927741b2bf3d91bf5f373e5391e6e794858cf1:k8s/apps/auth/auth-deployment.yml:generic-api-key:17
+4d927741b2bf3d91bf5f373e5391e6e794858cf1:k8s/apps/api-gateway/api-gateway-deployment.yml:generic-api-key:17
+f7dc364835bd70509c010e7e8037cbabea2f0f72:k8s/apps/api-gateway/api-gateway-deployment.yml:generic-api-key:17
+f7dc364835bd70509c010e7e8037cbabea2f0f72:k8s/apps/auth/auth-deployment.yml:generic-api-key:17
+8fb8ff4e03c2d89bd5908c8f6c31d0609f917a59:apps/execution-service/README.md:generic-api-key:5
+8fb8ff4e03c2d89bd5908c8f6c31d0609f917a59:apps/submissions-service/README.md:generic-api-key:5
+365aee99ba648011df81519b2a2445da683b484e:apps/companies-service/README.md:generic-api-key:5
+ace30eb9b630b1eb11a3bc34fff66d0c5a993645:apps/tags-service/README.md:generic-api-key:5
+2da1d981e99cc95ab27731d60541ea0e72e95aa9:apps/problems-service/README.md:generic-api-key:5
+d7f12e7f20f08e38ba90138546a8ef9f57a8703e:apps/auth-service/README.md:generic-api-key:5
+b6823c55672a3cb267ce8ce1d270f4a6c290d378:apps/users-service/README.md:generic-api-key:5
+cf71c8ee303a4cdbff0a20b5e239e8d9d92e1cf7:apps/api-gateway/README.md:generic-api-key:5
