@@ -14,7 +14,7 @@
         "start:debug": "dotenv -e ../../.env -- nest start --debug --watch",
         "start:prod": "dotenv -e ../../.env -- node dist/main",
         "lint": "eslint src --ext .ts",
-        "test": "NODE_OPTIONS='--experimental-vm-modules' dotenv -e ../../.env.test -- jest --passWithNoTests",
+        "test": "dotenv -e ../../.env.test -- jest --passWithNoTests",
         "test:watch": "dotenv -e ../../.env.test -- jest --watch --passWithNoTests",
         "test:cov": "dotenv -e ../../.env.test -- jest --coverage --passWithNoTests",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

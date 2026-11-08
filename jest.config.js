@@ -1,3 +1,6 @@
+const { compilerOptions } = require('./tsconfig.json');
+const tsconfigPathsJest = require('tsconfig-paths-jest');
+
 module.exports = {
     moduleFileExtensions: ['js', 'json', 'ts'],
     rootDir: 'src',
@@ -5,7 +8,6 @@ module.exports = {
     transform: {
         '^.+\\.(t|j)s$': 'ts-jest',
     },
-    collectCoverageFrom: ['**/*.(t|j)s'],
-    coverageDirectory: '../coverage',
     testEnvironment: 'node',
+    moduleNameMapper: tsconfigPathsJest(compilerOptions),
 };
