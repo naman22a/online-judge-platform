@@ -10,4 +10,5 @@ module.exports = {
     },
     testEnvironment: 'node',
     moduleNameMapper: tsconfigPathsJest(compilerOptions),
+    transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|@nestjs|\\.pnpm)'],
 };
